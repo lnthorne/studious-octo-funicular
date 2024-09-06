@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>711469187430-7k41sv2jgf4i2i8rm6me0dhuqk9ehk8n.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.711469187430-7k41sv2jgf4i2i8rm6me0dhuqk9ehk8n</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>711469187430-h03itqh2enmec59e9e20vtc8v704nttq.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAppYIUqc9rz-w7R8yGd0XeX3ooQCn_dik</string>
+	<key>GCM_SENDER_ID</key>
+	<string>711469187430</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.LTSS.LandscapeConnect</string>
+	<key>PROJECT_ID</key>
+	<string>landscapeconnect-1e166</string>
+	<key>STORAGE_BUCKET</key>
+	<string>landscapeconnect-1e166.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:711469187430:ios:3241b68c9872a7a7e5c8a7</string>
+</dict>
+</plist>

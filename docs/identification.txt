@@ -1,0 +1,4 @@
+bundle_ID_ios: com.LTSS.LandscapeConnect
+Public-facing name for project: project-711469187430
+database_ID: (default)
+Database_LOcation: us-west1
