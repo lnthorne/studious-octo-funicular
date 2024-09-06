@@ -18,6 +18,7 @@ import { IPost, JobStatus } from "@/typings/jobs.inter";
 import { getUser } from "@/services/user";
 import { IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { router } from "expo-router";
+import { useUser } from "@/contexts/userContext";
 
 const PostSchema = Yup.object().shape({
 	title: Yup.string().required("Title is required"),
@@ -25,43 +26,18 @@ const PostSchema = Yup.object().shape({
 });
 
 export default function CreatePostScreen() {
+	const { user } = useUser<IHomeOwnerEntity>();
 	const [imageUri, setImageUri] = useState<string | null>(null);
-	const [userData, setUserData] = useState<IHomeOwnerEntity | null>();
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		try {
-			// TODO: THIS IS BAD YOU NEED TO CREATE A CONTEXT TO GET THE USER
-			const fetchUser = async () => {
-				setLoading(true);
-				try {
-					const user = await getUser<IHomeOwnerEntity>(UserType.homeowner);
-					if (!user) {
-						return;
-					}
-					setUserData(user);
-				} catch (error) {
-					console.error("Error fetching user data", error);
-				} finally {
-					setLoading(false);
-				}
-			};
-			fetchUser();
-		} catch (error) {
-			console.error("Error fetching user data", error);
-		}
-	}, []);
+	const [loading, setLoading] = useState(false);
 
 	const handlePostSubmit = async (values: IPost) => {
-		console.log("Values: ", values);
 		setLoading(true);
 		try {
 			const postWithUid: IPost = {
 				...values,
-				uid: userData!.uid,
+				uid: user!.uid,
 			};
 			await CreateNewPost(postWithUid, imageUri);
-			// Optionally navigate back or show a success message
 		} catch (error) {
 			console.error("Error creating post: ", error);
 		} finally {

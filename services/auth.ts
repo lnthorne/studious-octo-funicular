@@ -9,7 +9,7 @@ export async function signIn(data: ILoginData) {
 	try {
 		const user = await auth().signInWithEmailAndPassword(data.email, data.password);
 		await AsyncStorage.setItem("uid", user.user.uid);
-		return user;
+		return user.user;
 	} catch (error) {
 		throw error;
 	}

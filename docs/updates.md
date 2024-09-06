@@ -36,3 +36,9 @@
 - The android sim cannot connect to the wifi, still need to work that out
 - I chose RNUILib (https://wix.github.io/react-native-ui-lib/docs/components/media/AnimatedScanner) as the UI library. I might actually scrap it and just use style sheets due to AI
 - Created student figma account, also looked into AI UI designers. I liked galileo (https://www.usegalileo.ai/create/2a4cc4ae-5409-47c3-8a53-3cb119ed00b8) but will look into more
+
+### Sep 5, 2024
+
+- Have been building the styling of the app offline. I installed RNUILib but I find that its just too much. Currently just using stylesheets as I found that was easiest to implement with figma designs. I have the user onboarding set up in the style and homeowner login/signup set in the current design. Not entirely sold on it but gonna have to do. I will be implementing a design system and breaking out the indiviual components.
+- Gonna take a pause on the UI stuff and discuss with others. In the meantime, I want to work on the functionality. Current choices are: App wide user context, DB schema, in-app messaging, uploading and displaying mutliple photos at time, filtering by postal code.
+  - Setting up app wide user context.

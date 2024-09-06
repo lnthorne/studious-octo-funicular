@@ -1,6 +1,6 @@
 // app/home/index.tsx
+import { useUser } from "@/contexts/userContext";
 import { fetchAllOpenJobsWithBids } from "@/services/bid";
-import { getUser } from "@/services/user";
 import { IPostEntity } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { router, useFocusEffect } from "expo-router";
@@ -11,51 +11,31 @@ import {
 	View,
 	StyleSheet,
 	FlatList,
-	Touchable,
 	TouchableOpacity,
 } from "react-native";
 
 export default function HomeScreen() {
-	const [userData, setUserData] = useState<IHomeOwnerEntity | null>();
+	const { user } = useUser<IHomeOwnerEntity>();
 	const [jobsWithBids, setJobsWithBids] = useState<IPostEntity[]>([]);
 	const [loading, setLoading] = useState(true);
-	useEffect(() => {
-		const fetchUser = async () => {
-			setLoading(true);
-			try {
-				const user = await getUser<IHomeOwnerEntity>(UserType.homeowner);
-				if (!user) {
-					return;
-				}
-				setUserData(user);
-			} catch (error) {
-				console.error("Error fetching user data", error);
-			} finally {
-				setLoading(false);
-			}
-		};
 
-		fetchUser();
-	}, []);
+	const fetchJobsAndBids = async () => {
+		if (!user) return;
+		setLoading(true);
+		try {
+			const jobs = await fetchAllOpenJobsWithBids(user.uid);
+			setJobsWithBids(jobs);
+		} catch (error) {
+			console.error("Failed to fetch jobs and bids:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useFocusEffect(
 		useCallback(() => {
-			if (!userData) return;
-
-			const fetchJobsAndBids = async () => {
-				setLoading(true);
-				try {
-					const jobs = await fetchAllOpenJobsWithBids(userData.uid);
-					setJobsWithBids(jobs);
-				} catch (error) {
-					console.error("Failed to fetch jobs and bids:", error);
-				} finally {
-					setLoading(false);
-				}
-			};
-
 			fetchJobsAndBids();
-		}, [userData])
+		}, [user])
 	);
 
 	const handleBidPress = (bid: string) => {

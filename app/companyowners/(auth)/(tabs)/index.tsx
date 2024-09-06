@@ -1,4 +1,5 @@
 // app/home/index.tsx
+import { useUser } from "@/contexts/userContext";
 import { fetchBidsFromUid } from "@/services/bid";
 import { getUser } from "@/services/user";
 import { IBidEntity } from "@/typings/jobs.inter";
@@ -15,45 +16,27 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
-	const [userData, setUserData] = useState<ICompanyOwnerEntity | null>();
+	const { user } = useUser<ICompanyOwnerEntity>();
 	const [bidData, setBidData] = useState<IBidEntity[] | null>();
 	const [loading, setLoading] = useState(true);
-	useEffect(() => {
-		const fetchUser = async () => {
-			setLoading(true);
-			try {
-				const user = await getUser<ICompanyOwnerEntity>(UserType.companyowner);
-				if (!user) {
-					console.error("No user found");
-					return;
-				}
-				setUserData(user);
-			} catch (error) {
-				console.error("Error fetching user data", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchUser();
-	}, []);
+
+	const fetchBids = async () => {
+		if (!user) return;
+		setLoading(true);
+		try {
+			const bids = await fetchBidsFromUid(user.uid);
+			setBidData(bids);
+		} catch (error) {
+			console.error("Failed to fetch bids:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useFocusEffect(
 		useCallback(() => {
-			if (!userData) return;
-
-			const fetchBids = async () => {
-				setLoading(true);
-				try {
-					const bids = await fetchBidsFromUid(userData.uid);
-					setBidData(bids);
-				} catch (error) {
-					console.error("Failed to fetch bids:", error);
-				} finally {
-					setLoading(false);
-				}
-			};
 			fetchBids();
-		}, [userData])
+		}, [user])
 	);
 
 	const handleBidPress = (bid: string) => {
@@ -67,7 +50,7 @@ export default function HomeScreen() {
 		<View style={styles.container}>
 			<Text
 				style={styles.title}
-			>{`Welcome back ${userData?.companyName}! Here are your current bids`}</Text>
+			>{`Welcome back ${user?.companyName}! Here are your current bids`}</Text>
 			<FlatList
 				data={bidData}
 				keyExtractor={(item) => item.pid}

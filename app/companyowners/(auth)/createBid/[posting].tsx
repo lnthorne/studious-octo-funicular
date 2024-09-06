@@ -7,31 +7,30 @@ import { BidModal } from "@/components/BidModal";
 import { ICompanyOwnerEntity, UserType } from "@/typings/user.inter";
 import { getUser } from "@/services/user";
 import { submitBid } from "@/services/bid";
+import { useUser } from "@/contexts/userContext";
 
 export default function CreateBidScreen() {
+	const { user } = useUser<ICompanyOwnerEntity>();
 	const { posting } = useLocalSearchParams<{ posting: string }>();
 	const [post, setPosting] = useState<IPostEntity | null>(null);
-	const [user, setUser] = useState<ICompanyOwnerEntity | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [modalVisible, setModalVisible] = useState(false);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			if (!posting) return;
-			setLoading(true);
-			try {
-				const postData = await fetchPost(posting);
-				setPosting(postData);
+	const fetchPostData = async () => {
+		if (!posting) return;
+		setLoading(true);
+		try {
+			const postData = await fetchPost(posting);
+			setPosting(postData);
+		} catch (error) {
+			console.error("Error fetching post", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-				const userData = await getUser<ICompanyOwnerEntity>(UserType.companyowner);
-				setUser(userData);
-			} catch (error) {
-				console.error("Error fetching post", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchData();
+	useEffect(() => {
+		fetchPostData();
 	}, [posting]);
 
 	const handleBidSubmit = async (bidAmount: string, bidDescription: string) => {

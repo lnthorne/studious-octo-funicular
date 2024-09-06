@@ -12,48 +12,31 @@ import { fetchOpenJobPostsNotBidOn } from "@/services/post";
 import { IPostEntity } from "@/typings/jobs.inter";
 import { router, useFocusEffect } from "expo-router";
 import { getUserId } from "@/services/user";
+import { useUser } from "@/contexts/userContext";
+import { ICompanyOwnerEntity } from "@/typings/user.inter";
 
 export default function ViewPostsScreen() {
+	const { user } = useUser<ICompanyOwnerEntity>();
 	const [posts, setPosts] = useState<IPostEntity[]>([]);
-	const [userId, setUserId] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		const fetchUser = async () => {
-			setLoading(true);
-			try {
-				const uid = await getUserId();
-				if (!uid) {
-					console.error("No user id found");
-					return;
-				}
-				setUserId(uid);
-			} catch (error) {
-				console.error("Error fetching user data", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchUser();
-	}, []);
+	const loadPosts = async () => {
+		if (!user) return;
+		setLoading(true);
+		try {
+			const openPosts = await fetchOpenJobPostsNotBidOn(user.uid);
+			setPosts(openPosts);
+		} catch (error) {
+			console.error("Error fetching posts", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useFocusEffect(
 		useCallback(() => {
-			if (!userId) return;
-
-			const loadPosts = async () => {
-				setLoading(true);
-				try {
-					const openPosts = await fetchOpenJobPostsNotBidOn(userId);
-					setPosts(openPosts);
-				} catch (error) {
-					console.error("Error fetching posts", error);
-				} finally {
-					setLoading(false);
-				}
-			};
 			loadPosts();
-		}, [userId])
+		}, [user])
 	);
 
 	const handlePostPress = (pid: string) => {
