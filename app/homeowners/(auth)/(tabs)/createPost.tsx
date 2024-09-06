@@ -14,9 +14,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { CreateNewPost } from "@/services/post";
 import * as ImagePicker from "expo-image-picker";
-import { IPost, JobStatus } from "@/typings/jobs.inter";
-import { getUser } from "@/services/user";
-import { IHomeOwnerEntity, UserType } from "@/typings/user.inter";
+import { IPost } from "@/typings/jobs.inter";
+import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { router } from "expo-router";
 import { useUser } from "@/contexts/userContext";
 
@@ -27,7 +26,7 @@ const PostSchema = Yup.object().shape({
 
 export default function CreatePostScreen() {
 	const { user } = useUser<IHomeOwnerEntity>();
-	const [imageUri, setImageUri] = useState<string | null>(null);
+	const [imageUris, setImageUris] = useState<string[]>([]);
 	const [loading, setLoading] = useState(false);
 
 	const handlePostSubmit = async (values: IPost) => {
@@ -37,7 +36,7 @@ export default function CreatePostScreen() {
 				...values,
 				uid: user!.uid,
 			};
-			await CreateNewPost(postWithUid, imageUri);
+			await CreateNewPost(postWithUid, imageUris);
 		} catch (error) {
 			console.error("Error creating post: ", error);
 		} finally {
@@ -70,14 +69,15 @@ export default function CreatePostScreen() {
 		} else {
 			result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				allowsEditing: true,
 				aspect: [4, 3],
 				quality: 1,
+				allowsMultipleSelection: true,
 			});
 		}
 
 		if (!result.canceled) {
-			setImageUri(result.assets[0].uri);
+			const uris = result.assets.map((asset) => asset.uri);
+			setImageUris([...imageUris, ...uris]);
 		}
 	};
 
@@ -129,7 +129,17 @@ export default function CreatePostScreen() {
 						{errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
 
 						<Button title="Pick an image" onPress={showImagePickerOptions} />
-						{imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />}
+						{imageUris.length > 0 && (
+							<View style={styles.imageContainer}>
+								{imageUris.map((uri, index) => (
+									<Image
+										key={index}
+										source={{ uri }}
+										style={{ width: 100, height: 100, margin: 5 }}
+									/>
+								))}
+							</View>
+						)}
 
 						{loading ? (
 							<ActivityIndicator size="small" color="#0000ff" />
@@ -159,6 +169,11 @@ const styles = StyleSheet.create({
 	textArea: {
 		height: 120, // Adjust this to make the text area bigger
 		textAlignVertical: "top", // Ensure the text starts at the top of the text area
+	},
+	imageContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		marginTop: 10,
 	},
 	errorText: {
 		color: "red",

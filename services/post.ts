@@ -2,7 +2,7 @@ import { IBidEntity, IPost, IPostEntity, JobStatus } from "@/typings/jobs.inter"
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 
-export async function CreateNewPost(newPostContent: IPost, imageUri: string | null) {
+export async function CreateNewPost(newPostContent: IPost, imageUris: string[]) {
 	try {
 		const postRef = firestore().collection("posts").doc();
 		const newPost: IPostEntity = {
@@ -14,25 +14,23 @@ export async function CreateNewPost(newPostContent: IPost, imageUri: string | nu
 
 		await postRef.set(newPost);
 		const postId = postRef.id;
-		let imageUrl = null;
 
-		if (imageUri) {
-			// Convert image URI to Blob
-			const imageRef = storage().ref(`posts/${postId}/image.jpg`);
+		const uploadPromises = imageUris.map(async (uri, index) => {
+			const response = await fetch(uri);
+			const blob = await response.blob();
 
-			// Upload the image file to Firebase Storage
-			await imageRef.putFile(imageUri);
+			const imageRef = storage().ref(`posts/${postId}/image_${index + 1}.jpg`);
+			await imageRef.put(blob);
+			return await imageRef.getDownloadURL();
+		});
 
-			// Get the download URL of the uploaded image
-			imageUrl = await imageRef.getDownloadURL();
+		const imageUrls: string[] = await Promise.all(uploadPromises);
 
-			// Update the post document with the image URL
-			await postRef.update({
-				imageUrl,
-			});
-		}
+		await postRef.update({
+			imageUrls,
+		});
 
-		return { postId, imageUrl };
+		return { postId, imageUrls };
 	} catch (error) {
 		console.error("Error creating post: ", error);
 		throw error;

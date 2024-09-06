@@ -1,11 +1,19 @@
-import { View, Text, StyleSheet, ActivityIndicator, Image, Button } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	ActivityIndicator,
+	Image,
+	Button,
+	SafeAreaView,
+	ScrollView,
+} from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { IBid, IPostEntity } from "@/typings/jobs.inter";
 import { fetchPost } from "@/services/post";
 import { BidModal } from "@/components/BidModal";
-import { ICompanyOwnerEntity, UserType } from "@/typings/user.inter";
-import { getUser } from "@/services/user";
+import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import { submitBid } from "@/services/bid";
 import { useUser } from "@/contexts/userContext";
 
@@ -66,20 +74,30 @@ export default function CreateBidScreen() {
 	}
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>{post?.title}</Text>
-			<Text style={styles.description}>{post?.description}</Text>
-			<Text style={styles.status}>Status: {post?.jobStatus}</Text>
-			{post?.imageUrl && <Image source={{ uri: post?.imageUrl }} style={styles.image} />}
+		<SafeAreaView>
+			<ScrollView>
+				<View style={styles.container}>
+					<Text style={styles.title}>{post?.title}</Text>
+					<Text style={styles.description}>{post?.description}</Text>
+					<Text style={styles.status}>Status: {post?.jobStatus}</Text>
+					{post?.imageUrls && (
+						<View style={styles.imageContainer}>
+							{post?.imageUrls.map((uri, index) => (
+								<Image key={index} source={{ uri }} style={styles.image} />
+							))}
+						</View>
+					)}
 
-			<Button title="BID" onPress={() => setModalVisible(true)} />
+					<Button title="BID" onPress={() => setModalVisible(true)} />
 
-			<BidModal
-				visible={modalVisible}
-				onClose={() => setModalVisible(false)}
-				onSubmit={handleBidSubmit}
-			/>
-		</View>
+					<BidModal
+						visible={modalVisible}
+						onClose={() => setModalVisible(false)}
+						onSubmit={handleBidSubmit}
+					/>
+				</View>
+			</ScrollView>
+		</SafeAreaView>
 	);
 }
 
@@ -103,6 +121,11 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: "#777",
 		marginBottom: 10,
+	},
+	imageContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		marginTop: 10,
 	},
 	image: {
 		width: "100%",

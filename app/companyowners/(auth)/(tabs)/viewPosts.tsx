@@ -11,7 +11,6 @@ import {
 import { fetchOpenJobPostsNotBidOn } from "@/services/post";
 import { IPostEntity } from "@/typings/jobs.inter";
 import { router, useFocusEffect } from "expo-router";
-import { getUserId } from "@/services/user";
 import { useUser } from "@/contexts/userContext";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
 

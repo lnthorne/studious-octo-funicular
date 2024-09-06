@@ -42,3 +42,15 @@
 - Have been building the styling of the app offline. I installed RNUILib but I find that its just too much. Currently just using stylesheets as I found that was easiest to implement with figma designs. I have the user onboarding set up in the style and homeowner login/signup set in the current design. Not entirely sold on it but gonna have to do. I will be implementing a design system and breaking out the indiviual components.
 - Gonna take a pause on the UI stuff and discuss with others. In the meantime, I want to work on the functionality. Current choices are: App wide user context, DB schema, in-app messaging, uploading and displaying mutliple photos at time, filtering by postal code.
   - Setting up app wide user context.
+  - Created global user context. Data is set in the userContextWrapper
+
+### Sep 6, 2024
+
+- Now support mutiple photos for a job posting
+- I believe I will home roll a messaging server for direct messaging. Seems quite straight forward. Throw it in a container or run directly on GCP
+- Looking into services for chat as well
+  - Cometchat
+  - Stream (looks super robust, expensive as fuck)
+  - Firebase realtime data
+  - Going to be using RTDB from firebase
+
