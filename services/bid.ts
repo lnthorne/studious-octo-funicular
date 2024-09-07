@@ -1,6 +1,10 @@
 import { BidStatus, IBid, IBidEntity, IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import firestore from "@react-native-firebase/firestore";
 
+/**
+ * Submit a new bid for a job post. Stores bid in firestore.
+ * @param bidData - The bid data to submit
+ */
 export async function submitBid(bidData: IBid): Promise<void> {
 	try {
 		const bidRef = firestore().collection("bids").doc();
@@ -28,6 +32,11 @@ export async function submitBid(bidData: IBid): Promise<void> {
 	}
 }
 
+/**
+ * Fetch a bid from a bid ID
+ * @param bid - The bid ID to fetch
+ * @returns All bid data from the bid ID
+ */
 export async function fetchBidFromBid(bid: string): Promise<IBidEntity> {
 	try {
 		const bidDoc = await firestore().collection("bids").doc(bid).get();
@@ -39,7 +48,11 @@ export async function fetchBidFromBid(bid: string): Promise<IBidEntity> {
 		throw error;
 	}
 }
-
+/**
+ *	Fetch all bids that belong to a user ID
+ * @param uid - The user ID to fetch bids from
+ * @returns All the bids that belong to the user ID
+ */
 export async function fetchBidsFromUid(uid: string): Promise<IBidEntity[]> {
 	try {
 		const bidsSnapshot = await firestore().collection("bids").where("uid", "==", uid).get();
@@ -56,6 +69,11 @@ export async function fetchBidsFromUid(uid: string): Promise<IBidEntity[]> {
 	}
 }
 
+/**
+ * Only fetches all open jobs with bids for a user ID
+ * @param uid - The user ID to fetch all open jobs with bids
+ * @returns Only open jobs with bids for the user ID
+ */
 export async function fetchAllOpenJobsWithBids(uid: string = ""): Promise<IPostEntity[]> {
 	try {
 		const postsSnapshot = await firestore()
@@ -87,6 +105,11 @@ export async function fetchAllOpenJobsWithBids(uid: string = ""): Promise<IPostE
 	}
 }
 
+/**
+ * Accept the current bid and close all other bids for a job post
+ * @param bid - The bid ID to accept
+ * @param pid - The post ID to close
+ */
 export async function acceptBidAndCloseOtherBids(bid: string, pid: string): Promise<void> {
 	console.log("bid and pid", bid, pid);
 	const firestoreInstance = firestore();

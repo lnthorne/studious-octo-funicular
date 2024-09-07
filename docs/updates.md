@@ -54,3 +54,6 @@
   - Firebase realtime data
   - Going to be using RTDB from firebase
 
+### Sep 7, 2024
+
+- I have a very rough draft of direct messaging working!! Two users can now message each other (Just homeowners). We are using RTDB to store the messaging. The code is very dirty so need to clean that up. Check for effeciency, look into caching old messages on device and effecient queries

@@ -54,7 +54,7 @@ export default function SignIn() {
 							style={styles.backIcon}
 						/>
 					</TouchableOpacity>
-					<Text style={styles.text}>{"Sign up"}</Text>
+					<Text style={styles.text}>{"Welcome Back!"}</Text>
 				</View>
 				<Formik
 					initialValues={initialValues}
@@ -79,7 +79,7 @@ export default function SignIn() {
 							{touched.email && errors.email && (
 								<Text style={styles.errorText}>{errors.email}</Text>
 							)}
-							<Text style={styles.text6}>{"Email"}</Text>
+							<Text style={styles.text6}>{"Password"}</Text>
 							<View style={styles.view3}>
 								<TextInput
 									style={styles.text2}

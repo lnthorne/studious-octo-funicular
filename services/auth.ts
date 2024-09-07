@@ -5,6 +5,11 @@ import firestore from "@react-native-firebase/firestore";
 import { ILoginData } from "@/typings/auth/login.inter";
 import { ICompanyOwner, IHomeOwner, UserType } from "@/typings/user.inter";
 
+/**
+ * Call firbase auth to sign in the user and fetch the authenticate user
+ * @param data - The login data of the user
+ * @returns - The authenticated user
+ */
 export async function signIn(data: ILoginData) {
 	try {
 		const user = await auth().signInWithEmailAndPassword(data.email, data.password);
@@ -15,6 +20,9 @@ export async function signIn(data: ILoginData) {
 	}
 }
 
+/**
+ * Signs out the current user
+ */
 export async function signOut() {
 	try {
 		await auth().signOut();
@@ -24,6 +32,11 @@ export async function signOut() {
 	}
 }
 
+/**
+ * Use firebase auth to signup a new user
+ * @param userType - The type of user to sign up
+ * @param userData - The form data of the new user
+ */
 export async function signUp<T extends IHomeOwner | ICompanyOwner>(
 	userType: UserType,
 	userData: T

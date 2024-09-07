@@ -11,7 +11,7 @@ import {
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
-import { Form, Formik } from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
 import { FirebaseError } from "firebase/app";
 import { router } from "expo-router";

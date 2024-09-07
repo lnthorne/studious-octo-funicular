@@ -4,6 +4,10 @@ import firestore from "@react-native-firebase/firestore";
 
 import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 
+/**
+ * get the current user ID
+ * @returns The user ID of the current user
+ */
 export async function getUserId(): Promise<string | null> {
 	try {
 		const userId = await AsyncStorage.getItem("uid");
@@ -24,6 +28,11 @@ export async function getUserId(): Promise<string | null> {
 	}
 }
 
+/**
+ * Get the current user data
+ * @param userType - The type of user to get, used to determine the collection to get the user from
+ * @returns The user data of the current user
+ */
 export async function getUser<T extends IHomeOwnerEntity | ICompanyOwnerEntity>(
 	userType: UserType
 ): Promise<T | null> {
@@ -42,6 +51,11 @@ export async function getUser<T extends IHomeOwnerEntity | ICompanyOwnerEntity>(
 	}
 }
 
+/**
+ *	Identify the type of user
+ * @param uid - The user ID you want to identify the type of user
+ * @returns The type of user
+ */
 export async function identifyUserType(uid: string = ""): Promise<UserType | null> {
 	try {
 		const homeownerDoc = await firestore().collection(UserType.homeowner).doc(uid).get();

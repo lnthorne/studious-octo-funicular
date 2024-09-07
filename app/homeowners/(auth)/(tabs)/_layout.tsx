@@ -22,6 +22,13 @@ export default function HomeLayout() {
 				}}
 			/>
 			<Tabs.Screen
+				name="conversations"
+				options={{
+					title: "Messages",
+					tabBarIcon: ({ color, size }) => <Text style={{ color }}>✉️</Text>,
+				}}
+			/>
+			<Tabs.Screen
 				name="settings"
 				options={{
 					title: "Settings",
