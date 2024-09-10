@@ -23,9 +23,13 @@ export interface IConversation {
 export interface IMessage {
 	body: string;
 	senderId: string;
+	messageType: MessageType;
+}
+
+export interface IMessageEntity extends IMessage {
+	messageId: string;
 	timestamp: number;
-	messageType: MessageType; // Optional type for message type
-	readBy?: { [userId: string]: true }; // An object to track which users have read the message
+	readBy?: { [userId: string]: true };
 }
 
 export interface IUserConversations {

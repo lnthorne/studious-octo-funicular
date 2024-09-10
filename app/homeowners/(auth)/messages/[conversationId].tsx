@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, TextInput, Button, StyleSheet, SafeAreaView } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { subscribeToMessages, sendMessage } from "@/services/messaging"; // Your service
-import { IMessage, MessageType } from "@/typings/messaging.inter";
+import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/messaging"; // Your service
+import { IMessage, IMessageEntity, MessageType } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 
 export default function MessagesPage() {
 	const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
-	const [messages, setMessages] = useState<IMessage[]>([]);
+	const [messages, setMessages] = useState<IMessageEntity[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 	const { user } = useUser<IHomeOwnerEntity>();
 
 	useEffect(() => {
-		if (!conversationId) return;
+		if (!conversationId || !user) return;
 		const unsubscribe = subscribeToMessages(conversationId, (newMessages) => {
 			setMessages((prevMessages) => [...prevMessages, ...newMessages]);
+
+			newMessages.forEach((message) => {
+				if (!message.readBy || !message.readBy[user.uid]) {
+					markMessageAsRead(conversationId, message.messageId, user.uid);
+				}
+			});
 		});
-		console.log("MessagesPage useEffect", messages);
 		return () => unsubscribe();
 	}, [conversationId]);
 
@@ -27,15 +32,14 @@ export default function MessagesPage() {
 		const message: IMessage = {
 			body: newMessage,
 			senderId: user.uid,
-			timestamp: Date.now(), // Using Firestore server timestamp
-			messageType: MessageType.TEXT, // Message type is text
-			readBy: {
-				[user.uid]: true, // Mark as read by the sender
-			},
+			messageType: MessageType.TEXT,
 		};
-
-		await sendMessage(conversationId, message);
-		setNewMessage("");
+		try {
+			await sendMessage(conversationId, message);
+			setNewMessage("");
+		} catch (error) {
+			console.error("Error sending message:", error);
+		}
 	};
 
 	return (

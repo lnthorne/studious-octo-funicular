@@ -15,9 +15,7 @@ export default function ConversationsPage() {
 		const unsubscribe = subscribeToConversations(user.uid, (updatedConversations) => {
 			setConversations(updatedConversations);
 		});
-		console.log("ConversationsPage useEffect", conversations, user.uid);
 
-		// Unsubscribe from conversations when leaving the page
 		return () => unsubscribe();
 	}, [user]);
 

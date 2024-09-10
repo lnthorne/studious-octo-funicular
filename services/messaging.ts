@@ -1,5 +1,5 @@
 import database from "@react-native-firebase/database";
-import { IMessage, IConversation, MessageType } from "@/typings/messaging.inter";
+import { IMessage, IConversation, MessageType, IMessageEntity } from "@/typings/messaging.inter";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
 /**
@@ -45,14 +45,14 @@ export function subscribeToConversations(
  */
 export function subscribeToMessages(
 	conversationId: string,
-	onMessagesUpdate: (messages: IMessage[]) => void
+	onMessagesUpdate: (messages: IMessageEntity[]) => void
 ) {
 	const ref = database().ref(`messages/${conversationId}`);
 
 	// Listen for new messages or changes to messages
 	const listener = ref.on("child_added", (snapshot) => {
 		const messageData = snapshot.val();
-		const message: IMessage = {
+		const message: IMessageEntity = {
 			...messageData,
 		};
 
@@ -69,12 +69,26 @@ export function subscribeToMessages(
  * @param message - The message to send.
  */
 export async function sendMessage(conversationId: string, message: IMessage) {
-	const ref = database().ref(`messages/${conversationId}`).push();
+	const messageRef = database().ref(`messages/${conversationId}`).push();
+	const conversationRef = database().ref(`conversations/${conversationId}`);
+	try {
+		await messageRef.set({
+			...message,
+			messageId: messageRef.key!,
+			timestamp: Date.now(),
+			readBy: {
+				[message.senderId]: true,
+			},
+		});
 
-	await ref.set({
-		...message,
-		timestamp: Date.now(),
-	});
+		await conversationRef.update({
+			lastMessage: message.body,
+			lastMessageTimestamp: Date.now(),
+			lastSenderId: message.senderId,
+		});
+	} catch (error) {
+		throw error;
+	}
 }
 
 /**
@@ -102,7 +116,7 @@ export async function startNewConversation(
 			isPinned: false,
 			isReadOnly: false,
 			unreadMessagesCount: 0,
-			lastMessage: initialMessage || "", // Empty if no initial message
+			lastMessage: initialMessage || "",
 			lastMessageTimestamp: Date.now(),
 			lastSenderId: senderId,
 			members: {
@@ -111,29 +125,34 @@ export async function startNewConversation(
 			},
 		};
 
-		// Save the conversation data in Realtime Database
 		await conversationRef.set(newConversation);
 
-		// If there is an initial message, add it to the messages node
 		if (initialMessage) {
-			const messageRef = database().ref(`messages/${conversationRef.key}`).push();
 			const message: IMessage = {
 				body: initialMessage,
 				senderId,
-				timestamp: Date.now(),
 				messageType: MessageType.TEXT,
-				readBy: {
-					[senderId]: true, // Mark as read by the sender
-				},
 			};
-
-			// Save the message in the conversation's messages node
-			await messageRef.set(message);
+			sendMessage(newConversation.conversationId, message);
 		}
 
 		return conversationRef.key!; // Return the new conversation ID
 	} catch (error) {
 		console.error("Error starting new conversation:", error);
+		throw error;
+	}
+}
+
+export async function markMessageAsRead(conversationId: string, messageId: string, userId: string) {
+	const messagesRef = database().ref(`messages/${conversationId}`);
+	try {
+		await messagesRef
+			.child(messageId)
+			.child("readBy")
+			.update({
+				[userId]: true,
+			});
+	} catch (error) {
 		throw error;
 	}
 }
