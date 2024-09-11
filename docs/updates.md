@@ -80,3 +80,4 @@
 ### Sep 11, 2024
 
 - When the homeowner sends the first messsage, I would like the UI to look like when you're sharing something throught text on iOS. So you just have keyboard and mini modal from top of screen to send message.
+- When the user creates a new conversation, we should check if they already have one open. If so we just bring them to that convo. Done

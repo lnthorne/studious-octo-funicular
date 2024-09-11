@@ -64,7 +64,7 @@ export function subscribeToMessages(
 }
 
 /**
- * Send a new message in a conversation.
+ * Send a new message in a conversation. Then update the conversation's last message.
  * @param conversationId - The ID of the conversation.
  * @param message - The message to send.
  */
@@ -92,7 +92,31 @@ export async function sendMessage(conversationId: string, message: IMessage) {
 }
 
 /**
- * Starts a new conversation between two users in Realtime Database.
+ * Check if two users are in a conversation together.
+ * @param userId1 - The ID of the first user.
+ * @param userId2 - The ID of the second user.
+ * @returns True if the users are in a conversation together, false otherwise.
+ */
+async function areUsersInConversationTogether(
+	userId1: string,
+	userId2: string
+): Promise<string | null> {
+	const conversationRef = database().ref("conversations");
+	const snapshot = await conversationRef.once("value");
+	const conversations = snapshot.val();
+
+	for (const conversationId in conversations) {
+		const members = conversations[conversationId].members;
+		if (members[userId1] && members[userId2]) {
+			return conversationId;
+		}
+	}
+	return null;
+}
+
+/**
+ * Calls areUsersInConversationTogether to check if a conversation exists, if not,
+ * creates a new conversation between two users in Realtime Database.
  * @param senderId - The ID of the user starting the conversation.
  * @param recipientId - The ID of the other participant in the conversation.
  * @param initialMessage - (Optional) The initial message to start the conversation with.
@@ -104,6 +128,10 @@ export async function startNewConversation(
 	initialMessage?: string
 ): Promise<string> {
 	try {
+		const existingConversationId = await areUsersInConversationTogether(senderId, recipientId);
+		if (existingConversationId) {
+			return existingConversationId;
+		}
 		// Create a reference to the new conversation
 		const conversationRef = database().ref("conversations").push();
 
@@ -136,13 +164,19 @@ export async function startNewConversation(
 			sendMessage(newConversation.conversationId, message);
 		}
 
-		return conversationRef.key!; // Return the new conversation ID
+		return conversationRef.key!;
 	} catch (error) {
 		console.error("Error starting new conversation:", error);
 		throw error;
 	}
 }
 
+/**
+ * Update the messages readby property to mark a message as read by a user.
+ * @param conversationId - The ID of the conversation.
+ * @param messageId - The ID of the message to mark as read.
+ * @param userId - The ID of the user who read the message.
+ */
 export async function markMessageAsRead(conversationId: string, messageId: string, userId: string) {
 	const messagesRef = database().ref(`messages/${conversationId}`);
 	try {
