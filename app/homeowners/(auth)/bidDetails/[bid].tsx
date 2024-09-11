@@ -3,10 +3,14 @@ import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { acceptBidAndCloseOtherBids, fetchBidFromBid } from "@/services/bid";
 import { IBidEntity } from "@/typings/jobs.inter";
+import { IHomeOwnerEntity } from "@/typings/user.inter";
+import { useUser } from "@/contexts/userContext";
+import { startNewConversation } from "@/services/messaging";
 
 export default function BidDetails() {
 	const { bid } = useLocalSearchParams<{ bid: string }>();
 	const [bidDetails, setBidDetails] = useState<IBidEntity | null>(null);
+	const { user } = useUser<IHomeOwnerEntity>();
 
 	useEffect(() => {
 		const fetchBidDetails = async () => {
@@ -35,6 +39,21 @@ export default function BidDetails() {
 		}
 	};
 
+	const handleCreateConversation = () => {
+		if (!user || !bidDetails) {
+			Alert.alert("Error", "Please try again.");
+			return;
+		}
+		const initialMessage = "fuck you";
+		// TODO: Right here
+		try {
+			const conversationId = startNewConversation(user.uid, bidDetails.uid, initialMessage);
+		} catch (error) {
+			console.error("Error creating conversation:", error);
+			Alert.alert("Error creating conversation. Please try again.");
+		}
+	};
+
 	if (!bidDetails) {
 		return (
 			<View style={styles.container}>
@@ -52,6 +71,7 @@ export default function BidDetails() {
 			<Text>Status: {bidDetails.status}</Text>
 			<View style={styles.buttonContainer}>
 				<Button title="Accept Bid" onPress={handleAcceptBid} />
+				<Button title="Send Message" onPress={handleCreateConversation} />
 				<Button title="CANCEL" onPress={() => router.back()} />
 			</View>
 		</View>

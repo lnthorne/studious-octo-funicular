@@ -4,6 +4,10 @@ import { router } from "expo-router";
 import { startNewConversation } from "@/services/messaging"; // Import the service
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
+/**
+ * TODO: remove this component, only used for testing purposes
+ * We will only start conversations from the bidDetails page
+ */
 
 export default function NewConversationPage() {
 	const [recipientId, setRecipientId] = useState("");

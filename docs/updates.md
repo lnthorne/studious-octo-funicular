@@ -53,6 +53,7 @@
   - Stream (looks super robust, expensive as fuck)
   - Firebase realtime data
   - Going to be using RTDB from firebase
+- Ended up going with firebase RTDB
 
 ### Sep 7, 2024
 
@@ -61,3 +62,17 @@
 ### Sep 9, 2024
 
 - Fixed the IMessage interface and added the ability to have messages marked as read.
+
+### Sep 10, 2024
+
+- For future we need to add notifications for:
+  - Messaging
+  - New Bids (Homeowner)
+  - New Jobs (Companyowner)
+  - Bid status (Companyowner)
+- Want to get reviews done, project completion, jobs in progress, then we can cement in the schemas for the DB and set the rules
+- Requirments for reviews:
+  - As a homeowner, before accpeting a bid, I would like to see a rating of the company from past jobs. This rating will be out of 5 stars and can be view when selecting the bid. As a homeowner, I would also like to see comments from other users from the companies previous jobs. In these comments, I would like to see photos. These comments can be viewed when select the bid.
+  - As a homeowner, when the job is completed, I would like be asked to leave a rating and comment on the job. I would like to be asked of this when I say that the job is done (Some button on the job screen)
+- Note: When the homeowner is viewing bids, they can then send a message to the company owner.
+- Look into making bid details a modal instead of an entire page. We can then send the bid object as a prop to it and save on requests

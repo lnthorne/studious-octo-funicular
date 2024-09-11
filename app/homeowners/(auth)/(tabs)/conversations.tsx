@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import {
+	View,
+	Text,
+	FlatList,
+	TouchableOpacity,
+	StyleSheet,
+	ActivityIndicator,
+} from "react-native";
 import { router } from "expo-router";
 import { subscribeToConversations } from "@/services/messaging"; // Your service
 import { IConversation } from "@/typings/messaging.inter";
@@ -8,16 +15,23 @@ import { IHomeOwnerEntity } from "@/typings/user.inter";
 
 export default function ConversationsPage() {
 	const [conversations, setConversations] = useState<IConversation[]>([]);
+	const [loading, setLoading] = useState(true);
 	const { user } = useUser<IHomeOwnerEntity>();
 
 	useEffect(() => {
+		setLoading(true);
 		if (!user) return;
 		const unsubscribe = subscribeToConversations(user.uid, (updatedConversations) => {
 			setConversations(updatedConversations);
+			setLoading(false);
 		});
 
 		return () => unsubscribe();
 	}, [user]);
+
+	if (loading) {
+		return <ActivityIndicator size={"large"} />;
+	}
 
 	return (
 		<View style={styles.container}>
