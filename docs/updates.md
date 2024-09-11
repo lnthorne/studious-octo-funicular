@@ -76,3 +76,7 @@
   - As a homeowner, when the job is completed, I would like be asked to leave a rating and comment on the job. I would like to be asked of this when I say that the job is done (Some button on the job screen)
 - Note: When the homeowner is viewing bids, they can then send a message to the company owner.
 - Look into making bid details a modal instead of an entire page. We can then send the bid object as a prop to it and save on requests
+
+### Sep 11, 2024
+
+- When the homeowner sends the first messsage, I would like the UI to look like when you're sharing something throught text on iOS. So you just have keyboard and mini modal from top of screen to send message.

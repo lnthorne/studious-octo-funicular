@@ -11,12 +11,12 @@ import { router } from "expo-router";
 import { subscribeToConversations } from "@/services/messaging"; // Your service
 import { IConversation } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext"; // Assuming you have user context
-import { IHomeOwnerEntity } from "@/typings/user.inter";
+import { ICompanyOwnerEntity } from "@/typings/user.inter";
 
 export default function ConversationsPage() {
 	const [conversations, setConversations] = useState<IConversation[]>([]);
 	const [loading, setLoading] = useState(true);
-	const { user } = useUser<IHomeOwnerEntity>();
+	const { user } = useUser<ICompanyOwnerEntity>();
 
 	useEffect(() => {
 		setLoading(true);

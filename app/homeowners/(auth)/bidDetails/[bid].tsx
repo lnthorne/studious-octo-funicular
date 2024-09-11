@@ -39,15 +39,14 @@ export default function BidDetails() {
 		}
 	};
 
-	const handleCreateConversation = () => {
+	const handleCreateConversation = async () => {
 		if (!user || !bidDetails) {
 			Alert.alert("Error", "Please try again.");
 			return;
 		}
-		const initialMessage = "fuck you";
-		// TODO: Right here
 		try {
-			const conversationId = startNewConversation(user.uid, bidDetails.uid, initialMessage);
+			const conversationId = await startNewConversation(user.uid, bidDetails.uid);
+			router.push(`/shared/messages/${conversationId}`);
 		} catch (error) {
 			console.error("Error creating conversation:", error);
 			Alert.alert("Error creating conversation. Please try again.");

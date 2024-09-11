@@ -4,13 +4,12 @@ import { useLocalSearchParams } from "expo-router";
 import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/messaging"; // Your service
 import { IMessage, IMessageEntity, MessageType } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
-import { IHomeOwnerEntity } from "@/typings/user.inter";
 
 export default function MessagesPage() {
 	const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
 	const [messages, setMessages] = useState<IMessageEntity[]>([]);
 	const [newMessage, setNewMessage] = useState("");
-	const { user } = useUser<IHomeOwnerEntity>();
+	const { user } = useUser();
 
 	useEffect(() => {
 		if (!conversationId || !user) return;
