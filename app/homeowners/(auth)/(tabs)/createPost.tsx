@@ -9,6 +9,10 @@ import {
 	StyleSheet,
 	Alert,
 	ActivityIndicator,
+	KeyboardAvoidingView,
+	Platform,
+	Keyboard,
+	TouchableWithoutFeedback,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -101,55 +105,63 @@ export default function CreatePostScreen() {
 	};
 
 	return (
-		<View style={styles.container}>
-			<Formik
-				initialValues={initialValues}
-				validationSchema={PostSchema}
-				onSubmit={handlePostSubmit}
+		<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
+				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
 			>
-				{({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-					<View>
-						<TextInput
-							style={styles.input}
-							placeholder="Title"
-							onChangeText={handleChange("title")}
-							onBlur={handleBlur("title")}
-							value={values.title}
-						/>
-						{errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
-						<TextInput
-							style={[styles.input, styles.textArea]}
-							placeholder="Enter description"
-							onChangeText={handleChange("description")}
-							onBlur={handleBlur("description")}
-							value={values.description}
-							multiline={true}
-							numberOfLines={5} // Adjust this to make the text area bigger
-						/>
-						{errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
+				<View>
+					<Formik
+						initialValues={initialValues}
+						validationSchema={PostSchema}
+						onSubmit={handlePostSubmit}
+					>
+						{({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+							<View>
+								<TextInput
+									style={styles.input}
+									placeholder="Title"
+									onChangeText={handleChange("title")}
+									onBlur={handleBlur("title")}
+									value={values.title}
+								/>
+								{errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
+								<TextInput
+									style={[styles.input, styles.textArea]}
+									placeholder="Enter description"
+									onChangeText={handleChange("description")}
+									onBlur={handleBlur("description")}
+									value={values.description}
+									multiline={true}
+									numberOfLines={5}
+								/>
+								{errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
 
-						<Button title="Pick an image" onPress={showImagePickerOptions} />
-						{imageUris.length > 0 && (
-							<View style={styles.imageContainer}>
-								{imageUris.map((uri, index) => (
-									<Image
-										key={index}
-										source={{ uri }}
-										style={{ width: 100, height: 100, margin: 5 }}
-									/>
-								))}
+								<Button title="Pick an image" onPress={showImagePickerOptions} />
+								{imageUris.length > 0 && (
+									<View style={styles.imageContainer}>
+										{imageUris.map((uri, index) => (
+											<Image
+												key={index}
+												source={{ uri }}
+												style={{ width: 100, height: 100, margin: 5 }}
+											/>
+										))}
+									</View>
+								)}
+
+								{loading ? (
+									<ActivityIndicator size="small" color="#0000ff" />
+								) : (
+									<Button title="Create Post" onPress={handleSubmit as () => void} />
+								)}
 							</View>
 						)}
-
-						{loading ? (
-							<ActivityIndicator size="small" color="#0000ff" />
-						) : (
-							<Button title="Create Post" onPress={handleSubmit as () => void} />
-						)}
-					</View>
-				)}
-			</Formik>
-		</View>
+					</Formik>
+				</View>
+			</KeyboardAvoidingView>
+		</TouchableWithoutFeedback>
 	);
 }
 

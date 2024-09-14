@@ -1,5 +1,17 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, Image } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	Button,
+	TextInput,
+	ActivityIndicator,
+	Image,
+	KeyboardAvoidingView,
+	SafeAreaView,
+	Platform,
+	ScrollView,
+} from "react-native";
 import { FirebaseError } from "firebase/app";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -34,63 +46,73 @@ export default function SignIn() {
 		}
 	};
 	return (
-		<View style={styles.container}>
-			<Text style={{ fontSize: 20, marginBottom: 20 }}>COMPANY OWNER</Text>
-			<Image
-				source={require("../../assets/images/Landscape_Connect_Logo.png")}
-				style={{
-					width: 200,
-					height: 200,
-					marginLeft: 80,
-					marginBottom: 20,
-				}}
-			/>
-			<Formik
-				initialValues={initialValues}
-				validationSchema={validationSchema}
-				onSubmit={handleSignIn}
+		<SafeAreaView style={styles.container}>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
+				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
 			>
-				{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-					<View>
-						<TextInput
-							style={styles.input}
-							placeholder="Email"
-							onChangeText={handleChange("email")}
-							onBlur={handleBlur("email")}
-							value={values.email}
-							keyboardType="email-address"
-						/>
-						{touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-						<TextInput
-							style={styles.input}
-							placeholder="Password"
-							onChangeText={handleChange("password")}
-							onBlur={handleBlur("password")}
-							value={values.password}
-							secureTextEntry
-						/>
-						{touched.password && errors.password && (
-							<Text style={styles.errorText}>{errors.password}</Text>
-						)}
-
-						{loading ? (
-							<ActivityIndicator size="small" color="#0000ff" />
-						) : (
-							<>
-								<Button onPress={handleSubmit as () => void} title="Sign In" />
-								<Button
-									onPress={() => {
-										router.replace("/companyowners/signUp");
-									}}
-									title="Sign Up"
+				<ScrollView>
+					<Text style={{ fontSize: 20, marginBottom: 20 }}>COMPANY OWNER</Text>
+					<Image
+						source={require("../../assets/images/Landscape_Connect_Logo.png")}
+						style={{
+							width: 200,
+							height: 200,
+							marginLeft: 80,
+							marginBottom: 20,
+						}}
+					/>
+					<Formik
+						initialValues={initialValues}
+						validationSchema={validationSchema}
+						onSubmit={handleSignIn}
+					>
+						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+							<View>
+								<TextInput
+									style={styles.input}
+									placeholder="Email"
+									onChangeText={handleChange("email")}
+									onBlur={handleBlur("email")}
+									value={values.email}
+									keyboardType="email-address"
 								/>
-							</>
+								{touched.email && errors.email && (
+									<Text style={styles.errorText}>{errors.email}</Text>
+								)}
+
+								<TextInput
+									style={styles.input}
+									placeholder="Password"
+									onChangeText={handleChange("password")}
+									onBlur={handleBlur("password")}
+									value={values.password}
+									secureTextEntry
+								/>
+								{touched.password && errors.password && (
+									<Text style={styles.errorText}>{errors.password}</Text>
+								)}
+
+								{loading ? (
+									<ActivityIndicator size="small" color="#0000ff" />
+								) : (
+									<>
+										<Button onPress={handleSubmit as () => void} title="Sign In" />
+										<Button
+											onPress={() => {
+												router.replace("/companyowners/signUp");
+											}}
+											title="Sign Up"
+										/>
+									</>
+								)}
+							</View>
 						)}
-					</View>
-				)}
-			</Formik>
-		</View>
+					</Formik>
+				</ScrollView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
 	);
 }
 

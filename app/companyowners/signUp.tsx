@@ -1,5 +1,17 @@
 import { useState } from "react";
-import { Button, Text, TextInput, View, StyleSheet, Image, ActivityIndicator } from "react-native";
+import {
+	Button,
+	Text,
+	TextInput,
+	View,
+	StyleSheet,
+	Image,
+	ActivityIndicator,
+	SafeAreaView,
+	KeyboardAvoidingView,
+	Platform,
+	ScrollView,
+} from "react-native";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { FirebaseError } from "firebase/app";
@@ -37,74 +49,84 @@ export default function SignUp() {
 		setLoading(false);
 	};
 	return (
-		<View style={styles.container}>
-			<Text style={{ fontSize: 20, marginBottom: 20 }}>COMPANY OWNER</Text>
-			<Image
-				source={require("../../assets/images/Landscape_Connect_Logo.png")}
-				style={{
-					width: 200,
-					height: 200,
-					marginLeft: 80,
-					marginBottom: 20,
-				}}
-			/>
-			<Formik
-				initialValues={initialValues}
-				validationSchema={validationSchema}
-				onSubmit={handleSignUp}
+		<SafeAreaView style={styles.container}>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
+				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
 			>
-				{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-					<View>
-						<TextInput
-							style={styles.input}
-							placeholder="Company Name"
-							onChangeText={handleChange("companyName")}
-							onBlur={handleBlur("companyName")}
-							value={values.companyName}
-						/>
-						{touched.companyName && errors.companyName && (
-							<Text style={styles.errorText}>{errors.companyName}</Text>
-						)}
-
-						<TextInput
-							style={styles.input}
-							placeholder="Email"
-							onChangeText={handleChange("email")}
-							onBlur={handleBlur("email")}
-							value={values.email}
-							keyboardType="email-address"
-						/>
-						{touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-						<TextInput
-							style={styles.input}
-							placeholder="Password"
-							onChangeText={handleChange("password")}
-							onBlur={handleBlur("password")}
-							value={values.password}
-							secureTextEntry
-						/>
-						{touched.password && errors.password && (
-							<Text style={styles.errorText}>{errors.password}</Text>
-						)}
-
-						{loading ? (
-							<ActivityIndicator size="small" color="#0000ff" />
-						) : (
-							<>
-								<Button onPress={handleSubmit as () => void} title="Sign Up" />
-								<Button
-									onPress={() => {
-										router.replace("/companyowners/signIn");
-									}}
-									title="Sign In"
+				<ScrollView>
+					<Text style={{ fontSize: 20, marginBottom: 20 }}>COMPANY OWNER</Text>
+					<Image
+						source={require("../../assets/images/Landscape_Connect_Logo.png")}
+						style={{
+							width: 200,
+							height: 200,
+							marginLeft: 80,
+							marginBottom: 20,
+						}}
+					/>
+					<Formik
+						initialValues={initialValues}
+						validationSchema={validationSchema}
+						onSubmit={handleSignUp}
+					>
+						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+							<View>
+								<TextInput
+									style={styles.input}
+									placeholder="Company Name"
+									onChangeText={handleChange("companyName")}
+									onBlur={handleBlur("companyName")}
+									value={values.companyName}
 								/>
-							</>
+								{touched.companyName && errors.companyName && (
+									<Text style={styles.errorText}>{errors.companyName}</Text>
+								)}
+
+								<TextInput
+									style={styles.input}
+									placeholder="Email"
+									onChangeText={handleChange("email")}
+									onBlur={handleBlur("email")}
+									value={values.email}
+									keyboardType="email-address"
+								/>
+								{touched.email && errors.email && (
+									<Text style={styles.errorText}>{errors.email}</Text>
+								)}
+
+								<TextInput
+									style={styles.input}
+									placeholder="Password"
+									onChangeText={handleChange("password")}
+									onBlur={handleBlur("password")}
+									value={values.password}
+									secureTextEntry
+								/>
+								{touched.password && errors.password && (
+									<Text style={styles.errorText}>{errors.password}</Text>
+								)}
+
+								{loading ? (
+									<ActivityIndicator size="small" color="#0000ff" />
+								) : (
+									<>
+										<Button onPress={handleSubmit as () => void} title="Sign Up" />
+										<Button
+											onPress={() => {
+												router.replace("/companyowners/signIn");
+											}}
+											title="Sign In"
+										/>
+									</>
+								)}
+							</View>
 						)}
-					</View>
-				)}
-			</Formik>
-		</View>
+					</Formik>
+				</ScrollView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
 	);
 }
 

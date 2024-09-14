@@ -10,6 +10,8 @@ import {
 	SafeAreaView,
 	ScrollView,
 	TouchableOpacity,
+	KeyboardAvoidingView,
+	Platform,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -58,8 +60,12 @@ export default function SignUp() {
 	};
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView style={styles.scrollView}>
-				<View style={styles.column}>
+			<KeyboardAvoidingView
+				style={styles.column}
+				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
+				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
+			>
+				<ScrollView style={styles.scrollView}>
 					<View style={styles.heading}>
 						<TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
 							<Image
@@ -180,8 +186,8 @@ export default function SignUp() {
 							</View>
 						)}
 					</Formik>
-				</View>
-			</ScrollView>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 }
@@ -215,6 +221,7 @@ const styles = StyleSheet.create({
 	column: {
 		backgroundColor: "#F7FCF7",
 		paddingBottom: 57,
+		flex: 1,
 	},
 	image: {
 		width: 24,

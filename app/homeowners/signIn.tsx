@@ -3,12 +3,14 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	Button,
 	TextInput,
 	ActivityIndicator,
 	Image,
 	TouchableOpacity,
 	SafeAreaView,
+	KeyboardAvoidingView,
+	Platform,
+	ScrollView,
 } from "react-native";
 import { FirebaseError } from "firebase/app";
 import { Formik } from "formik";
@@ -45,75 +47,81 @@ export default function SignIn() {
 	};
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.column}>
-				<View style={styles.heading}>
-					<TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-						<Image
-							source={require("../../assets/images/back-icon.png")}
-							resizeMode={"stretch"}
-							style={styles.backIcon}
-						/>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
+				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
+			>
+				<ScrollView style={styles.column}>
+					<View style={styles.heading}>
+						<TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+							<Image
+								source={require("../../assets/images/back-icon.png")}
+								resizeMode={"stretch"}
+								style={styles.backIcon}
+							/>
+						</TouchableOpacity>
+						<Text style={styles.text}>{"Welcome Back!"}</Text>
+					</View>
+					<Formik
+						initialValues={initialValues}
+						validationSchema={validationSchema}
+						onSubmit={handleSignIn}
+					>
+						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+							<View>
+								<Text style={styles.text6}>{"Email"}</Text>
+								<View style={styles.view2}>
+									<TextInput
+										style={styles.text2}
+										placeholderTextColor="#4F964F"
+										placeholder="Email"
+										onChangeText={handleChange("email")}
+										onBlur={handleBlur("email")}
+										value={values.email}
+										keyboardType="email-address"
+									/>
+								</View>
+
+								{touched.email && errors.email && (
+									<Text style={styles.errorText}>{errors.email}</Text>
+								)}
+								<Text style={styles.text6}>{"Password"}</Text>
+								<View style={styles.view3}>
+									<TextInput
+										style={styles.text2}
+										placeholderTextColor="#4F964F"
+										placeholder="Password"
+										onChangeText={handleChange("password")}
+										onBlur={handleBlur("password")}
+										value={values.password}
+										secureTextEntry
+									/>
+								</View>
+								{touched.password && errors.password && (
+									<Text style={styles.errorText}>{errors.password}</Text>
+								)}
+
+								{loading ? (
+									<ActivityIndicator size="small" color="#0000ff" />
+								) : (
+									<>
+										<TouchableOpacity onPress={handleSubmit as () => void} style={styles.view4}>
+											<Text style={styles.text4}>{"Log in"}</Text>
+										</TouchableOpacity>
+										<TouchableOpacity style={styles.view5}>
+											<Text style={styles.text4}>{"Continue with Google"}</Text>
+										</TouchableOpacity>
+									</>
+								)}
+							</View>
+						)}
+					</Formik>
+					<TouchableOpacity onPress={() => router.push("/homeowners/signUp")}>
+						<Text style={styles.text5}>{"Don't have an account? Sign up"}</Text>
 					</TouchableOpacity>
-					<Text style={styles.text}>{"Welcome Back!"}</Text>
-				</View>
-				<Formik
-					initialValues={initialValues}
-					validationSchema={validationSchema}
-					onSubmit={handleSignIn}
-				>
-					{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-						<View>
-							<Text style={styles.text6}>{"Email"}</Text>
-							<View style={styles.view2}>
-								<TextInput
-									style={styles.text2}
-									placeholderTextColor="#4F964F"
-									placeholder="Email"
-									onChangeText={handleChange("email")}
-									onBlur={handleBlur("email")}
-									value={values.email}
-									keyboardType="email-address"
-								/>
-							</View>
-
-							{touched.email && errors.email && (
-								<Text style={styles.errorText}>{errors.email}</Text>
-							)}
-							<Text style={styles.text6}>{"Password"}</Text>
-							<View style={styles.view3}>
-								<TextInput
-									style={styles.text2}
-									placeholderTextColor="#4F964F"
-									placeholder="Password"
-									onChangeText={handleChange("password")}
-									onBlur={handleBlur("password")}
-									value={values.password}
-									secureTextEntry
-								/>
-							</View>
-							{touched.password && errors.password && (
-								<Text style={styles.errorText}>{errors.password}</Text>
-							)}
-
-							{loading ? (
-								<ActivityIndicator size="small" color="#0000ff" />
-							) : (
-								<>
-									<TouchableOpacity onPress={handleSubmit as () => void} style={styles.view4}>
-										<Text style={styles.text4}>{"Log in"}</Text>
-									</TouchableOpacity>
-									<TouchableOpacity style={styles.view5}>
-										<Text style={styles.text4}>{"Continue with Google"}</Text>
-									</TouchableOpacity>
-								</>
-							)}
-						</View>
-					)}
-				</Formik>
-				<TouchableOpacity onPress={() => router.push("/homeowners/signUp")}>
-					<Text style={styles.text5}>{"Don't have an account? Sign up"}</Text>
-				</TouchableOpacity>
-			</View>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 }

@@ -1,5 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TextInput, Button, StyleSheet, SafeAreaView } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+	View,
+	Text,
+	FlatList,
+	TextInput,
+	Button,
+	StyleSheet,
+	SafeAreaView,
+	KeyboardAvoidingView,
+	Platform,
+} from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/messaging"; // Your service
 import { IMessage, IMessageEntity, MessageType } from "@/typings/messaging.inter";
@@ -10,6 +20,7 @@ export default function MessagesPage() {
 	const [messages, setMessages] = useState<IMessageEntity[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 	const { user } = useUser();
+	const flatListRef = useRef<FlatList<IMessageEntity>>(null);
 
 	useEffect(() => {
 		if (!conversationId || !user) return;
@@ -43,10 +54,17 @@ export default function MessagesPage() {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.container}>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
+				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
+			>
 				<FlatList
 					data={messages}
 					keyExtractor={(item) => new Date(item.timestamp).getTime().toString()}
+					ref={flatListRef}
+					onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+					onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
 					renderItem={({ item }) => (
 						<View
 							style={[
@@ -69,7 +87,7 @@ export default function MessagesPage() {
 					/>
 					<Button title="Send" onPress={handleSendMessage} />
 				</View>
-			</View>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 }
@@ -78,6 +96,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 10,
+		justifyContent: "flex-end",
 	},
 	messageBubble: {
 		padding: 10,
