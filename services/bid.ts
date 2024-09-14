@@ -70,16 +70,20 @@ export async function fetchBidsFromUid(uid: string): Promise<IBidEntity[]> {
 }
 
 /**
- * Only fetches all open jobs with bids for a user ID
+ * Fetch jobs and bids depending on the user ID and Job status
  * @param uid - The user ID to fetch all open jobs with bids
+ * @param jobStatus - The job status to fetch
  * @returns Only open jobs with bids for the user ID
  */
-export async function fetchAllOpenJobsWithBids(uid: string = ""): Promise<IPostEntity[]> {
+export async function getJobsWithBidsByStatus(
+	uid: string,
+	jobStatus: JobStatus
+): Promise<IPostEntity[]> {
 	try {
 		const postsSnapshot = await firestore()
 			.collection("posts")
 			.where("uid", "==", uid)
-			.where("jobStatus", "==", "open")
+			.where("jobStatus", "==", jobStatus)
 			.get();
 
 		const posts: IPostEntity[] = postsSnapshot.docs.map((doc) => doc.data() as IPostEntity);

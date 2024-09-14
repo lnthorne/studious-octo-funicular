@@ -1,7 +1,7 @@
 // app/home/index.tsx
 import { useUser } from "@/contexts/userContext";
-import { fetchAllOpenJobsWithBids } from "@/services/bid";
-import { IPostEntity } from "@/typings/jobs.inter";
+import { getJobsWithBidsByStatus } from "@/services/bid";
+import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -23,7 +23,7 @@ export default function HomeScreen() {
 		if (!user) return;
 		setLoading(true);
 		try {
-			const jobs = await fetchAllOpenJobsWithBids(user.uid);
+			const jobs = await getJobsWithBidsByStatus(user.uid, JobStatus.open);
 			setJobsWithBids(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs and bids:", error);
@@ -55,23 +55,19 @@ export default function HomeScreen() {
 						<Text style={styles.title}>{item.title}</Text>
 						<Text style={styles.description}>{item.description}</Text>
 						<Text style={styles.bidsTitle}>Bids:</Text>
-						{item.bids && item.bids.length > 0 ? (
-							item.bids.map((bid) => (
-								<TouchableOpacity key={bid.bid} onPress={() => handleBidPress(bid.bid)}>
-									<View style={styles.bidContainer}>
-										<Text>Company Name: {bid.companyName}</Text>
-										<Text>Bid Amount: ${bid.bidAmount}</Text>
-										<Text>Description: {bid.description}</Text>
-										<Text>Status: {bid.status}</Text>
-									</View>
-								</TouchableOpacity>
-							))
-						) : (
-							<Text>No bids available for this post.</Text>
-						)}
+						{item.bids?.map((bid) => (
+							<TouchableOpacity key={bid.bid} onPress={() => handleBidPress(bid.bid)}>
+								<View style={styles.bidContainer}>
+									<Text>Company Name: {bid.companyName}</Text>
+									<Text>Bid Amount: ${bid.bidAmount}</Text>
+									<Text>Description: {bid.description}</Text>
+									<Text>Status: {bid.status}</Text>
+								</View>
+							</TouchableOpacity>
+						))}
 					</View>
 				)}
-				ListEmptyComponent={<Text>No open jobs available.</Text>}
+				ListEmptyComponent={<Text>You have no open jobs.</Text>}
 			/>
 		</View>
 	);
