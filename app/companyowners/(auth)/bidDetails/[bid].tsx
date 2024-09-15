@@ -3,7 +3,15 @@ import React, { useEffect, useState } from "react";
 import { IBidEntity, IPostEntity } from "@/typings/jobs.inter";
 import { fetchBidFromBid } from "@/services/bid";
 import { fetchPost } from "@/services/post";
-import { ActivityIndicator, View, Text, ScrollView, StyleSheet, Image } from "react-native";
+import {
+	ActivityIndicator,
+	View,
+	Text,
+	ScrollView,
+	StyleSheet,
+	Image,
+	SafeAreaView,
+} from "react-native";
 
 export default function BidDetails() {
 	const { bid } = useLocalSearchParams<{ bid: string }>();
@@ -12,29 +20,31 @@ export default function BidDetails() {
 	const [posting, setPosting] = useState<IPostEntity | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			if (!bid) return;
+	const fetchData = async () => {
+		if (!bid) return;
 
-			setLoading(true);
-			setError(null);
+		setLoading(true);
+		setError(null);
 
-			try {
-				const bidDetails = await fetchBidFromBid(bid);
-				setBidDetails(bidDetails);
+		try {
+			const bidDetails = await fetchBidFromBid(bid);
+			setBidDetails(bidDetails);
 
-				if (bidDetails) {
-					const postData = await fetchPost(bidDetails.pid);
-					setPosting(postData);
-				}
-			} catch (error) {
-				console.error("Error fetching data", error);
-				setError("Failed to load bid and posting details.");
-			} finally {
-				setLoading(false);
+			if (bidDetails) {
+				const postData = await fetchPost(bidDetails.pid);
+				setPosting(postData);
+			} else {
+				console.error("Bid not found or no bid with the provided ID");
+				setError("Bid not found or no bid with the provided ID");
 			}
-		};
-
+		} catch (error) {
+			console.error("Error fetching data", error);
+			setError("Failed to load bid and posting details.");
+		} finally {
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
 		fetchData();
 	}, [bid]);
 
@@ -63,26 +73,30 @@ export default function BidDetails() {
 	}
 
 	return (
-		<ScrollView contentContainerStyle={styles.container}>
-			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Job Details</Text>
-				<Text style={styles.label}>Title:</Text>
-				<Text style={styles.value}>{posting.title}</Text>
-				<Text style={styles.label}>Description:</Text>
-				<Text style={styles.value}>{posting.description}</Text>
-				{posting.imageUrl && <Image source={{ uri: posting.imageUrl }} style={styles.image} />}
-			</View>
+		<SafeAreaView>
+			<ScrollView contentContainerStyle={styles.container}>
+				<View style={styles.section}>
+					<Text style={styles.sectionTitle}>Job Details</Text>
+					<Text style={styles.label}>Title:</Text>
+					<Text style={styles.value}>{posting.title}</Text>
+					<Text style={styles.label}>Description:</Text>
+					<Text style={styles.value}>{posting.description}</Text>
+					{posting.imageUrls?.map((url, index) => {
+						return <Image source={{ uri: url }} style={styles.image} key={index} />;
+					})}
+				</View>
 
-			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Your Bid</Text>
-				<Text style={styles.label}>Amount:</Text>
-				<Text style={styles.value}>${bidDetails.bidAmount}</Text>
-				<Text style={styles.label}>Bid Description:</Text>
-				<Text style={styles.value}>{bidDetails.description}</Text>
-				<Text style={styles.label}>Status:</Text>
-				<Text style={styles.value}>{bidDetails.status}</Text>
-			</View>
-		</ScrollView>
+				<View style={styles.section}>
+					<Text style={styles.sectionTitle}>Your Bid</Text>
+					<Text style={styles.label}>Amount:</Text>
+					<Text style={styles.value}>${bidDetails.bidAmount}</Text>
+					<Text style={styles.label}>Bid Description:</Text>
+					<Text style={styles.value}>{bidDetails.description}</Text>
+					<Text style={styles.label}>Status:</Text>
+					<Text style={styles.value}>{bidDetails.status}</Text>
+				</View>
+			</ScrollView>
+		</SafeAreaView>
 	);
 }
 

@@ -70,61 +70,28 @@ export async function fetchBidsFromUid(uid: string): Promise<IBidEntity[]> {
 }
 
 /**
- * Fetch jobs and bids depending on the user ID and Job status
- * @param uid - The user ID to fetch all open jobs with bids
- * @param jobStatus - The job status to fetch
- * @returns Only open jobs with bids for the user ID
- */
-export async function getJobsWithBidsByStatus(
-	uid: string,
-	jobStatus: JobStatus
-): Promise<IPostEntity[]> {
-	try {
-		const postsSnapshot = await firestore()
-			.collection("posts")
-			.where("uid", "==", uid)
-			.where("jobStatus", "==", jobStatus)
-			.get();
-
-		const posts: IPostEntity[] = postsSnapshot.docs.map((doc) => doc.data() as IPostEntity);
-
-		for (const post of posts) {
-			if (post.bidIds) {
-				// Fetch bids only if bidIds exist and bids array is not already populated
-				const bidDocs = await Promise.all(
-					post.bidIds.map((bidId) => firestore().collection("bids").doc(bidId).get())
-				);
-
-				// Map and filter the bid documents to get the actual bids
-				post.bids = bidDocs
-					.map((bidDoc) => bidDoc.data() as IBidEntity)
-					.filter((bid) => bid.status === BidStatus.accepted || bid.status === BidStatus.pending);
-			}
-		}
-
-		return posts;
-	} catch (error) {
-		console.error("Error fetching jobs with bids:", error);
-		throw error;
-	}
-}
-
-/**
  * Accept the current bid and close all other bids for a job post
  * @param bid - The bid ID to accept
  * @param pid - The post ID to close
+ * @param uid - The user ID of the bid maker (company owner)
  */
-export async function acceptBidAndCloseOtherBids(bid: string, pid: string): Promise<void> {
-	console.log("bid and pid", bid, pid);
+export async function acceptBidAndCloseOtherBids(
+	bid: string,
+	pid: string,
+	uid: string
+): Promise<void> {
 	const firestoreInstance = firestore();
 	const batch = firestoreInstance.batch();
 	try {
 		const bidRef = firestoreInstance.collection("bids").doc(bid);
-		console.log("bidRef", bidRef);
 		batch.update(bidRef, { status: BidStatus.accepted });
 
 		const postRef = firestoreInstance.collection("posts").doc(pid);
-		batch.update(postRef, { jobStatus: JobStatus.inprogress });
+		batch.update(postRef, {
+			jobStatus: JobStatus.inprogress,
+			winningBidId: bid,
+			[`completionConfirmed.${uid}`]: false,
+		});
 
 		const otherBidsSnapshot = await firestoreInstance
 			.collection("bids")

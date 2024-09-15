@@ -11,6 +11,7 @@ export enum BidStatus {
 	accepted = "accepted",
 	rejected = "rejected",
 	pending = "pending",
+	completed = "completed",
 }
 
 export interface IBid {
@@ -39,5 +40,7 @@ export interface IPostEntity extends IPost {
 	pid: string;
 	jobStatus: JobStatus;
 	createdAt: FirebaseFirestoreTypes.FieldValue;
-	bids?: IBidEntity[];
+	completionConfirmed: { [uid: string]: boolean };
+	winningBidId?: string;
+	bids?: IBidEntity[]; // NOTE: This is not stored in Firestore, but is populated when fetching posts
 }

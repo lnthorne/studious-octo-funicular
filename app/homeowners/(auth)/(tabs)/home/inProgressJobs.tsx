@@ -3,8 +3,9 @@ import React, { useCallback, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
-import { getJobsWithBidsByStatus } from "@/services/bid";
-import { useFocusEffect } from "expo-router";
+import { fetchJobsWithBidsByStatus } from "@/services/post";
+import { router, useFocusEffect } from "expo-router";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function inProgressJobs() {
 	const { user } = useUser<IHomeOwnerEntity>();
@@ -15,7 +16,7 @@ export default function inProgressJobs() {
 		if (!user) return;
 		setLoading(true);
 		try {
-			const jobs = await getJobsWithBidsByStatus(user.uid, JobStatus.inprogress);
+			const jobs = await fetchJobsWithBidsByStatus(user.uid, JobStatus.inprogress);
 			setJobsInProgress(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs in progress:", error);
@@ -40,9 +41,13 @@ export default function inProgressJobs() {
 				keyExtractor={(item) => item.pid}
 				renderItem={({ item }) => (
 					<View style={styles.postContainer}>
-						<Text style={styles.title}>{item.title}</Text>
-						<Text style={styles.description}>{item.description}</Text>
-						<Text style={styles.bidsTitle}>Bids:</Text>
+						<TouchableOpacity
+							onPress={() => router.push(`/homeowners/(auth)/jobDetails/${item.pid}`)}
+						>
+							<Text style={styles.title}>{item.title}</Text>
+							<Text style={styles.description}>{item.description}</Text>
+							<Text style={styles.bidsTitle}>Bids:</Text>
+						</TouchableOpacity>
 						{item.bids?.map((bid) => (
 							<View style={styles.bidContainer} key={bid.bid}>
 								<Text>Company Name: {bid.companyName}</Text>

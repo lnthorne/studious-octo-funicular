@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
-import { getJobsWithBidsByStatus } from "@/services/bid";
+import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { useFocusEffect } from "expo-router";
 
 export default function closedJobs() {
@@ -15,7 +15,7 @@ export default function closedJobs() {
 		if (!user) return;
 		setLoading(true);
 		try {
-			const jobs = await getJobsWithBidsByStatus(user.uid, JobStatus.closed);
+			const jobs = await fetchJobsWithBidsByStatus(user.uid, JobStatus.completed);
 			setClosedJobs(jobs);
 		} catch (error) {
 			console.error("Failed to fetch closed jobs:", error);

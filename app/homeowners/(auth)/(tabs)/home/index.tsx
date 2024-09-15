@@ -1,6 +1,7 @@
 // app/home/index.tsx
+import BidDetailsModal from "@/components/BidDetailsModal";
 import { useUser } from "@/contexts/userContext";
-import { getJobsWithBidsByStatus } from "@/services/bid";
+import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { router, useFocusEffect } from "expo-router";
@@ -18,12 +19,14 @@ export default function HomeScreen() {
 	const { user } = useUser<IHomeOwnerEntity>();
 	const [jobsWithBids, setJobsWithBids] = useState<IPostEntity[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [selectedBid, setSelectedBid] = useState<string | null>(null);
+	const [modalVisible, setModalVisible] = useState(false);
 
 	const fetchJobsAndBids = async () => {
 		if (!user) return;
 		setLoading(true);
 		try {
-			const jobs = await getJobsWithBidsByStatus(user.uid, JobStatus.open);
+			const jobs = await fetchJobsWithBidsByStatus(user.uid, JobStatus.open);
 			setJobsWithBids(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs and bids:", error);
@@ -38,8 +41,14 @@ export default function HomeScreen() {
 		}, [user])
 	);
 
-	const handleBidPress = (bid: string) => {
-		router.push(`/homeowners/bidDetails/${bid}`);
+	const openModal = (bid: string) => {
+		setSelectedBid(bid);
+		setModalVisible(true);
+	};
+
+	const closeModal = () => {
+		setModalVisible(false);
+		setSelectedBid(null);
 	};
 
 	if (loading) {
@@ -56,7 +65,7 @@ export default function HomeScreen() {
 						<Text style={styles.description}>{item.description}</Text>
 						<Text style={styles.bidsTitle}>Bids:</Text>
 						{item.bids?.map((bid) => (
-							<TouchableOpacity key={bid.bid} onPress={() => handleBidPress(bid.bid)}>
+							<TouchableOpacity key={bid.bid} onPress={() => openModal(bid.bid)}>
 								<View style={styles.bidContainer}>
 									<Text>Company Name: {bid.companyName}</Text>
 									<Text>Bid Amount: ${bid.bidAmount}</Text>
@@ -69,6 +78,7 @@ export default function HomeScreen() {
 				)}
 				ListEmptyComponent={<Text>You have no open jobs.</Text>}
 			/>
+			<BidDetailsModal visible={modalVisible} bid={selectedBid} onClose={closeModal} />
 		</View>
 	);
 }

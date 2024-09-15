@@ -81,3 +81,10 @@
 
 - When the homeowner sends the first messsage, I would like the UI to look like when you're sharing something throught text on iOS. So you just have keyboard and mini modal from top of screen to send message.
 - When the user creates a new conversation, we should check if they already have one open. If so we just bring them to that convo. Done
+
+### Sep 14, 2024
+
+- Fixed issue where the keyboard would be in the way of text inputs and messaging bubbles
+- Homeowner can now view different stages of their jobs (open, in progress, closed)
+- We have basically alot of repeated useEffect hooks fetching the same data, we should look into breaking those out into reuasble functions
+  Need to add the new home page in the companyowner section, as well as set the job completion for them. I then want to go through each page and get the back buttons and routing correct.
