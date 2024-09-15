@@ -5,20 +5,21 @@ export default function HomeLayout() {
 	return (
 		<Tabs>
 			<Tabs.Screen
-				name="index"
+				name="home"
 				options={{
 					title: "Home",
-					tabBarIcon: ({ color, size }) => (
-						// You can use an icon here, for now, let's use a simple text.
-						<Text style={{ color }}>🏠</Text>
-					),
+					tabBarIcon: ({ color, size }) => <Text style={{ color }}>🏠</Text>,
 				}}
 			/>
 			<Tabs.Screen
-				name="viewPosts"
+				name="bids"
 				options={{
-					title: "View Posts",
-					tabBarIcon: ({ color, size }) => <Text style={{ color }}>✏️</Text>,
+					title: "Bids",
+					headerShown: false,
+					tabBarIcon: ({ color, size }) => (
+						// You can use an icon here, for now, let's use a simple text.
+						<Text style={{ color }}>💰</Text>
+					),
 				}}
 			/>
 			<Tabs.Screen

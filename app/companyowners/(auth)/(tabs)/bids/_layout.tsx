@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router";
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { Link, usePathname } from "expo-router";
 
-export default function HomeownerHomeLayout() {
+export default function CompanyownerHomeLayout() {
 	const currentRoute = usePathname();
 
 	return (
@@ -10,43 +10,41 @@ export default function HomeownerHomeLayout() {
 			<View style={styles.container}>
 				<View style={styles.tabContainer}>
 					<Link
-						href="/homeowners/home"
-						style={currentRoute === "/homeowners/home" ? styles.activeTab : styles.tab}
+						href="/companyowners/bids"
+						style={currentRoute === "/companyowners/bids" ? styles.activeTab : styles.tab}
 					>
 						<Text
-							style={currentRoute === "/homeowners/home" ? styles.activeTabText : styles.tabText}
-						>
-							Open Jobs
-						</Text>
-					</Link>
-					<Link
-						href="/homeowners/home/inProgressJobs"
-						style={
-							currentRoute === "/homeowners/home/inProgressJobs" ? styles.activeTab : styles.tab
-						}
-					>
-						<Text
-							style={
-								currentRoute === "/homeowners/home/inProgressJobs"
-									? styles.activeTabText
-									: styles.tabText
-							}
+							style={currentRoute === "/companyowners/bids" ? styles.activeTabText : styles.tabText}
 						>
 							In Progress
 						</Text>
 					</Link>
 					<Link
-						href="/homeowners/home/closedJobs"
-						style={currentRoute === "/homeowners/home/closedJobs" ? styles.activeTab : styles.tab}
+						href="/companyowners/bids/pending"
+						style={currentRoute === "/companyowners/bids/pending" ? styles.activeTab : styles.tab}
 					>
 						<Text
 							style={
-								currentRoute === "/homeowners/home/closedJobs"
+								currentRoute === "/companyowners/bids/pending"
 									? styles.activeTabText
 									: styles.tabText
 							}
 						>
-							Closed Jobs
+							Pending
+						</Text>
+					</Link>
+					<Link
+						href="/companyowners/bids/closed"
+						style={currentRoute === "/companyowners/bids/closed" ? styles.activeTab : styles.tab}
+					>
+						<Text
+							style={
+								currentRoute === "/companyowners/bids/closed"
+									? styles.activeTabText
+									: styles.tabText
+							}
+						>
+							Closed
 						</Text>
 					</Link>
 				</View>

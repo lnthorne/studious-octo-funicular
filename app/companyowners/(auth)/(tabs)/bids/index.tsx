@@ -2,7 +2,7 @@
 import { useUser } from "@/contexts/userContext";
 import { fetchBidsFromUid } from "@/services/bid";
 import { getUser } from "@/services/user";
-import { IBidEntity } from "@/typings/jobs.inter";
+import { BidStatus, IBidEntity, IPostEntity } from "@/typings/jobs.inter";
 import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -15,7 +15,7 @@ import {
 	TouchableOpacity,
 } from "react-native";
 
-export default function HomeScreen() {
+export default function BidInProgress() {
 	const { user } = useUser<ICompanyOwnerEntity>();
 	const [bidData, setBidData] = useState<IBidEntity[] | null>();
 	const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ export default function HomeScreen() {
 		if (!user) return;
 		setLoading(true);
 		try {
-			const bids = await fetchBidsFromUid(user.uid);
+			const bids = await fetchBidsFromUid(user.uid, BidStatus.accepted);
 			setBidData(bids);
 		} catch (error) {
 			console.error("Failed to fetch bids:", error);
@@ -48,9 +48,6 @@ export default function HomeScreen() {
 	}
 	return (
 		<View style={styles.container}>
-			<Text
-				style={styles.title}
-			>{`Welcome back ${user?.companyName}! Here are your current bids`}</Text>
 			<FlatList
 				data={bidData}
 				keyExtractor={(item) => item.pid}

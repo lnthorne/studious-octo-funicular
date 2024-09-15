@@ -52,6 +52,7 @@ export default function ViewPostsScreen() {
 
 	return (
 		<View style={styles.container}>
+			<Text style={styles.title}>{`Welcome back ${user?.companyName}!`}</Text>
 			<FlatList
 				data={posts}
 				keyExtractor={(item) => item.pid}

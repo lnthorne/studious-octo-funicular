@@ -49,13 +49,18 @@ export async function fetchBidFromBid(bid: string): Promise<IBidEntity> {
 	}
 }
 /**
- *	Fetch all bids that belong to a user ID
+ *	Fetch bids that belong to a user ID and match the required status
  * @param uid - The user ID to fetch bids from
+ * @param BidStatus - The current status that the bid is in
  * @returns All the bids that belong to the user ID
  */
-export async function fetchBidsFromUid(uid: string): Promise<IBidEntity[]> {
+export async function fetchBidsFromUid(uid: string, BidStatus: BidStatus): Promise<IBidEntity[]> {
 	try {
-		const bidsSnapshot = await firestore().collection("bids").where("uid", "==", uid).get();
+		const bidsSnapshot = await firestore()
+			.collection("bids")
+			.where("uid", "==", uid)
+			.where("status", "==", BidStatus)
+			.get();
 
 		const bids = bidsSnapshot.docs.map((doc) => {
 			const data = doc.data() as IBidEntity;
