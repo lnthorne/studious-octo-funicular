@@ -25,7 +25,7 @@ export default function Pending() {
 		if (!user) return;
 		if (!isRefreshing) setLoading(true);
 		try {
-			const bids = await fetchBidsFromUid(user.uid, BidStatus.pending);
+			const bids = await fetchBidsFromUid(user.uid, [BidStatus.pending]);
 			setBidData(bids);
 		} catch (error) {
 			console.error("Failed to fetch bids:", error);

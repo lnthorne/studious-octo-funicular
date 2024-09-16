@@ -12,6 +12,7 @@ export enum BidStatus {
 	rejected = "rejected",
 	pending = "pending",
 	completed = "completed",
+	waiting = "waiting",
 }
 
 export interface IBid {

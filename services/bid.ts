@@ -54,12 +54,12 @@ export async function fetchBidFromBid(bid: string): Promise<IBidEntity> {
  * @param BidStatus - The current status that the bid is in
  * @returns All the bids that belong to the user ID
  */
-export async function fetchBidsFromUid(uid: string, BidStatus: BidStatus): Promise<IBidEntity[]> {
+export async function fetchBidsFromUid(uid: string, statuses: BidStatus[]): Promise<IBidEntity[]> {
 	try {
 		const bidsSnapshot = await firestore()
 			.collection("bids")
 			.where("uid", "==", uid)
-			.where("status", "==", BidStatus)
+			.where("status", "in", statuses)
 			.get();
 
 		const bids = bidsSnapshot.docs.map((doc) => {
@@ -70,6 +70,23 @@ export async function fetchBidsFromUid(uid: string, BidStatus: BidStatus): Promi
 		return bids;
 	} catch (error) {
 		console.error("Error fetching bids:", error);
+		throw error;
+	}
+}
+
+/**
+ * Update the status of the bid
+ * @param bid The id of the bid
+ * @param bidStatus The new status to set the bid
+ */
+export async function updateBidStatus(bid: string, bidStatus: BidStatus): Promise<void> {
+	try {
+		const bidRef = firestore().collection("bids").doc(bid);
+		bidRef.update({
+			status: bidStatus,
+		});
+	} catch (error) {
+		console.log("Error upating bid status", error);
 		throw error;
 	}
 }

@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { BidStatus, IBidEntity, IPostEntity } from "@/typings/jobs.inter";
-import { fetchBidFromBid } from "@/services/bid";
+import { fetchBidFromBid, updateBidStatus } from "@/services/bid";
 import { fetchPost, updatePostCompletionStatus } from "@/services/post";
 import {
 	ActivityIndicator,
@@ -28,6 +28,7 @@ export default function BidDetails() {
 		if (!posting || !bidDetails) return;
 		try {
 			await updatePostCompletionStatus(posting.pid, bidDetails.uid);
+			await updateBidStatus(bid, BidStatus.waiting);
 		} catch (error) {
 			setError("Failed to update bid status");
 			setModalVisible(false);

@@ -20,12 +20,18 @@ export default function BidInProgress() {
 	const [bidData, setBidData] = useState<IBidEntity[] | null>();
 	const [loading, setLoading] = useState(true);
 	const [isRefresh, setIsRefresh] = useState(false);
+	const [filterVisible, setFilterVisible] = useState(false);
+	const [selectedFilter, setSelectedFilter] = useState<BidStatus[]>([
+		BidStatus.accepted,
+		BidStatus.waiting,
+	]);
+	const [filterTitle, setFilterTitle] = useState("All");
 
-	const fetchBids = async (isRefreshing: boolean = false) => {
+	const fetchBids = async (status: BidStatus[], isRefreshing: boolean = false) => {
 		if (!user) return;
 		if (!isRefreshing) setLoading(true);
 		try {
-			const bids = await fetchBidsFromUid(user.uid, BidStatus.accepted);
+			const bids = await fetchBidsFromUid(user.uid, status);
 			setBidData(bids);
 		} catch (error) {
 			console.error("Failed to fetch bids:", error);
@@ -40,13 +46,22 @@ export default function BidInProgress() {
 
 	useFocusEffect(
 		useCallback(() => {
-			fetchBids();
-		}, [user])
+			fetchBids(selectedFilter);
+		}, [user, selectedFilter])
 	);
 
 	const onRefresh = () => {
 		setIsRefresh(true);
-		fetchBids(true);
+		fetchBids(selectedFilter, true);
+	};
+
+	const toggleFilterDropdown = () => {
+		setFilterVisible((prevVisable) => !prevVisable);
+	};
+
+	const handleFilterSelect = (status: BidStatus[]) => {
+		setSelectedFilter(status);
+		setFilterVisible(false);
 	};
 
 	const handleBidPress = (bid: string) => {
@@ -58,6 +73,38 @@ export default function BidInProgress() {
 	}
 	return (
 		<View style={styles.container}>
+			<TouchableOpacity onPress={toggleFilterDropdown} style={styles.filterButton}>
+				<Text style={styles.filterText}>Filter by Status: {filterTitle}</Text>
+			</TouchableOpacity>
+
+			{filterVisible && (
+				<View style={styles.dropdown}>
+					<TouchableOpacity
+						onPress={() => {
+							handleFilterSelect([BidStatus.accepted]);
+							setFilterTitle("Accepted");
+						}}
+					>
+						<Text style={styles.dropdownText}>Accepted</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => {
+							handleFilterSelect([BidStatus.waiting]);
+							setFilterTitle("Waiting");
+						}}
+					>
+						<Text style={styles.dropdownText}>Waiting</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => {
+							handleFilterSelect([BidStatus.accepted, BidStatus.waiting]);
+							setFilterTitle("All");
+						}}
+					>
+						<Text style={styles.dropdownText}>All</Text>
+					</TouchableOpacity>
+				</View>
+			)}
 			<FlatList
 				data={bidData}
 				keyExtractor={(item) => item.pid}
@@ -100,5 +147,28 @@ const styles = StyleSheet.create({
 	status: {
 		fontSize: 12,
 		color: "gray",
+	},
+	filterButton: {
+		marginBottom: 10,
+		backgroundColor: "#007bff",
+		padding: 10,
+		borderRadius: 5,
+	},
+	filterText: {
+		color: "white",
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	dropdown: {
+		backgroundColor: "white",
+		padding: 10,
+		borderRadius: 5,
+		borderColor: "#ccc",
+		borderWidth: 1,
+		marginBottom: 10,
+	},
+	dropdownText: {
+		paddingVertical: 8,
+		fontSize: 16,
 	},
 });

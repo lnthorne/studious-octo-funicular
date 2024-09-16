@@ -28,7 +28,7 @@ export default function HomeScreen() {
 		if (!user) return;
 		if (!isRefreshing) setLoading(true);
 		try {
-			const jobs = await fetchJobsWithBidsByStatus(user.uid, JobStatus.open);
+			const jobs = await fetchJobsWithBidsByStatus(user.uid, [JobStatus.open]);
 			setJobsWithBids(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs and bids:", error);

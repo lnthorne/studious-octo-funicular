@@ -15,7 +15,7 @@ export default function closedJobs() {
 		if (!user) return;
 		setLoading(true);
 		try {
-			const jobs = await fetchJobsWithBidsByStatus(user.uid, JobStatus.completed);
+			const jobs = await fetchJobsWithBidsByStatus(user.uid, [JobStatus.completed]);
 			setClosedJobs(jobs);
 		} catch (error) {
 			console.error("Failed to fetch closed jobs:", error);

@@ -20,10 +20,11 @@ export default function BidInClosed() {
 	const [bidData, setBidData] = useState<IBidEntity[] | null>();
 	const [loading, setLoading] = useState(true);
 	const [filterVisible, setFilterVisible] = useState(false);
-	const [selectedFilter, setSelectedFilter] = useState<BidStatus>(BidStatus.completed);
+	const [selectedFilter, setSelectedFilter] = useState<BidStatus[]>([BidStatus.completed]);
 	const [isRefresh, setIsRefresh] = useState(false);
+	const [filterTitle, setFilterTitle] = useState("Completed");
 
-	const fetchBids = async (status: BidStatus, isRefreshing: boolean = false) => {
+	const fetchBids = async (status: BidStatus[], isRefreshing: boolean = false) => {
 		if (!user) return;
 		if (!isRefreshing) setLoading(true);
 		try {
@@ -55,7 +56,7 @@ export default function BidInClosed() {
 		setFilterVisible((prevVisable) => !prevVisable);
 	};
 
-	const handleFilterSelect = (status: BidStatus) => {
+	const handleFilterSelect = (status: BidStatus[]) => {
 		setSelectedFilter(status);
 		setFilterVisible(false);
 	};
@@ -70,16 +71,34 @@ export default function BidInClosed() {
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity onPress={toggleFilterDropdown} style={styles.filterButton}>
-				<Text style={styles.filterText}>Filter by Status: {selectedFilter}</Text>
+				<Text style={styles.filterText}>Filter by Status: {filterTitle}</Text>
 			</TouchableOpacity>
 
 			{filterVisible && (
 				<View style={styles.dropdown}>
-					<TouchableOpacity onPress={() => handleFilterSelect(BidStatus.completed)}>
+					<TouchableOpacity
+						onPress={() => {
+							handleFilterSelect([BidStatus.completed]);
+							setFilterTitle("Completed");
+						}}
+					>
 						<Text style={styles.dropdownText}>Completed</Text>
 					</TouchableOpacity>
-					<TouchableOpacity onPress={() => handleFilterSelect(BidStatus.rejected)}>
+					<TouchableOpacity
+						onPress={() => {
+							handleFilterSelect([BidStatus.rejected]);
+							setFilterTitle("Rejected");
+						}}
+					>
 						<Text style={styles.dropdownText}>Rejected</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => {
+							handleFilterSelect([BidStatus.rejected, BidStatus.completed]);
+							setFilterTitle("All");
+						}}
+					>
+						<Text style={styles.dropdownText}>All</Text>
 					</TouchableOpacity>
 				</View>
 			)}

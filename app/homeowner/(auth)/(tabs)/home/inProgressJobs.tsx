@@ -16,7 +16,7 @@ export default function inProgressJobs() {
 		if (!user) return;
 		setLoading(true);
 		try {
-			const jobs = await fetchJobsWithBidsByStatus(user.uid, JobStatus.inprogress);
+			const jobs = await fetchJobsWithBidsByStatus(user.uid, [JobStatus.inprogress]);
 			setJobsInProgress(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs in progress:", error);
