@@ -17,8 +17,7 @@ export default function UserContextWrapper({ children }: { children: React.React
 			const userData = await getUser(userType);
 			setUser(userData);
 
-			const pathType = userType === UserType.homeowner ? "homeowners" : "companyowners";
-			router.replace(`/${pathType}/(auth)/home`); // Navigate to authenticated home
+			router.replace(`/${userType}/(auth)/home`); // Navigate to authenticated home
 		} catch (error) {
 			console.error("Error fetching user data", error);
 		}

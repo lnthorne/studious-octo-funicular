@@ -7,6 +7,7 @@ import {
 	ActivityIndicator,
 	FlatList,
 	TouchableOpacity,
+	RefreshControl,
 } from "react-native";
 import { fetchOpenJobPostsNotBidOn } from "@/services/post";
 import { IPostEntity } from "@/typings/jobs.inter";
@@ -18,17 +19,22 @@ export default function ViewPostsScreen() {
 	const { user } = useUser<ICompanyOwnerEntity>();
 	const [posts, setPosts] = useState<IPostEntity[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [isRefresh, setIsRefresh] = useState(false);
 
-	const loadPosts = async () => {
+	const loadPosts = async (isRefreshing: boolean = false) => {
 		if (!user) return;
-		setLoading(true);
+		if (!isRefreshing) setLoading(true);
 		try {
 			const openPosts = await fetchOpenJobPostsNotBidOn(user.uid);
 			setPosts(openPosts);
 		} catch (error) {
 			console.error("Error fetching posts", error);
 		} finally {
-			setLoading(false);
+			if (isRefreshing) {
+				setIsRefresh(false);
+			} else {
+				setLoading(false);
+			}
 		}
 	};
 
@@ -38,8 +44,13 @@ export default function ViewPostsScreen() {
 		}, [user])
 	);
 
+	const onRefresh = () => {
+		setIsRefresh(true);
+		loadPosts(true);
+	};
+
 	const handlePostPress = (pid: string) => {
-		router.push(`/companyowners/createBid/${pid}`);
+		router.push(`/companyowner/createBid/${pid}`);
 	};
 
 	if (loading) {
@@ -66,6 +77,7 @@ export default function ViewPostsScreen() {
 					</TouchableOpacity>
 				)}
 				ListEmptyComponent={<Text style={styles.title}>No open job posts available.</Text>}
+				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
 			/>
 		</View>
 	);

@@ -13,6 +13,7 @@ import {
 	StyleSheet,
 	FlatList,
 	TouchableOpacity,
+	RefreshControl,
 } from "react-native";
 
 export default function HomeScreen() {
@@ -21,17 +22,22 @@ export default function HomeScreen() {
 	const [loading, setLoading] = useState(true);
 	const [selectedBid, setSelectedBid] = useState<string | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
+	const [isRefresh, setIsRefresh] = useState(false);
 
-	const fetchJobsAndBids = async () => {
+	const fetchJobsAndBids = async (isRefreshing: boolean = false) => {
 		if (!user) return;
-		setLoading(true);
+		if (!isRefreshing) setLoading(true);
 		try {
 			const jobs = await fetchJobsWithBidsByStatus(user.uid, JobStatus.open);
 			setJobsWithBids(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs and bids:", error);
 		} finally {
-			setLoading(false);
+			if (isRefreshing) {
+				setIsRefresh(false);
+			} else {
+				setLoading(false);
+			}
 		}
 	};
 
@@ -46,9 +52,15 @@ export default function HomeScreen() {
 		setModalVisible(true);
 	};
 
-	const closeModal = () => {
+	const closeModal = (isRefresh?: boolean) => {
 		setModalVisible(false);
 		setSelectedBid(null);
+		if (isRefresh) fetchJobsAndBids();
+	};
+
+	const onRefresh = () => {
+		setIsRefresh(true);
+		fetchJobsAndBids(true);
 	};
 
 	if (loading) {
@@ -77,6 +89,7 @@ export default function HomeScreen() {
 					</View>
 				)}
 				ListEmptyComponent={<Text>You have no open jobs.</Text>}
+				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
 			/>
 			<BidDetailsModal visible={modalVisible} bid={selectedBid} onClose={closeModal} />
 		</View>

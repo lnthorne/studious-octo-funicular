@@ -60,7 +60,7 @@ export default function CreateBidScreen() {
 			console.error("Error submitting bid", error);
 		} finally {
 			setModalVisible(false);
-			router.navigate("/companyowners/(tabs)/viewPosts");
+			router.navigate("/companyowner/(tabs)/home");
 		}
 		console.log("Bid Submitted", { bidAmount, bidDescription });
 	};

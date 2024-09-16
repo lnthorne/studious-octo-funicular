@@ -10,24 +10,24 @@ export default function HomeownerHomeLayout() {
 			<View style={styles.container}>
 				<View style={styles.tabContainer}>
 					<Link
-						href="/homeowners/home"
-						style={currentRoute === "/homeowners/home" ? styles.activeTab : styles.tab}
+						href="/homeowner/home"
+						style={currentRoute === "/homeowner/home" ? styles.activeTab : styles.tab}
 					>
 						<Text
-							style={currentRoute === "/homeowners/home" ? styles.activeTabText : styles.tabText}
+							style={currentRoute === "/homeowner/home" ? styles.activeTabText : styles.tabText}
 						>
 							Open Jobs
 						</Text>
 					</Link>
 					<Link
-						href="/homeowners/home/inProgressJobs"
+						href="/homeowner/home/inProgressJobs"
 						style={
-							currentRoute === "/homeowners/home/inProgressJobs" ? styles.activeTab : styles.tab
+							currentRoute === "/homeowner/home/inProgressJobs" ? styles.activeTab : styles.tab
 						}
 					>
 						<Text
 							style={
-								currentRoute === "/homeowners/home/inProgressJobs"
+								currentRoute === "/homeowner/home/inProgressJobs"
 									? styles.activeTabText
 									: styles.tabText
 							}
@@ -36,12 +36,12 @@ export default function HomeownerHomeLayout() {
 						</Text>
 					</Link>
 					<Link
-						href="/homeowners/home/closedJobs"
-						style={currentRoute === "/homeowners/home/closedJobs" ? styles.activeTab : styles.tab}
+						href="/homeowner/home/closedJobs"
+						style={currentRoute === "/homeowner/home/closedJobs" ? styles.activeTab : styles.tab}
 					>
 						<Text
 							style={
-								currentRoute === "/homeowners/home/closedJobs"
+								currentRoute === "/homeowner/home/closedJobs"
 									? styles.activeTabText
 									: styles.tabText
 							}

@@ -7,13 +7,13 @@ export default function UserChoice() {
 	const handleLandscaperOnboarding = async () => {
 		await AsyncStorage.setItem("hasOnboarded", "true");
 		await AsyncStorage.setItem("userType", "companyowner");
-		router.push("/companyowners/signIn");
+		router.push("/companyowner/signIn");
 	};
 
 	const handleHomeownerOnboarding = async () => {
 		await AsyncStorage.setItem("hasOnboarded", "true");
 		await AsyncStorage.setItem("userType", "homeowner");
-		router.push("/homeowners/signIn");
+		router.push("/homeowner/signIn");
 	};
 	return (
 		<SafeAreaView style={styles.container}>

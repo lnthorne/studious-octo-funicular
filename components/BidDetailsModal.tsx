@@ -20,7 +20,7 @@ import { startNewConversation } from "@/services/messaging";
 interface BidDetailsModalProps {
 	bid: string | null;
 	visible: boolean;
-	onClose: () => void;
+	onClose: (isRefresh?: boolean) => void;
 }
 export default function BidDetailsModal({ bid, visible, onClose }: BidDetailsModalProps) {
 	const { user } = useUser<IHomeOwnerEntity>();
@@ -46,7 +46,7 @@ export default function BidDetailsModal({ bid, visible, onClose }: BidDetailsMod
 		try {
 			await acceptBidAndCloseOtherBids(bidDetails.bid, bidDetails.pid, bidDetails.uid);
 			Alert.alert("Bid accepted successfully!");
-			onClose();
+			onClose(true);
 		} catch (error) {
 			console.error("Failed to accept bid:", error);
 			Alert.alert("Failed to accept bid. Please try again.");
@@ -61,7 +61,7 @@ export default function BidDetailsModal({ bid, visible, onClose }: BidDetailsMod
 		try {
 			const conversationId = await startNewConversation(user.uid, bidDetails.uid);
 			onClose();
-			router.push(`/shared/messages/${conversationId}`);
+			router.navigate(`/shared/messages/${conversationId}`);
 		} catch (error) {
 			console.error("Error creating conversation:", error);
 			Alert.alert("Error creating conversation. Please try again.");
@@ -69,8 +69,13 @@ export default function BidDetailsModal({ bid, visible, onClose }: BidDetailsMod
 	};
 
 	return (
-		<Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
-			<TouchableWithoutFeedback onPress={onClose}>
+		<Modal
+			animationType="slide"
+			transparent={true}
+			visible={visible}
+			onRequestClose={() => onClose()}
+		>
+			<TouchableWithoutFeedback onPress={() => onClose()}>
 				<View style={styles.modalContainer}>
 					<Pressable style={styles.modalContent}>
 						<Text style={styles.modalTitle}>Bid Details</Text>
@@ -87,7 +92,7 @@ export default function BidDetailsModal({ bid, visible, onClose }: BidDetailsMod
 						<View style={styles.buttonContainer}>
 							<Button title="Accept Bid" onPress={handleAcceptBid} />
 							<Button title="Send Message" onPress={handleCreateConversation} />
-							<Button title="Cancel" onPress={onClose} />
+							<Button title="Cancel" onPress={() => onClose()} />
 						</View>
 					</Pressable>
 				</View>

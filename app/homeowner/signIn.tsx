@@ -117,7 +117,7 @@ export default function SignIn() {
 							</View>
 						)}
 					</Formik>
-					<TouchableOpacity onPress={() => router.push("/homeowners/signUp")}>
+					<TouchableOpacity onPress={() => router.push("/homeowner/signUp")}>
 						<Text style={styles.text5}>{"Don't have an account? Sign up"}</Text>
 					</TouchableOpacity>
 				</ScrollView>

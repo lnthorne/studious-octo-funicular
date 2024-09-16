@@ -1,11 +1,10 @@
 // app/home/index.tsx
 import { useUser } from "@/contexts/userContext";
 import { fetchBidsFromUid } from "@/services/bid";
-import { getUser } from "@/services/user";
-import { BidStatus, IBidEntity, IPostEntity } from "@/typings/jobs.inter";
-import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
+import { BidStatus, IBidEntity } from "@/typings/jobs.inter";
+import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
 	ActivityIndicator,
 	Text,
@@ -13,6 +12,7 @@ import {
 	StyleSheet,
 	FlatList,
 	TouchableOpacity,
+	RefreshControl,
 } from "react-native";
 
 export default function BidInClosed() {
@@ -21,17 +21,22 @@ export default function BidInClosed() {
 	const [loading, setLoading] = useState(true);
 	const [filterVisible, setFilterVisible] = useState(false);
 	const [selectedFilter, setSelectedFilter] = useState<BidStatus>(BidStatus.completed);
+	const [isRefresh, setIsRefresh] = useState(false);
 
-	const fetchBids = async (status: BidStatus) => {
+	const fetchBids = async (status: BidStatus, isRefreshing: boolean = false) => {
 		if (!user) return;
-		setLoading(true);
+		if (!isRefreshing) setLoading(true);
 		try {
 			const bids = await fetchBidsFromUid(user.uid, status);
 			setBidData(bids);
 		} catch (error) {
 			console.error("Failed to fetch bids:", error);
 		} finally {
-			setLoading(false);
+			if (isRefreshing) {
+				setIsRefresh(false);
+			} else {
+				setLoading(false);
+			}
 		}
 	};
 
@@ -40,6 +45,11 @@ export default function BidInClosed() {
 			fetchBids(selectedFilter);
 		}, [user, selectedFilter])
 	);
+
+	const onRefresh = () => {
+		setIsRefresh(true);
+		fetchBids(selectedFilter, true);
+	};
 
 	const toggleFilterDropdown = () => {
 		setFilterVisible((prevVisable) => !prevVisable);
@@ -51,7 +61,7 @@ export default function BidInClosed() {
 	};
 
 	const handleBidPress = (bid: string) => {
-		router.push(`/companyowners/bidDetails/${bid}`);
+		router.push(`/companyowner/bidDetails/${bid}`);
 	};
 
 	if (loading) {
@@ -87,6 +97,7 @@ export default function BidInClosed() {
 					</TouchableOpacity>
 				)}
 				ListEmptyComponent={<Text style={styles.title}>No bids available.</Text>}
+				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
 			/>
 		</View>
 	);

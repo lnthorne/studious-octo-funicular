@@ -42,7 +42,7 @@ export default function inProgressJobs() {
 				renderItem={({ item }) => (
 					<View style={styles.postContainer}>
 						<TouchableOpacity
-							onPress={() => router.push(`/homeowners/(auth)/jobDetails/${item.pid}`)}
+							onPress={() => router.push(`/homeowner/(auth)/jobDetails/${item.pid}`)}
 						>
 							<Text style={styles.title}>{item.title}</Text>
 							<Text style={styles.description}>{item.description}</Text>

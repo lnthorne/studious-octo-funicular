@@ -9,8 +9,10 @@ import {
 	SafeAreaView,
 	KeyboardAvoidingView,
 	Platform,
+	TouchableOpacity,
+	Image,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/messaging"; // Your service
 import { IMessage, IMessageEntity, MessageType } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
@@ -59,6 +61,15 @@ export default function MessagesPage() {
 				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
 				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
 			>
+				<View style={styles.heading}>
+					<TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+						<Image
+							source={require("../../../assets/images/back-icon.png")}
+							resizeMode={"stretch"}
+							style={styles.backIcon}
+						/>
+					</TouchableOpacity>
+				</View>
 				<FlatList
 					data={messages}
 					keyExtractor={(item) => new Date(item.timestamp).getTime().toString()}
@@ -97,6 +108,23 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 10,
 		justifyContent: "flex-end",
+	},
+	heading: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		position: "relative",
+		marginBottom: 27,
+	},
+	backBtn: {
+		position: "absolute",
+		left: 16,
+		zIndex: 1,
+	},
+	backIcon: {
+		width: 24,
+		height: 24,
+		marginTop: 28,
 	},
 	messageBubble: {
 		padding: 10,

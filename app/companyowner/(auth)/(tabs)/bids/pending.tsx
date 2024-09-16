@@ -12,23 +12,29 @@ import {
 	StyleSheet,
 	FlatList,
 	TouchableOpacity,
+	RefreshControl,
 } from "react-native";
 
 export default function Pending() {
 	const { user } = useUser<ICompanyOwnerEntity>();
 	const [bidData, setBidData] = useState<IBidEntity[] | null>();
 	const [loading, setLoading] = useState(true);
+	const [isRefresh, setIsRefresh] = useState(false);
 
-	const fetchBids = async () => {
+	const fetchBids = async (isRefreshing: boolean = false) => {
 		if (!user) return;
-		setLoading(true);
+		if (!isRefreshing) setLoading(true);
 		try {
 			const bids = await fetchBidsFromUid(user.uid, BidStatus.pending);
 			setBidData(bids);
 		} catch (error) {
 			console.error("Failed to fetch bids:", error);
 		} finally {
-			setLoading(false);
+			if (isRefreshing) {
+				setIsRefresh(false);
+			} else {
+				setLoading(false);
+			}
 		}
 	};
 
@@ -39,7 +45,12 @@ export default function Pending() {
 	);
 
 	const handleBidPress = (bid: string) => {
-		router.push(`/companyowners/bidDetails/${bid}`);
+		router.push(`/companyowner/bidDetails/${bid}`);
+	};
+
+	const onRefresh = () => {
+		setIsRefresh(true);
+		fetchBids(true);
 	};
 
 	if (loading) {
@@ -60,6 +71,7 @@ export default function Pending() {
 					</TouchableOpacity>
 				)}
 				ListEmptyComponent={<Text style={styles.title}>No bids available.</Text>}
+				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
 			/>
 		</View>
 	);

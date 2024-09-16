@@ -1,8 +1,8 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { IBidEntity, IPostEntity } from "@/typings/jobs.inter";
+import { BidStatus, IBidEntity, IPostEntity } from "@/typings/jobs.inter";
 import { fetchBidFromBid } from "@/services/bid";
-import { fetchPost } from "@/services/post";
+import { fetchPost, updatePostCompletionStatus } from "@/services/post";
 import {
 	ActivityIndicator,
 	View,
@@ -11,7 +11,9 @@ import {
 	StyleSheet,
 	Image,
 	SafeAreaView,
+	Button,
 } from "react-native";
+import GeneralModal from "@/components/generalModal";
 
 export default function BidDetails() {
 	const { bid } = useLocalSearchParams<{ bid: string }>();
@@ -19,6 +21,25 @@ export default function BidDetails() {
 	const [loading, setLoading] = useState(true);
 	const [posting, setPosting] = useState<IPostEntity | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [modalVisible, setModalVisible] = useState(false);
+	const [showCompletionButton, setShowCompletionButton] = useState(false);
+
+	const handleJobCompleted = async () => {
+		if (!posting || !bidDetails) return;
+		try {
+			await updatePostCompletionStatus(posting.pid, bidDetails.uid);
+		} catch (error) {
+			setError("Failed to update bid status");
+			setModalVisible(false);
+		} finally {
+			setModalVisible(false);
+			router.back();
+		}
+	};
+
+	const handleModalClose = () => {
+		setModalVisible(false);
+	};
 
 	const fetchData = async () => {
 		if (!bid) return;
@@ -31,6 +52,7 @@ export default function BidDetails() {
 			setBidDetails(bidDetails);
 
 			if (bidDetails) {
+				setShowCompletionButton(bidDetails.status === BidStatus.accepted);
 				const postData = await fetchPost(bidDetails.pid);
 				setPosting(postData);
 			} else {
@@ -95,6 +117,17 @@ export default function BidDetails() {
 					<Text style={styles.label}>Status:</Text>
 					<Text style={styles.value}>{bidDetails.status}</Text>
 				</View>
+
+				{showCompletionButton && (
+					<Button title={"Job Completed"} onPress={() => setModalVisible(true)} />
+				)}
+
+				<GeneralModal
+					visible={modalVisible}
+					description="Are you sure you want to mark this job as completed? You cannot undo this action."
+					onDone={handleJobCompleted}
+					onCancel={handleModalClose}
+				/>
 			</ScrollView>
 		</SafeAreaView>
 	);

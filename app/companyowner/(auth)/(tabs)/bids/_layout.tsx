@@ -10,22 +10,22 @@ export default function CompanyownerHomeLayout() {
 			<View style={styles.container}>
 				<View style={styles.tabContainer}>
 					<Link
-						href="/companyowners/bids"
-						style={currentRoute === "/companyowners/bids" ? styles.activeTab : styles.tab}
+						href="/companyowner/bids"
+						style={currentRoute === "/companyowner/bids" ? styles.activeTab : styles.tab}
 					>
 						<Text
-							style={currentRoute === "/companyowners/bids" ? styles.activeTabText : styles.tabText}
+							style={currentRoute === "/companyowner/bids" ? styles.activeTabText : styles.tabText}
 						>
 							In Progress
 						</Text>
 					</Link>
 					<Link
-						href="/companyowners/bids/pending"
-						style={currentRoute === "/companyowners/bids/pending" ? styles.activeTab : styles.tab}
+						href="/companyowner/bids/pending"
+						style={currentRoute === "/companyowner/bids/pending" ? styles.activeTab : styles.tab}
 					>
 						<Text
 							style={
-								currentRoute === "/companyowners/bids/pending"
+								currentRoute === "/companyowner/bids/pending"
 									? styles.activeTabText
 									: styles.tabText
 							}
@@ -34,14 +34,12 @@ export default function CompanyownerHomeLayout() {
 						</Text>
 					</Link>
 					<Link
-						href="/companyowners/bids/closed"
-						style={currentRoute === "/companyowners/bids/closed" ? styles.activeTab : styles.tab}
+						href="/companyowner/bids/closed"
+						style={currentRoute === "/companyowner/bids/closed" ? styles.activeTab : styles.tab}
 					>
 						<Text
 							style={
-								currentRoute === "/companyowners/bids/closed"
-									? styles.activeTabText
-									: styles.tabText
+								currentRoute === "/companyowner/bids/closed" ? styles.activeTabText : styles.tabText
 							}
 						>
 							Closed

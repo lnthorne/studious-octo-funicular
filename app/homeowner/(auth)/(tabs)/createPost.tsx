@@ -14,7 +14,7 @@ import {
 	Keyboard,
 	TouchableWithoutFeedback,
 } from "react-native";
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { CreateNewPost } from "@/services/post";
 import * as ImagePicker from "expo-image-picker";
@@ -33,7 +33,7 @@ export default function CreatePostScreen() {
 	const [imageUris, setImageUris] = useState<string[]>([]);
 	const [loading, setLoading] = useState(false);
 
-	const handlePostSubmit = async (values: IPost) => {
+	const handlePostSubmit = async (values: IPost, { resetForm }: FormikHelpers<IPost>) => {
 		setLoading(true);
 		try {
 			const postWithUid: IPost = {
@@ -45,6 +45,7 @@ export default function CreatePostScreen() {
 			console.error("Error creating post: ", error);
 		} finally {
 			setLoading(false);
+			resetForm();
 			router.back();
 		}
 	};

@@ -87,4 +87,12 @@
 - Fixed issue where the keyboard would be in the way of text inputs and messaging bubbles
 - Homeowner can now view different stages of their jobs (open, in progress, closed)
 - We have basically alot of repeated useEffect hooks fetching the same data, we should look into breaking those out into reuasble functions
-  Need to add the new home page in the companyowner section, as well as set the job completion for them. I then want to go through each page and get the back buttons and routing correct.
+- Need to add the new home page in the companyowner section, as well as set the job completion for them. I then want to go through each page and get the back buttons and routing correct.
+
+### Sep 15, 2024
+
+- Create a profile page for both homeowner/companyoowner
+- Create review system and link with the companyowner profile
+- Companyowner filter job postings by distance
+- How do I build a release build instead of a debug
+- I want to add user type to each user. That way we can quickly get it in the conversation screen
