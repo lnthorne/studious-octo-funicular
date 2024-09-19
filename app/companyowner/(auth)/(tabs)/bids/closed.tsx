@@ -21,8 +21,8 @@ export default function BidInClosed() {
 	const [loading, setLoading] = useState(true);
 	const [filterVisible, setFilterVisible] = useState(false);
 	const [selectedFilter, setSelectedFilter] = useState<BidStatus[]>([BidStatus.completed]);
-	const [isRefresh, setIsRefresh] = useState(false);
 	const [filterTitle, setFilterTitle] = useState("Completed");
+	const [isRefresh, setIsRefresh] = useState(false);
 
 	const fetchBids = async (status: BidStatus[], isRefreshing: boolean = false) => {
 		if (!user) return;

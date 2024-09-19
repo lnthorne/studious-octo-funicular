@@ -95,4 +95,7 @@
 - Create review system and link with the companyowner profile
 - Companyowner filter job postings by distance
 - How do I build a release build instead of a debug
-- I want to add user type to each user. That way we can quickly get it in the conversation screen
+
+### Sep 18, 2024
+
+- Updated xcode 16 which adds a flag for BoringSSL-GRPC. Update podfile with fix show here(https://stackoverflow.com/questions/78608693/boringssl-grpc-unsupported-option-g-for-target-arm64-apple-ios15-0)
