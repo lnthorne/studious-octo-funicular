@@ -99,3 +99,8 @@
 ### Sep 18, 2024
 
 - Updated xcode 16 which adds a flag for BoringSSL-GRPC. Update podfile with fix show here(https://stackoverflow.com/questions/78608693/boringssl-grpc-unsupported-option-g-for-target-arm64-apple-ios15-0)
+
+### Sep 24, 2024
+
+- Created figma designs with the help of galileo AI. Now importing all the fonts, styles and colours into our design system.
+- Cannot get the colors to come through on components (CustomeButton and CustomText). I remember the only time I had it working was when I defined it in the app/ . I figured it would work here, because it is getting imported

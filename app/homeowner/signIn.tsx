@@ -18,6 +18,8 @@ import * as Yup from "yup";
 import { router } from "expo-router";
 import { ILoginData } from "@/typings/auth/login.inter";
 import { signIn } from "@/services/auth";
+import { CustomText } from "@/components/atoms/text";
+import { CustomButton } from "@/components/molecules/Button";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -109,9 +111,11 @@ export default function SignIn() {
 										<TouchableOpacity onPress={handleSubmit as () => void} style={styles.view4}>
 											<Text style={styles.text4}>{"Log in"}</Text>
 										</TouchableOpacity>
-										<TouchableOpacity style={styles.view5}>
-											<Text style={styles.text4}>{"Continue with Google"}</Text>
-										</TouchableOpacity>
+										<CustomButton
+											label="Continue with Google"
+											variant="primary"
+											onPress={handleSubmit}
+										/>
 									</>
 								)}
 							</View>
