@@ -20,6 +20,7 @@ import { ILoginData } from "@/typings/auth/login.inter";
 import { signIn } from "@/services/auth";
 import { CustomText } from "@/components/atoms/text";
 import { CustomButton } from "@/components/molecules/Button";
+import { CustomTextBox } from "@/components/molecules/TextBox";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -72,7 +73,7 @@ export default function SignIn() {
 					>
 						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 							<View>
-								<Text style={styles.text6}>{"Email"}</Text>
+								{/* <Text style={styles.text6}>{"Email"}</Text>
 								<View style={styles.view2}>
 									<TextInput
 										style={styles.text2}
@@ -87,7 +88,12 @@ export default function SignIn() {
 
 								{touched.email && errors.email && (
 									<Text style={styles.errorText}>{errors.email}</Text>
-								)}
+								)} */}
+								<CustomTextBox
+									onChangeText={handleChange("email")}
+									heading="Email"
+									placeholder="Email"
+								/>
 								<Text style={styles.text6}>{"Password"}</Text>
 								<View style={styles.view3}>
 									<TextInput
@@ -108,12 +114,10 @@ export default function SignIn() {
 									<ActivityIndicator size="small" color="#0000ff" />
 								) : (
 									<>
-										<TouchableOpacity onPress={handleSubmit as () => void} style={styles.view4}>
-											<Text style={styles.text4}>{"Log in"}</Text>
-										</TouchableOpacity>
+										<CustomButton label="Login" variant="primary" onPress={handleSubmit} />
 										<CustomButton
 											label="Continue with Google"
-											variant="primary"
+											variant="secondary"
 											onPress={handleSubmit}
 										/>
 									</>

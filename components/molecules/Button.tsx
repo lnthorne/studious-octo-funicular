@@ -1,37 +1,42 @@
+import "../../app/design-system/designSystem";
 import React from "react";
-import { Button } from "react-native-ui-lib";
+import { Button, View } from "react-native-ui-lib";
 import { CustomText } from "../atoms/text";
 import { Colors, Typography } from "react-native-ui-lib";
+import { StyleSheet } from "react-native";
 
 interface CustomButtonProps {
 	label: string;
 	onPress: () => void;
-	variant?: "primary" | "secondary"; // To allow for different button styles
+	variant?: "primary" | "secondary";
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
 	label,
 	onPress,
-	variant = "primary", // Default to primary button
+	variant = "primary",
 }) => {
 	const backgroundColor =
 		variant === "primary" ? Colors.primaryButtonColor : Colors.secondaryButtonColor;
-	const textColor =
-		variant === "primary" ? Colors.primaryButtonTextColor : Colors.secondaryButtonTextColor;
+	const textColor = variant === "primary" ? "primaryButtonTextColor" : "secondaryButtonTextColor";
 
 	return (
-		<Button
-			onPress={onPress}
-			style={{
-				backgroundColor: Colors.secondaryButtonColor,
-				borderRadius: 8,
-				paddingVertical: 12,
-				paddingHorizontal: 24,
-			}}
-		>
-			<CustomText typography="buttonText" color={textColor}>
-				{label}
-			</CustomText>
-		</Button>
+		<View>
+			<Button onPress={onPress} backgroundColor={backgroundColor} style={styles.ButtonLayout}>
+				<CustomText typography="buttonText" color={textColor}>
+					{label}
+				</CustomText>
+			</Button>
+		</View>
 	);
 };
+
+const styles = StyleSheet.create({
+	ButtonLayout: {
+		alignItems: "center",
+		borderRadius: 12,
+		paddingVertical: 21,
+		marginBottom: 12,
+		marginHorizontal: 16,
+	},
+});

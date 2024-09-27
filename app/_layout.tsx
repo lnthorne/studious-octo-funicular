@@ -5,7 +5,7 @@ import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { UserProvider } from "@/contexts/userContext";
 import UserContextWrapper from "./userContextWrapper";
-
+import { Colors } from "react-native-ui-lib";
 export default function RootLayout() {
 	const [initializing, setInitializing] = useState<boolean>(true);
 

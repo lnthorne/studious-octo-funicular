@@ -25,7 +25,6 @@ export const CustomText: React.FC<CustomTextProps> = ({
 	const textStyle: TextStyle = {
 		...Typography[typography],
 		color: Colors[color],
-		fontFamily: "Roboto-Regular",
 		...style,
 	};
 

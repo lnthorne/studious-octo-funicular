@@ -12,6 +12,7 @@ import {
 	ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Colors } from "react-native-ui-lib";
 // import { SafeAreaView } from "react-native-safe-area-context";
 // import { TextField, View, Text } from "react-native-ui-lib";
 // import { Colors, Typography } from "react-native-ui-lib";

@@ -1,14 +1,14 @@
 import { Colors, Typography } from "react-native-ui-lib";
 
 Colors.loadColors({
-	primaryButtonColor: "1F94E0",
-	primaryButtonTextColor: "F7FAFA",
-	secondaryButtonColor: "E8EDF2",
-	secondaryButtonTextColor: "0D171C",
-	backgroundColor: "F7FAFA",
-	primaryTextColor: "0D171C",
-	secondaryTextColor: "4F7A94",
-	textBoxBackgroundColor: "E8EDF2",
+	primaryButtonColor: "#1F94E0",
+	primaryButtonTextColor: "#F7FAFA",
+	secondaryButtonColor: "#E8EDF2",
+	secondaryButtonTextColor: "#0D171C",
+	backgroundColor: "#F7FAFA",
+	primaryTextColor: "#0D171C",
+	secondaryTextColor: "#4F7A94",
+	textBoxBackgroundColor: "#E8EDF2",
 });
 
 Typography.loadTypographies({
