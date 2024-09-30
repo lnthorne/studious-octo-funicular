@@ -10,7 +10,7 @@ interface CustomTextProps {
 	style?: TextStyle;
 }
 
-export const CustomText: React.FC<CustomTextProps> = ({
+export const ATText: React.FC<CustomTextProps> = ({
 	children,
 	typography = "body",
 	color = "primaryTextColor",

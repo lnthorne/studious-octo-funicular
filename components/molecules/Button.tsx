@@ -1,8 +1,8 @@
 import "../../app/design-system/designSystem";
 import React from "react";
 import { Button, View } from "react-native-ui-lib";
-import { CustomText } from "../atoms/text";
-import { Colors, Typography } from "react-native-ui-lib";
+import { ATText } from "../atoms/Text";
+import { Colors } from "react-native-ui-lib";
 import { StyleSheet } from "react-native";
 
 interface CustomButtonProps {
@@ -11,11 +11,7 @@ interface CustomButtonProps {
 	variant?: "primary" | "secondary";
 }
 
-export const CustomButton: React.FC<CustomButtonProps> = ({
-	label,
-	onPress,
-	variant = "primary",
-}) => {
+export const MLButton: React.FC<CustomButtonProps> = ({ label, onPress, variant = "primary" }) => {
 	const backgroundColor =
 		variant === "primary" ? Colors.primaryButtonColor : Colors.secondaryButtonColor;
 	const textColor = variant === "primary" ? "primaryButtonTextColor" : "secondaryButtonTextColor";
@@ -23,9 +19,9 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 	return (
 		<View>
 			<Button onPress={onPress} backgroundColor={backgroundColor} style={styles.ButtonLayout}>
-				<CustomText typography="buttonText" color={textColor}>
+				<ATText typography="buttonText" color={textColor}>
 					{label}
-				</CustomText>
+				</ATText>
 			</Button>
 		</View>
 	);

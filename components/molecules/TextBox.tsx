@@ -1,75 +1,99 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
-import { Text, Colors, Typography, TextField, View, TouchableOpacity } from "react-native-ui-lib";
-import { Ionicons } from "@expo/vector-icons"; // Assuming you're using Ionicons or another icon library
-import { CustomText } from "../atoms/text";
+import { StyleSheet, TextInputProps, View } from "react-native";
+import { Text, Colors, Typography, TextField, TouchableOpacity } from "react-native-ui-lib";
+import { Ionicons } from "@expo/vector-icons";
+import { ATText } from "../atoms/Text";
 
-interface CustomTextBoxProps {
-	heading?: string; // Optional heading text
-	placeholder?: string; // Placeholder (hint) inside the text box
-	errorText?: string; // Error message to display when validation fails
-	secureTextEntry?: boolean; // Toggle for password hider
-	icon?: string; // Optional icon name (Ionicons in this case)
-	onChangeText: (text: string) => void; // Callback to capture input value
-	value?: string; // Current value of the text box
+interface CustomTextBoxProps extends TextInputProps {
+	heading?: string;
+	errorText?: string;
 }
 
-export const CustomTextBox: React.FC<CustomTextBoxProps> = ({
+export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 	heading,
 	placeholder,
 	errorText,
 	secureTextEntry = false,
-	icon,
 	onChangeText,
-	value = "",
+	value,
+	keyboardType,
+	onBlur,
 }) => {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry);
 
 	return (
-		<>
+		<View style={styles.container}>
 			{heading && (
-				<CustomText style={styles.heading} color="secondaryTextColor">
+				<ATText style={styles.heading} color="primaryTextColor">
 					{heading}
-				</CustomText>
+				</ATText>
 			)}
 
-			<TextField
-				value={value}
-				placeholder={placeholder}
-				placeholderTextColor={Colors.secondaryTextColor}
-				secureTextEntry={isPasswordVisible}
-				onChangeText={onChangeText}
-				style={styles.textField}
-			/>
+			<View style={styles.textFieldContainer}>
+				<TextField
+					value={value}
+					placeholder={placeholder}
+					placeholderTextColor={Colors.secondaryTextColor}
+					secureTextEntry={secureTextEntry && !isPasswordVisible}
+					onChangeText={onChangeText}
+					style={styles.textField}
+					keyboardType={keyboardType}
+					onBlur={onBlur}
+				/>
 
-			{secureTextEntry && (
-				<TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-					<Ionicons
-						name={isPasswordVisible ? "eye-off" : "eye"}
-						size={24}
-						color={Colors.secondaryTextColor}
-					/>
-				</TouchableOpacity>
-			)}
+				{secureTextEntry && (
+					<TouchableOpacity
+						onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+						style={styles.iconContainer}
+					>
+						<Ionicons
+							name={isPasswordVisible ? "eye-off" : "eye"}
+							size={24}
+							color={Colors.secondaryTextColor}
+						/>
+					</TouchableOpacity>
+				)}
+			</View>
 
 			{errorText && (
-				<Text style={{ ...Typography.error, color: "red", marginTop: 4 }}>{errorText}</Text>
+				<ATText style={styles.error} color="error" typography="error">
+					{errorText}
+				</ATText>
 			)}
-		</>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
+	container: {
+		paddingVertical: 12,
+		paddingHorizontal: 16,
+	},
 	heading: {
 		marginBottom: 9,
-		marginLeft: 17,
 	},
-	textField: {
+	textFieldContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 		backgroundColor: Colors.textBoxBackgroundColor,
 		borderRadius: 12,
-		paddingVertical: 23,
 		paddingHorizontal: 17,
-		marginBottom: 31,
-		marginHorizontal: 16,
+		marginBottom: 9,
+	},
+	textField: {
+		flex: 1,
+		height: 56,
+		width: 290,
+		...Typography.textBoxText,
+		color: Colors.primaryTextColor,
+		textAlignVertical: "center",
+	},
+	iconContainer: {
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	error: {
+		marginTop: 3,
 	},
 });

@@ -9,13 +9,22 @@ Colors.loadColors({
 	primaryTextColor: "#0D171C",
 	secondaryTextColor: "#4F7A94",
 	textBoxBackgroundColor: "#E8EDF2",
+	error: "red",
+	primaryDotColor: "#1F94E0",
+	secondaryDotColor: "#D1DEE5",
 });
 
 Typography.loadTypographies({
 	heading: { fontSize: 24, fontWeight: "700", lineHeight: 30, fontStyle: "normal" },
 	subheading: { fontSize: 26, fontWeight: "400", lineHeight: 24, fontStyle: "normal" },
-	buttonText: { fontSize: 16, fontWeight: "700", lineHeight: 24, fontStyle: "normal" },
-	textBoxText: { fontSize: 16, fontWeight: "500", lineHeight: 24, fontStyle: "normal" },
+	buttonText: {
+		fontSize: 14,
+		fontWeight: "700",
+		lineHeight: 21,
+		fontStyle: "normal",
+		textOveflow: "ellipsis",
+	},
+	textBoxText: { fontSize: 16, fontWeight: "400", lineHeight: 24, fontStyle: "normal" },
 	secondaryText: { fontSize: 14, fontWeight: "400", lineHeight: 21, fontStyle: "normal" },
 	error: { fontSize: 14, fontWeight: "400", lineHeight: 20 },
 	body: { fontSize: 16, fontWeight: "500", lineHeight: 24, fontStyle: "normal" },

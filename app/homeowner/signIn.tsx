@@ -18,9 +18,8 @@ import * as Yup from "yup";
 import { router } from "expo-router";
 import { ILoginData } from "@/typings/auth/login.inter";
 import { signIn } from "@/services/auth";
-import { CustomText } from "@/components/atoms/text";
-import { CustomButton } from "@/components/molecules/Button";
-import { CustomTextBox } from "@/components/molecules/TextBox";
+import { MLButton } from "@/components/molecules/Button";
+import { MLTextBox } from "@/components/molecules/TextBox";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -48,6 +47,7 @@ export default function SignIn() {
 			setLoading(false);
 		}
 	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
@@ -73,49 +73,31 @@ export default function SignIn() {
 					>
 						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 							<View>
-								{/* <Text style={styles.text6}>{"Email"}</Text>
-								<View style={styles.view2}>
-									<TextInput
-										style={styles.text2}
-										placeholderTextColor="#4F964F"
-										placeholder="Email"
-										onChangeText={handleChange("email")}
-										onBlur={handleBlur("email")}
-										value={values.email}
-										keyboardType="email-address"
-									/>
-								</View>
-
-								{touched.email && errors.email && (
-									<Text style={styles.errorText}>{errors.email}</Text>
-								)} */}
-								<CustomTextBox
+								<MLTextBox
 									onChangeText={handleChange("email")}
 									heading="Email"
 									placeholder="Email"
+									value={values.email}
+									keyboardType="email-address"
+									onBlur={handleBlur("email")}
+									errorText={touched.email && errors.email ? errors.email : undefined}
 								/>
-								<Text style={styles.text6}>{"Password"}</Text>
-								<View style={styles.view3}>
-									<TextInput
-										style={styles.text2}
-										placeholderTextColor="#4F964F"
-										placeholder="Password"
-										onChangeText={handleChange("password")}
-										onBlur={handleBlur("password")}
-										value={values.password}
-										secureTextEntry
-									/>
-								</View>
-								{touched.password && errors.password && (
-									<Text style={styles.errorText}>{errors.password}</Text>
-								)}
+								<MLTextBox
+									heading="Password"
+									placeholder="Password"
+									value={values.password}
+									secureTextEntry
+									onChangeText={handleChange("password")}
+									onBlur={handleBlur("password")}
+									errorText={touched.password && errors.password ? errors.password : undefined}
+								/>
 
 								{loading ? (
 									<ActivityIndicator size="small" color="#0000ff" />
 								) : (
 									<>
-										<CustomButton label="Login" variant="primary" onPress={handleSubmit} />
-										<CustomButton
+										<MLButton label="Log in" variant="primary" onPress={handleSubmit} />
+										<MLButton
 											label="Continue with Google"
 											variant="secondary"
 											onPress={handleSubmit}

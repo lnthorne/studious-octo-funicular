@@ -1,23 +1,7 @@
 import React from "react";
-import {
-	Button,
-	StyleSheet,
-	Image,
-	ImageBackground,
-	TouchableOpacity,
-	View,
-	Text,
-	SafeAreaView,
-	Dimensions,
-	ScrollView,
-} from "react-native";
+import { StyleSheet, Image, TouchableOpacity, View, Text, SafeAreaView } from "react-native";
 import { useRouter } from "expo-router";
-import { Colors } from "react-native-ui-lib";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { TextField, View, Text } from "react-native-ui-lib";
-// import { Colors, Typography } from "react-native-ui-lib";
-
-const { height } = Dimensions.get("window");
+import { ATProgressDots } from "@/components/atoms/ProgressDots";
 
 export default function Onboarding() {
 	const router = useRouter();
@@ -34,6 +18,7 @@ export default function Onboarding() {
 				<Text style={styles.text2}>
 					{"Get your yard ready for the season with professional help."}
 				</Text>
+				<ATProgressDots totalDots={3} selectedIndex={0} />
 				<TouchableOpacity style={styles.view} onPress={() => router.push("/userChoice")}>
 					<Text style={styles.text3}>{"Let's Go"}</Text>
 				</TouchableOpacity>
