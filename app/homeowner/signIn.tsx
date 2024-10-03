@@ -20,6 +20,7 @@ import { ILoginData } from "@/typings/auth/login.inter";
 import { signIn } from "@/services/auth";
 import { MLButton } from "@/components/molecules/Button";
 import { MLTextBox } from "@/components/molecules/TextBox";
+import { ATText } from "@/components/atoms/Text";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -56,16 +57,6 @@ export default function SignIn() {
 				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
 			>
 				<ScrollView style={styles.column}>
-					<View style={styles.heading}>
-						<TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-							<Image
-								source={require("../../assets/images/back-icon.png")}
-								resizeMode={"stretch"}
-								style={styles.backIcon}
-							/>
-						</TouchableOpacity>
-						<Text style={styles.text}>{"Welcome Back!"}</Text>
-					</View>
 					<Formik
 						initialValues={initialValues}
 						validationSchema={validationSchema}
@@ -91,6 +82,24 @@ export default function SignIn() {
 									onBlur={handleBlur("password")}
 									errorText={touched.password && errors.password ? errors.password : undefined}
 								/>
+								<TouchableOpacity>
+									<ATText
+										style={styles.optionText}
+										typography="secondaryText"
+										color="secondaryTextColor"
+									>
+										Forgot password?
+									</ATText>
+								</TouchableOpacity>
+								<TouchableOpacity onPress={() => router.navigate("/homeowner/signUp")}>
+									<ATText
+										style={styles.optionText}
+										typography="secondaryText"
+										color="secondaryTextColor"
+									>
+										Don't have an account? Sign Up
+									</ATText>
+								</TouchableOpacity>
 
 								{loading ? (
 									<ActivityIndicator size="small" color="#0000ff" />
@@ -107,9 +116,6 @@ export default function SignIn() {
 							</View>
 						)}
 					</Formik>
-					<TouchableOpacity onPress={() => router.push("/homeowner/signUp")}>
-						<Text style={styles.text5}>{"Don't have an account? Sign up"}</Text>
-					</TouchableOpacity>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
@@ -135,6 +141,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		position: "relative",
 		marginVertical: 27,
+	},
+	optionText: {
+		alignSelf: "center",
+		paddingHorizontal: 16,
+		paddingTop: 4,
+		paddingBottom: 12,
 	},
 	backBtn: {
 		position: "absolute",

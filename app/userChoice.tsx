@@ -1,7 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { SafeAreaView, ScrollView, View, Image, Text, StyleSheet } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
+import { Colors } from "react-native-ui-lib";
+import { ATText } from "@/components/atoms/Text";
+import { ATProgressDots } from "@/components/atoms/ProgressDots";
+import { MLButton } from "@/components/molecules/Button";
 
 export default function UserChoice() {
 	const handleLandscaperOnboarding = async () => {
@@ -17,27 +20,30 @@ export default function UserChoice() {
 	};
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.column}>
-				<View style={styles.view}>
-					<TouchableOpacity onPress={() => router.back()}>
-						<Image
-							source={require("../assets/images/back-icon.png")}
-							resizeMode={"stretch"}
-							style={styles.image}
-						/>
-					</TouchableOpacity>
-				</View>
-				<Text style={styles.text}>{"What kind of profile would you like to create?"}</Text>
-				<Text style={styles.text2}>
-					{"You can be both a homeowner and a landscaper with the same account."}
-				</Text>
-				<TouchableOpacity style={styles.view2} onPress={handleHomeownerOnboarding}>
-					<Text style={styles.text3}>{"Homeowner"}</Text>
-				</TouchableOpacity>
-				<TouchableOpacity style={styles.view3} onPress={handleLandscaperOnboarding}>
-					<Text style={styles.text3}>{"Landscaper"}</Text>
-				</TouchableOpacity>
-				<View style={styles.box}></View>
+			<View style={styles.subHeading}>
+				<ATText typography="subheading">Welcome to Yardly</ATText>
+			</View>
+			<Image source={require("../assets/images/decision.png")} style={styles.image} />
+			<ATText typography="heading" style={styles.heading}>
+				Welcome to the future of landscaping.
+			</ATText>
+			<ATText typography="body" style={styles.body}>
+				Are you a homeowner or a landscaper?
+			</ATText>
+			<ATProgressDots totalDots={3} selectedIndex={1} />
+			<View style={styles.buttonContainer}>
+				<MLButton
+					label="Homeowner"
+					variant="primary"
+					onPress={handleHomeownerOnboarding}
+					style={styles.button}
+				/>
+				<MLButton
+					label="Landscaper"
+					variant="secondary"
+					onPress={handleLandscaperOnboarding}
+					style={styles.button}
+				/>
 			</View>
 		</SafeAreaView>
 	);
@@ -46,62 +52,47 @@ export default function UserChoice() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#F7FCF7",
+		backgroundColor: Colors.backgroundColor,
+		width: "100%",
 	},
-	box: {
-		height: 20,
-		backgroundColor: "#F7FCF7",
-	},
-	column: {
-		backgroundColor: "#F7FCF7",
-		paddingBottom: 469,
+	subHeading: {
+		alignItems: "center",
+		paddingTop: 21,
+		paddingBottom: 8,
 	},
 	image: {
-		width: 24,
-		height: 24,
-		marginTop: 28,
+		maxHeight: 218,
+		width: "100%",
 	},
-	scrollView: {
-		flex: 1,
-		backgroundColor: "#FFFFFF",
-	},
-	text: {
-		color: "#0C1C0C",
-		fontSize: 22,
-		marginBottom: 27,
-		marginHorizontal: 17,
-		width: 356,
-	},
-	text2: {
-		color: "#0C1C0C",
-		fontSize: 16,
-		marginBottom: 33,
-		marginHorizontal: 17,
-		width: 356,
-	},
-	text3: {
-		color: "#0C1C0C",
-		fontSize: 16,
-	},
-	view: {
-		backgroundColor: "#F7FCF7",
+	heading: {
 		paddingHorizontal: 16,
-		marginBottom: 27,
+		paddingTop: 20,
+		paddingBottom: 8,
+		alignSelf: "center",
+		textAlign: "center",
 	},
-	view2: {
-		alignItems: "center",
-		backgroundColor: "#19E519",
-		borderRadius: 24,
-		paddingVertical: 20,
-		marginBottom: 12,
-		marginHorizontal: 16,
+	body: {
+		paddingHorizontal: 16,
+		paddingTop: 4,
+		paddingBottom: 16,
+		alignSelf: "center",
+		textAlign: "center",
 	},
-	view3: {
-		alignItems: "center",
-		backgroundColor: "#E8F2E8",
-		borderRadius: 24,
-		paddingVertical: 19,
-		marginBottom: 12,
-		marginHorizontal: 16,
+	buttonContainer: {
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "flex-start",
+		alignSelf: "stretch",
+		paddingHorizontal: 12,
+		paddingVertical: 12,
+		gap: 12,
+	},
+	button: {
+		width: 175,
+		minWidth: 84,
+		maxWidth: 480,
+		paddingHorizontal: 10,
+		marginHorizontal: 0,
 	},
 });

@@ -16,7 +16,7 @@ Colors.loadColors({
 
 Typography.loadTypographies({
 	heading: { fontSize: 24, fontWeight: "700", lineHeight: 30, fontStyle: "normal" },
-	subheading: { fontSize: 26, fontWeight: "400", lineHeight: 24, fontStyle: "normal" },
+	subheading: { fontSize: 18, fontWeight: "700", lineHeight: 23, fontStyle: "normal" },
 	buttonText: {
 		fontSize: 14,
 		fontWeight: "700",

@@ -1,7 +1,10 @@
 import React from "react";
 import { StyleSheet, Image, TouchableOpacity, View, Text, SafeAreaView } from "react-native";
+import { Colors, Typography } from "react-native-ui-lib";
 import { useRouter } from "expo-router";
 import { ATProgressDots } from "@/components/atoms/ProgressDots";
+import { ATText } from "@/components/atoms/Text";
+import { MLButton } from "@/components/molecules/Button";
 
 export default function Onboarding() {
 	const router = useRouter();
@@ -9,20 +12,22 @@ export default function Onboarding() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.column}>
-				<Image
-					source={require("../assets/images/onboarding.png")}
-					resizeMode={"stretch"}
-					style={styles.image}
-				/>
-				<Text style={styles.text}>{"Welcome to Yardly"}</Text>
-				<Text style={styles.text2}>
-					{"Get your yard ready for the season with professional help."}
-				</Text>
+				<View style={styles.subHeading}>
+					<ATText typography="subheading">Welcome to Yardly</ATText>
+				</View>
+				<Image source={require("../assets/images/welcome.png")} style={styles.image} />
+				<ATText typography="heading" style={styles.heading}>
+					Get your price. Schedule and pay.
+				</ATText>
+				<ATText typography="body" style={styles.body}>
+					Get your yard ready for the season with professional help.
+				</ATText>
 				<ATProgressDots totalDots={3} selectedIndex={0} />
-				<TouchableOpacity style={styles.view} onPress={() => router.push("/userChoice")}>
-					<Text style={styles.text3}>{"Let's Go"}</Text>
-				</TouchableOpacity>
-				<View style={styles.box3}></View>
+				<MLButton
+					variant="primary"
+					label="Get Started"
+					onPress={() => router.navigate("/userChoice")}
+				/>
 			</View>
 		</SafeAreaView>
 	);
@@ -31,66 +36,33 @@ export default function Onboarding() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#F7FCF7",
-	},
-	box: {
-		width: 8,
-		height: 8,
-		backgroundColor: "#19E519",
-		borderRadius: 4,
-	},
-	box2: {
-		width: 8,
-		height: 8,
-		backgroundColor: "#D1E8D1",
-		borderRadius: 4,
-	},
-	box3: {
-		height: 20,
-		backgroundColor: "#F7FCF7",
+		backgroundColor: Colors.backgroundColor,
+		width: "100%",
 	},
 	column: {
-		backgroundColor: "#F7FCF7",
 		paddingBottom: 253,
 	},
 	image: {
-		height: 320,
-		marginBottom: 28,
+		maxHeight: 218,
+		width: "100%",
 	},
-	row: {
-		flexDirection: "row",
-		justifyContent: "space-between",
+	subHeading: {
 		alignItems: "center",
-		marginBottom: 32,
-		marginHorizontal: 161,
+		paddingTop: 21,
+		paddingBottom: 8,
 	},
-	scrollView: {
-		flex: 1,
-		backgroundColor: "#FFFFFF",
+	heading: {
+		paddingHorizontal: 16,
+		paddingTop: 20,
+		paddingBottom: 8,
+		alignSelf: "center",
+		textAlign: "center",
 	},
-	text: {
-		color: "#0C1C0C",
-		fontSize: 28,
-		marginBottom: 22,
-		marginLeft: 17,
-	},
-	text2: {
-		color: "#0C1C0C",
-		fontSize: 16,
-		marginBottom: 41,
-		marginHorizontal: 18,
-		width: 354,
-	},
-	text3: {
-		color: "#0C1C0C",
-		fontSize: 16,
-	},
-	view: {
-		alignItems: "center",
-		backgroundColor: "#19E519",
-		borderRadius: 24,
-		paddingVertical: 18,
-		marginBottom: 12,
-		marginHorizontal: 16,
+	body: {
+		paddingHorizontal: 16,
+		paddingTop: 4,
+		paddingBottom: 16,
+		alignSelf: "center",
+		textAlign: "center",
 	},
 });
