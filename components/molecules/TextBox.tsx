@@ -34,7 +34,7 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 					value={value}
 					placeholder={placeholder}
 					placeholderTextColor={Colors.secondaryTextColor}
-					secureTextEntry={secureTextEntry && !isPasswordVisible}
+					secureTextEntry={secureTextEntry && isPasswordVisible}
 					onChangeText={onChangeText}
 					style={styles.textField}
 					keyboardType={keyboardType}
@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.textBoxBackgroundColor,
 		borderRadius: 12,
 		paddingHorizontal: 17,
-		marginBottom: 9,
 	},
 	textField: {
 		flex: 1,

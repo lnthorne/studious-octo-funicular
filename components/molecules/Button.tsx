@@ -26,7 +26,7 @@ export const MLButton: React.FC<CustomButtonProps> = ({
 		alignItems: "center",
 		borderRadius: 12,
 		paddingVertical: 21,
-		marginBottom: 12,
+		marginVertical: 12,
 		marginHorizontal: 16,
 		...style,
 	};

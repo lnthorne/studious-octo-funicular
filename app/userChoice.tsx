@@ -21,9 +21,9 @@ export default function UserChoice() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.subHeading}>
-				<ATText typography="subheading">Welcome to Yardly</ATText>
+				<ATText typography="heading">Welcome</ATText>
 			</View>
-			<Image source={require("../assets/images/decision.png")} style={styles.image} />
+			<Image source={require("../assets/Logo.png")} style={styles.image} />
 			<ATText typography="heading" style={styles.heading}>
 				Welcome to the future of landscaping.
 			</ATText>

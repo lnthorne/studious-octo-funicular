@@ -13,9 +13,9 @@ export default function Onboarding() {
 		<SafeAreaView style={styles.container}>
 			<View style={styles.column}>
 				<View style={styles.subHeading}>
-					<ATText typography="subheading">Welcome to Yardly</ATText>
+					<ATText typography="heading">Welcome</ATText>
 				</View>
-				<Image source={require("../assets/images/welcome.png")} style={styles.image} />
+				<Image source={require("../assets/Logo.png")} style={styles.image} />
 				<ATText typography="heading" style={styles.heading}>
 					Get your price. Schedule and pay.
 				</ATText>
@@ -45,6 +45,9 @@ const styles = StyleSheet.create({
 	image: {
 		maxHeight: 218,
 		width: "100%",
+		marginVertical: 20,
+		borderBlockColor: "red",
+		borderWidth: 2,
 	},
 	subHeading: {
 		alignItems: "center",

@@ -8,10 +8,22 @@ const SignInHeader = () => {
 	return <ATText typography="heading">Sign In</ATText>;
 };
 
+const SignUpHeader = () => {
+	return <ATText typography="heading">Sign Up</ATText>;
+};
+
 const SignInBack = () => {
 	return (
 		<TouchableOpacity onPress={() => router.navigate("/userChoice")}>
 			<Ionicons name="close-outline" size={35}></Ionicons>
+		</TouchableOpacity>
+	);
+};
+
+const SignUpBack = () => {
+	return (
+		<TouchableOpacity onPress={() => router.back()}>
+			<Ionicons name="arrow-back-outline" size={35}></Ionicons>
 		</TouchableOpacity>
 	);
 };
@@ -30,11 +42,9 @@ export default function HomeOwnerRootLayout() {
 			<Stack.Screen
 				name="signUp"
 				options={{
-					headerShown: false,
-					headerTitle: "Sign Up",
-					headerBackTitleVisible: false,
+					headerTitle: () => <SignUpHeader />,
 					headerTransparent: true,
-					headerLeft: () => <Button title="Back" onPress={() => router.replace("/")} />,
+					headerLeft: () => <SignUpBack />,
 				}}
 			/>
 			<Stack.Screen name="(auth)" options={{ headerShown: false, gestureEnabled: false }} />

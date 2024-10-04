@@ -11,6 +11,7 @@ import {
 	KeyboardAvoidingView,
 	Platform,
 	ScrollView,
+	TouchableOpacity,
 } from "react-native";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
@@ -18,6 +19,10 @@ import { FirebaseError } from "firebase/app";
 import { router } from "expo-router";
 import { signUp } from "@/services/auth";
 import { ICompanyOwner, UserType } from "@/typings/user.inter";
+import { MLTextBox } from "@/components/molecules/TextBox";
+import { Colors } from "react-native-ui-lib";
+import { MLButton } from "@/components/molecules/Button";
+import { ATText } from "@/components/atoms/Text";
 
 const validationSchema = Yup.object().shape({
 	companyName: Yup.string()
@@ -36,6 +41,8 @@ export default function SignUp() {
 		companyName: "",
 		email: "",
 		password: "",
+		zipcode: "",
+		telephone: "",
 	};
 
 	const handleSignUp = async (values: ICompanyOwner) => {
@@ -51,21 +58,10 @@ export default function SignUp() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
-				style={styles.container}
 				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
-				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
+				keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0} // Adjust if needed
 			>
 				<ScrollView>
-					<Text style={{ fontSize: 20, marginBottom: 20 }}>COMPANY OWNER</Text>
-					<Image
-						source={require("../../assets/images/Landscape_Connect_Logo.png")}
-						style={{
-							width: 200,
-							height: 200,
-							marginLeft: 80,
-							marginBottom: 20,
-						}}
-					/>
 					<Formik
 						initialValues={initialValues}
 						validationSchema={validationSchema}
@@ -73,57 +69,69 @@ export default function SignUp() {
 					>
 						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 							<View>
-								<TextInput
-									style={styles.input}
-									placeholder="Company Name"
-									onChangeText={handleChange("companyName")}
-									onBlur={handleBlur("companyName")}
+								<MLTextBox
+									onChangeText={handleChange("Company name")}
+									heading="Conpany name"
+									placeholder="Company name"
 									value={values.companyName}
+									onBlur={handleBlur("companyname")}
+									errorText={
+										touched.companyName && errors.companyName ? errors.companyName : undefined
+									}
 								/>
-								{touched.companyName && errors.companyName && (
-									<Text style={styles.errorText}>{errors.companyName}</Text>
-								)}
 
-								<TextInput
-									style={styles.input}
-									placeholder="Email"
+								<MLTextBox
 									onChangeText={handleChange("email")}
-									onBlur={handleBlur("email")}
+									heading="Email"
+									placeholder="Email"
 									value={values.email}
 									keyboardType="email-address"
+									onBlur={handleBlur("email")}
+									errorText={touched.email && errors.email ? errors.email : undefined}
 								/>
-								{touched.email && errors.email && (
-									<Text style={styles.errorText}>{errors.email}</Text>
-								)}
 
-								<TextInput
-									style={styles.input}
+								<MLTextBox
+									heading="Postal code"
+									placeholder="Postal code"
+									value={values.zipcode}
+									onChangeText={handleChange("zipcode")}
+									onBlur={handleBlur("zipcode")}
+									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
+								/>
+
+								<MLTextBox
+									onChangeText={handleChange("telephone")}
+									heading="Phone number"
+									placeholder="Phone number"
+									value={values.telephone}
+									keyboardType="numeric"
+									onBlur={handleBlur("telephone")}
+									errorText={touched.telephone && errors.telephone ? errors.telephone : undefined}
+								/>
+
+								<MLTextBox
+									heading="Password"
 									placeholder="Password"
-									onChangeText={handleChange("password")}
-									onBlur={handleBlur("password")}
 									value={values.password}
 									secureTextEntry
+									onChangeText={handleChange("password")}
+									onBlur={handleBlur("password")}
+									errorText={touched.password && errors.password ? errors.password : undefined}
 								/>
-								{touched.password && errors.password && (
-									<Text style={styles.errorText}>{errors.password}</Text>
-								)}
 
 								{loading ? (
 									<ActivityIndicator size="small" color="#0000ff" />
 								) : (
-									<>
-										<Button onPress={handleSubmit as () => void} title="Sign Up" />
-										<Button
-											onPress={() => {
-												router.replace("/companyowners/signIn");
-											}}
-											title="Sign In"
-										/>
-									</>
+									<MLButton label="Sign up" variant="primary" onPress={handleSubmit} />
 								)}
 							</View>
 						)}
 					</Formik>
+					<TouchableOpacity>
+						<ATText style={styles.optionText} typography="secondaryText" color="secondaryTextColor">
+							By signing up, you agree to the Terms of Use and Privacy Policy.
+						</ATText>
+					</TouchableOpacity>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
@@ -133,18 +141,14 @@ export default function SignUp() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: "center",
+		backgroundColor: Colors.backgroundColor,
+		paddingBottom: 60,
+	},
+	optionText: {
+		textAlign: "center",
+		alignSelf: "center",
 		paddingHorizontal: 16,
-	},
-	input: {
-		borderWidth: 1,
-		borderColor: "#ccc",
-		padding: 8,
-		marginBottom: 10,
-		borderRadius: 4,
-	},
-	errorText: {
-		color: "red",
-		marginBottom: 10,
+		paddingTop: 4,
+		paddingBottom: 12,
 	},
 });

@@ -1,5 +1,31 @@
+import { ATText } from "@/components/atoms/Text";
+import { Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
-import { Button } from "react-native";
+import { Button, TouchableOpacity } from "react-native";
+
+const SignInHeader = () => {
+	return <ATText typography="heading">Sign In</ATText>;
+};
+
+const SignUpHeader = () => {
+	return <ATText typography="heading">Sign Up</ATText>;
+};
+
+const SignInBack = () => {
+	return (
+		<TouchableOpacity onPress={() => router.navigate("/userChoice")}>
+			<Ionicons name="close-outline" size={35}></Ionicons>
+		</TouchableOpacity>
+	);
+};
+
+const SignUpBack = () => {
+	return (
+		<TouchableOpacity onPress={() => router.back()}>
+			<Ionicons name="arrow-back-outline" size={35}></Ionicons>
+		</TouchableOpacity>
+	);
+};
 
 export default function CompanyOwnerRootLayout() {
 	return (
@@ -7,21 +33,17 @@ export default function CompanyOwnerRootLayout() {
 			<Stack.Screen
 				name="signIn"
 				options={{
-					headerTitle: "Sign In",
-					headerShown: true,
-					headerBackTitleVisible: true,
+					headerTitle: () => <SignInHeader />,
 					headerTransparent: true,
-					headerLeft: () => <Button title="Back" onPress={() => router.replace("/")} />,
+					headerRight: () => <SignInBack />,
 				}}
 			/>
 			<Stack.Screen
 				name="signUp"
 				options={{
-					headerShown: true,
-					headerTitle: "Sign Up",
-					headerBackTitleVisible: false,
+					headerTitle: () => <SignUpHeader />,
 					headerTransparent: true,
-					headerLeft: () => <Button title="Back" onPress={() => router.replace("/")} />,
+					headerLeft: () => <SignUpBack />,
 				}}
 			/>
 			<Stack.Screen name="(auth)" options={{ headerShown: false, gestureEnabled: false }} />

@@ -1,39 +1,71 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Stack, Tabs } from "expo-router";
 import { Text, View } from "react-native";
+import { Colors } from "react-native-ui-lib";
 
 export default function MainLayout() {
 	return (
-		<Tabs screenOptions={{ headerShown: true }}>
+		<Tabs
+			screenOptions={{
+				headerShown: true,
+				tabBarStyle: {
+					backgroundColor: Colors.tabBarColor,
+					borderTopWidth: 2,
+					borderTopColor: Colors.tabBorderTopColor,
+				},
+			}}
+		>
 			<Tabs.Screen
 				name="home"
 				options={{
-					title: "Home",
-					tabBarIcon: ({ color, size }) => (
-						// You can use an icon here, for now, let's use a simple text.
-						<Text style={{ color }}>🏠</Text>
-					),
 					headerShown: false,
+					tabBarShowLabel: false,
+					tabBarIcon: ({ focused }) => (
+						<Ionicons
+							name={focused ? "home" : "home-outline"}
+							size={25}
+							color={Colors.tabIconColor}
+						/>
+					),
 				}}
 			/>
 			<Tabs.Screen
 				name="createPost"
 				options={{
-					title: "Create Post",
-					tabBarIcon: ({ color, size }) => <Text style={{ color }}>✏️</Text>,
+					tabBarShowLabel: false,
+					tabBarIcon: ({ focused }) => (
+						<Ionicons
+							name={focused ? "add-circle" : "add-circle-outline"}
+							size={25}
+							color={Colors.tabIconColor}
+						/>
+					),
 				}}
 			/>
 			<Tabs.Screen
 				name="conversations"
 				options={{
-					title: "Messages",
-					tabBarIcon: ({ color, size }) => <Text style={{ color }}>✉️</Text>,
+					tabBarShowLabel: false,
+					tabBarIcon: ({ focused }) => (
+						<Ionicons
+							name={focused ? "chatbox" : "chatbox-outline"}
+							size={25}
+							color={Colors.tabIconColor}
+						/>
+					),
 				}}
 			/>
 			<Tabs.Screen
 				name="settings"
 				options={{
-					title: "Settings",
-					tabBarIcon: ({ color, size }) => <Text style={{ color }}>⚙️</Text>,
+					tabBarShowLabel: false,
+					tabBarIcon: ({ focused }) => (
+						<Ionicons
+							name={focused ? "person" : "person-outline"}
+							size={25}
+							color={Colors.tabIconColor}
+						/>
+					),
 				}}
 			/>
 		</Tabs>

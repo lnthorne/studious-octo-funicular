@@ -12,6 +12,9 @@ Colors.loadColors({
 	error: "red",
 	primaryDotColor: "#1F94E0",
 	secondaryDotColor: "#D1DEE5",
+	tabBarColor: "#F7FAFA",
+	tabBorderTopColor: "#E8EDF2",
+	tabIconColor: "#4F7A94",
 });
 
 Typography.loadTypographies({

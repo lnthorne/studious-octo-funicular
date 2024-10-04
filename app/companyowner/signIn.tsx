@@ -1,15 +1,10 @@
 import { useState } from "react";
 import {
 	View,
-	Text,
 	StyleSheet,
-	Button,
-	TextInput,
 	ActivityIndicator,
-	Image,
-	KeyboardAvoidingView,
+	TouchableOpacity,
 	SafeAreaView,
-	Platform,
 	ScrollView,
 } from "react-native";
 import { FirebaseError } from "firebase/app";
@@ -18,6 +13,10 @@ import * as Yup from "yup";
 import { router } from "expo-router";
 import { ILoginData } from "@/typings/auth/login.inter";
 import { signIn } from "@/services/auth";
+import { MLButton } from "@/components/molecules/Button";
+import { MLTextBox } from "@/components/molecules/TextBox";
+import { ATText } from "@/components/atoms/Text";
+import { Colors } from "react-native-ui-lib";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -45,73 +44,70 @@ export default function SignIn() {
 			setLoading(false);
 		}
 	};
+
 	return (
 		<SafeAreaView style={styles.container}>
-			<KeyboardAvoidingView
-				style={styles.container}
-				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
-				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
-			>
-				<ScrollView>
-					<Text style={{ fontSize: 20, marginBottom: 20 }}>COMPANY OWNER</Text>
-					<Image
-						source={require("../../assets/images/Landscape_Connect_Logo.png")}
-						style={{
-							width: 200,
-							height: 200,
-							marginLeft: 80,
-							marginBottom: 20,
-						}}
-					/>
-					<Formik
-						initialValues={initialValues}
-						validationSchema={validationSchema}
-						onSubmit={handleSignIn}
-					>
-						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-							<View>
-								<TextInput
-									style={styles.input}
-									placeholder="Email"
-									onChangeText={handleChange("email")}
-									onBlur={handleBlur("email")}
-									value={values.email}
-									keyboardType="email-address"
-								/>
-								{touched.email && errors.email && (
-									<Text style={styles.errorText}>{errors.email}</Text>
-								)}
+			<ScrollView>
+				<Formik
+					initialValues={initialValues}
+					validationSchema={validationSchema}
+					onSubmit={handleSignIn}
+				>
+					{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+						<View>
+							<MLTextBox
+								onChangeText={handleChange("email")}
+								heading="Email"
+								placeholder="Email"
+								value={values.email}
+								keyboardType="email-address"
+								onBlur={handleBlur("email")}
+								errorText={touched.email && errors.email ? errors.email : undefined}
+							/>
+							<MLTextBox
+								heading="Password"
+								placeholder="Password"
+								value={values.password}
+								secureTextEntry
+								onChangeText={handleChange("password")}
+								onBlur={handleBlur("password")}
+								errorText={touched.password && errors.password ? errors.password : undefined}
+							/>
+							<TouchableOpacity>
+								<ATText
+									style={styles.optionText}
+									typography="secondaryText"
+									color="secondaryTextColor"
+								>
+									Forgot password?
+								</ATText>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={() => router.navigate("/companyowner/signUp")}>
+								<ATText
+									style={styles.optionText}
+									typography="secondaryText"
+									color="secondaryTextColor"
+								>
+									Don't have an account? Sign Up
+								</ATText>
+							</TouchableOpacity>
 
-								<TextInput
-									style={styles.input}
-									placeholder="Password"
-									onChangeText={handleChange("password")}
-									onBlur={handleBlur("password")}
-									value={values.password}
-									secureTextEntry
-								/>
-								{touched.password && errors.password && (
-									<Text style={styles.errorText}>{errors.password}</Text>
-								)}
-
-								{loading ? (
-									<ActivityIndicator size="small" color="#0000ff" />
-								) : (
-									<>
-										<Button onPress={handleSubmit as () => void} title="Sign In" />
-										<Button
-											onPress={() => {
-												router.replace("/companyowners/signUp");
-											}}
-											title="Sign Up"
-										/>
-									</>
-								)}
-							</View>
-						)}
-					</Formik>
-				</ScrollView>
-			</KeyboardAvoidingView>
+							{loading ? (
+								<ActivityIndicator size="small" color="#0000ff" />
+							) : (
+								<>
+									<MLButton label="Log in" variant="primary" onPress={handleSubmit} />
+									<MLButton
+										label="Continue with Google"
+										variant="secondary"
+										onPress={handleSubmit}
+									/>
+								</>
+							)}
+						</View>
+					)}
+				</Formik>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }
@@ -119,18 +115,13 @@ export default function SignIn() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: "center",
+		backgroundColor: Colors.backgroundColor,
+		paddingBottom: 60,
+	},
+	optionText: {
+		alignSelf: "center",
 		paddingHorizontal: 16,
-	},
-	input: {
-		borderWidth: 1,
-		borderColor: "#ccc",
-		padding: 8,
-		marginBottom: 10,
-		borderRadius: 4,
-	},
-	errorText: {
-		color: "red",
-		marginBottom: 10,
+		paddingTop: 4,
+		paddingBottom: 12,
 	},
 });

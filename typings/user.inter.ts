@@ -18,6 +18,8 @@ export interface ICompanyOwner {
 	companyName: string;
 	email: string;
 	password: string;
+	zipcode: string;
+	telephone: string;
 }
 
 export interface IHomeOwnerEntity extends IHomeOwner {
