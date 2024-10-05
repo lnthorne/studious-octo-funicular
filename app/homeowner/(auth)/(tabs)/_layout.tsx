@@ -21,7 +21,7 @@ export default function MainLayout() {
 			}}
 		>
 			<Tabs.Screen
-				name="test"
+				name="home"
 				options={{
 					headerTransparent: true,
 					headerTitleAlign: "left",
