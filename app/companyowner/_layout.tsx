@@ -13,7 +13,7 @@ const SignUpHeader = () => {
 
 const SignInBack = () => {
 	return (
-		<TouchableOpacity onPress={() => router.navigate("/userChoice")}>
+		<TouchableOpacity onPress={() => router.back()}>
 			<Ionicons name="close-outline" size={35}></Ionicons>
 		</TouchableOpacity>
 	);

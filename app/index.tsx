@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { ATProgressDots } from "@/components/atoms/ProgressDots";
 import { ATText } from "@/components/atoms/Text";
 import { MLButton } from "@/components/molecules/Button";
+import ORCoursel from "@/components/organisms/Coursel";
 
 export default function Onboarding() {
 	const router = useRouter();
@@ -15,19 +16,8 @@ export default function Onboarding() {
 				<View style={styles.subHeading}>
 					<ATText typography="heading">Welcome</ATText>
 				</View>
-				<Image source={require("../assets/Logo.png")} style={styles.image} />
-				<ATText typography="heading" style={styles.heading}>
-					Get your price. Schedule and pay.
-				</ATText>
-				<ATText typography="body" style={styles.body}>
-					Get your yard ready for the season with professional help.
-				</ATText>
-				<ATProgressDots totalDots={3} selectedIndex={0} />
-				<MLButton
-					variant="primary"
-					label="Get Started"
-					onPress={() => router.navigate("/userChoice")}
-				/>
+				<Image source={require("../assets/images/Logo.png")} style={styles.image} />
+				<ORCoursel />
 			</View>
 		</SafeAreaView>
 	);
@@ -46,8 +36,6 @@ const styles = StyleSheet.create({
 		maxHeight: 218,
 		width: "100%",
 		marginVertical: 20,
-		borderBlockColor: "red",
-		borderWidth: 2,
 	},
 	subHeading: {
 		alignItems: "center",

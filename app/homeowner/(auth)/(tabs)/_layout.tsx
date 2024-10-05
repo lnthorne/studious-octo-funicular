@@ -1,8 +1,13 @@
+import { ATText } from "@/components/atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, Tabs } from "expo-router";
 import { Text, View } from "react-native";
 import { Colors } from "react-native-ui-lib";
-
+const TabHeader = () => (
+	<ATText typography="heading" style={{ fontSize: 28 }}>
+		Dashboard
+	</ATText>
+);
 export default function MainLayout() {
 	return (
 		<Tabs
@@ -16,9 +21,11 @@ export default function MainLayout() {
 			}}
 		>
 			<Tabs.Screen
-				name="home"
+				name="test"
 				options={{
-					headerShown: false,
+					headerTransparent: true,
+					headerTitleAlign: "left",
+					headerTitle: () => <TabHeader />,
 					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons

@@ -28,6 +28,7 @@ Typography.loadTypographies({
 		textOveflow: "ellipsis",
 	},
 	textBoxText: { fontSize: 16, fontWeight: "400", lineHeight: 24, fontStyle: "normal" },
+	chipText: { fonSize: 15, fontWeight: "500", lineHeight: 21, fontStyle: "normal" },
 	secondaryText: { fontSize: 14, fontWeight: "400", lineHeight: 21, fontStyle: "normal" },
 	error: { fontSize: 14, fontWeight: "400", lineHeight: 20 },
 	body: { fontSize: 16, fontWeight: "500", lineHeight: 24, fontStyle: "normal" },

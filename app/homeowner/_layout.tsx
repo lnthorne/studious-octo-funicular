@@ -1,7 +1,6 @@
 import { ATText } from "@/components/atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
-import { Button } from "react-native";
 import { TouchableOpacity } from "react-native-ui-lib";
 
 const SignInHeader = () => {
@@ -14,7 +13,7 @@ const SignUpHeader = () => {
 
 const SignInBack = () => {
 	return (
-		<TouchableOpacity onPress={() => router.navigate("/userChoice")}>
+		<TouchableOpacity onPress={() => router.back()}>
 			<Ionicons name="close-outline" size={35}></Ionicons>
 		</TouchableOpacity>
 	);

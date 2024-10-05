@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { UserProvider } from "@/contexts/userContext";
 import UserContextWrapper from "./userContextWrapper";
 import { Colors } from "react-native-ui-lib";
+import { StatusBar } from "expo-status-bar";
 export default function RootLayout() {
 	const [initializing, setInitializing] = useState<boolean>(true);
 
@@ -34,11 +35,11 @@ export default function RootLayout() {
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
+			<StatusBar style="dark" />
 			<UserProvider>
 				<UserContextWrapper>
 					<Stack screenOptions={{ headerShown: false }}>
 						<Stack.Screen name="index" />
-						<Stack.Screen name="userChoice" />
 					</Stack>
 				</UserContextWrapper>
 			</UserProvider>

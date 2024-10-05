@@ -34,7 +34,7 @@ export default function CarouselScreen() {
 				<View style={styles.subHeading}>
 					<ATText typography="heading">Welcome</ATText>
 				</View>
-				<Image source={require("../assets/Logo.png")} style={styles.image} />
+				<Image source={require("../assets/images/Logo.png")} style={styles.image} />
 			</View>
 
 			<ScrollView

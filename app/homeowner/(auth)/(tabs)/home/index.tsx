@@ -1,4 +1,5 @@
 // app/home/index.tsx
+import ATChip from "@/components/atoms/Chips";
 import BidDetailsModal from "@/components/BidDetailsModal";
 import { useUser } from "@/contexts/userContext";
 import { fetchJobsWithBidsByStatus } from "@/services/post";
