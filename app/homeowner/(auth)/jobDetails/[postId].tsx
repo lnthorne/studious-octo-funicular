@@ -17,6 +17,7 @@ import {
 } from "@/services/post";
 import { IPostEntity } from "@/typings/jobs.inter";
 import GeneralModal from "@/components/generalModal";
+import ORJobDetails from "@/components/organisms/JobDetails";
 
 export default function JobDetails() {
 	const { postId } = useLocalSearchParams<{ postId: string }>();
@@ -98,43 +99,7 @@ export default function JobDetails() {
 	return (
 		<SafeAreaView>
 			<ScrollView contentContainerStyle={styles.container}>
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Job Details</Text>
-					<Text style={styles.label}>Title:</Text>
-					<Text style={styles.value}>{jobData?.title}</Text>
-					<Text style={styles.label}>Description:</Text>
-					<Text style={styles.value}>{jobData?.description}</Text>
-					<Text style={styles.label}>Status:</Text>
-					<Text style={styles.value}>{jobData?.jobStatus}</Text>
-					{jobData?.imageUrls?.map((url, index) => {
-						return <Image source={{ uri: url }} style={styles.image} key={index} />;
-					})}
-				</View>
-				{jobData?.bids?.map((bid, index) => (
-					<View style={styles.section} key={index}>
-						<Text style={styles.sectionTitle}>{bid.companyName}'s bid</Text>
-						<Text style={styles.label}>Amount:</Text>
-						<Text style={styles.value}>${bid.bidAmount}</Text>
-						<Text style={styles.label}>Bid Description:</Text>
-						<Text style={styles.value}>{bid.description}</Text>
-						<Text style={styles.label}>Status:</Text>
-						<Text style={styles.value}>{bid.status}</Text>
-					</View>
-				))}
-				{isCompanyCompletionPending && (
-					<Text style={styles.errorText}>Company has not marked the job as completed yet.</Text>
-				)}
-				<Button
-					title={"Job Completed"}
-					onPress={() => setModalVisible(true)}
-					disabled={isCompanyCompletionPending}
-				/>
-				<GeneralModal
-					visible={modalVisible}
-					description="Are you sure you want to mark this job as completed? You cannot undo this action."
-					onDone={handleJobCompleted}
-					onCancel={handleModalClose}
-				/>
+				<ORJobDetails jobDetails={jobData} />
 			</ScrollView>
 		</SafeAreaView>
 	);
@@ -158,40 +123,6 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	container: {
-		padding: 20,
-		backgroundColor: "#F5F5F5",
-	},
-	section: {
-		backgroundColor: "#FFFFFF",
-		borderRadius: 8,
-		padding: 15,
-		marginBottom: 20,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.1,
-		shadowRadius: 8,
-		elevation: 2,
-	},
-	sectionTitle: {
-		fontSize: 20,
-		fontWeight: "bold",
-		marginBottom: 10,
-		color: "#333333",
-	},
-	label: {
-		fontSize: 16,
-		color: "#555555",
-		marginTop: 10,
-	},
-	value: {
-		fontSize: 16,
-		color: "#000000",
-		marginBottom: 5,
-	},
-	image: {
-		width: "100%",
-		height: 200,
-		borderRadius: 8,
-		marginTop: 10,
+		paddingHorizontal: 20,
 	},
 });

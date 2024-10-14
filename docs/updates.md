@@ -109,3 +109,6 @@
 
 - Added in the flat list for viewing jobs
 - Remove all the copied code, maybe we put everything into one screen then do a 'filter'
+- WE HAVE TO CACHE THE DATA INCLUDING IMAGES
+- Job Data fields to add: Budget, Start date
+- Need to use API to convert Postal code to relative location
