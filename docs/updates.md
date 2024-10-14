@@ -104,3 +104,8 @@
 
 - Created figma designs with the help of galileo AI. Now importing all the fonts, styles and colours into our design system.
 - Cannot get the colors to come through on components (CustomeButton and CustomText). I remember the only time I had it working was when I defined it in the app/ . I figured it would work here, because it is getting imported
+
+### Oct 13, 2024
+
+- Added in the flat list for viewing jobs
+- Remove all the copied code, maybe we put everything into one screen then do a 'filter'

@@ -1,28 +1,70 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	FlatList,
+	RefreshControl,
+	StyleSheet,
+	Text,
+	View,
+	Image,
+} from "react-native";
 import React, { useCallback, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { fetchJobsWithBidsByStatus } from "@/services/post";
-import { router, useFocusEffect } from "expo-router";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { useFocusEffect } from "expo-router";
+import { Timestamp } from "@react-native-firebase/firestore";
+import ATChip from "@/components/atoms/Chips";
+import { ATText } from "@/components/atoms/Text";
 
 export default function inProgressJobs() {
 	const { user } = useUser<IHomeOwnerEntity>();
 	const [jobsInProgress, setJobsInProgress] = useState<IPostEntity[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [isRefresh, setIsRefresh] = useState(false);
 
-	const fetchJobsInProgress = async () => {
+	const fetchJobsInProgress = async (isRefreshing: boolean = false) => {
 		if (!user) return;
-		setLoading(true);
+		if (!isRefreshing) setLoading(true);
 		try {
 			const jobs = await fetchJobsWithBidsByStatus(user.uid, [JobStatus.inprogress]);
 			setJobsInProgress(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs in progress:", error);
 		} finally {
-			setLoading(false);
+			if (isRefreshing) {
+				setIsRefresh(false);
+			} else {
+				setLoading(false);
+			}
 		}
+	};
+
+	const getDaysAgo = (createdAt: Timestamp) => {
+		const createdDate = createdAt.toDate();
+		const currentDate = new Date();
+
+		const diffTime = currentDate.getTime() - createdDate.getTime();
+
+		// Convert the time difference to days
+		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 1000 ms * 60 s * 60 m * 24 h
+
+		if (diffDays === 0) return "Today";
+		if (diffDays === 1) return "1 day ago";
+		return `${diffDays} days ago`;
+	};
+
+	const shortenTitle = (title: string): string => {
+		if (title.length > 19) {
+			return title.substring(0, 16) + "...";
+		}
+		return title;
+	};
+
+	const getpostImage = (uri: string | undefined) => {
+		if (uri) return { uri };
+
+		return require("../../../../../assets/images/welcome.png");
 	};
 
 	useFocusEffect(
@@ -30,6 +72,11 @@ export default function inProgressJobs() {
 			fetchJobsInProgress();
 		}, [user])
 	);
+
+	const onRefresh = () => {
+		setIsRefresh(true);
+		fetchJobsInProgress(true);
+	};
 
 	if (loading) {
 		return <ActivityIndicator size={"large"} />;
@@ -41,24 +88,18 @@ export default function inProgressJobs() {
 				keyExtractor={(item) => item.pid}
 				renderItem={({ item }) => (
 					<View style={styles.postContainer}>
-						<TouchableOpacity
-							onPress={() => router.push(`/homeowner/(auth)/jobDetails/${item.pid}`)}
-						>
-							<Text style={styles.title}>{item.title}</Text>
-							<Text style={styles.description}>{item.description}</Text>
-							<Text style={styles.bidsTitle}>Bids:</Text>
-						</TouchableOpacity>
-						{item.bids?.map((bid) => (
-							<View style={styles.bidContainer} key={bid.bid}>
-								<Text>Company Name: {bid.companyName}</Text>
-								<Text>Bid Amount: ${bid.bidAmount}</Text>
-								<Text>Description: {bid.description}</Text>
-								<Text>Status: {bid.status}</Text>
-							</View>
-						))}
+						<Image source={getpostImage(item.imageUrls?.[0])} style={styles.image} />
+						<View style={styles.column}>
+							<ATText typography="body">{shortenTitle(item.title)}</ATText>
+							<ATText typography="secondary" color="secondaryTextColor">
+								{getDaysAgo(item.createdAt as Timestamp)}
+							</ATText>
+						</View>
+						<ATChip label="View Bids" isToggled={false} onPress={() => ({})} />
 					</View>
 				)}
-				ListEmptyComponent={<Text>You have no jobs in progress.</Text>}
+				ListEmptyComponent={<Text>You have no open jobs.</Text>}
+				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
 			/>
 		</View>
 	);
@@ -70,28 +111,20 @@ const styles = StyleSheet.create({
 		padding: 16,
 	},
 	postContainer: {
-		backgroundColor: "#f9f9f9",
-		padding: 16,
-		borderRadius: 8,
-		marginBottom: 16,
+		flexDirection: "row",
+		alignItems: "center",
+		paddingVertical: 8,
+		paddingHorizontal: 16,
+		minHeight: 76,
 	},
-	title: {
-		fontSize: 18,
-		fontWeight: "bold",
+	column: {
+		flex: 1,
+		marginRight: 4,
+		paddingHorizontal: 10,
 	},
-	description: {
-		fontSize: 14,
-		marginVertical: 8,
-	},
-	bidsTitle: {
-		marginTop: 16,
-		fontSize: 16,
-		fontWeight: "bold",
-	},
-	bidContainer: {
-		marginTop: 8,
-		padding: 8,
-		backgroundColor: "#e9e9e9",
+	image: {
+		height: 56,
+		width: 56,
 		borderRadius: 8,
 	},
 });
