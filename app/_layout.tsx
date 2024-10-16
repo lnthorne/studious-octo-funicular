@@ -7,6 +7,7 @@ import { UserProvider } from "@/contexts/userContext";
 import UserContextWrapper from "./userContextWrapper";
 import { Colors } from "react-native-ui-lib";
 import { StatusBar } from "expo-status-bar";
+import { JobProvider } from "@/contexts/jobContext";
 export default function RootLayout() {
 	const [initializing, setInitializing] = useState<boolean>(true);
 
@@ -38,9 +39,11 @@ export default function RootLayout() {
 			<StatusBar style="dark" />
 			<UserProvider>
 				<UserContextWrapper>
-					<Stack screenOptions={{ headerShown: false }}>
-						<Stack.Screen name="index" />
-					</Stack>
+					<JobProvider>
+						<Stack screenOptions={{ headerShown: false }}>
+							<Stack.Screen name="index" />
+						</Stack>
+					</JobProvider>
 				</UserContextWrapper>
 			</UserProvider>
 		</GestureHandlerRootView>

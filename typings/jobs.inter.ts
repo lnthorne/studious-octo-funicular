@@ -33,6 +33,7 @@ export interface IPost {
 	uid: string; //uid of the homeowner
 	title: string;
 	description: string;
+	zipcode: string;
 	imageUrls?: string[];
 	bidIds?: string[];
 }

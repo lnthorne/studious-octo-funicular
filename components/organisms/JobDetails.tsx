@@ -13,14 +13,6 @@ interface JobDetailProps {
 
 export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 	const [geocode, setGeocode] = useState<GeocodeInformation>();
-	const formatDate = (createdAt: Timestamp): string => {
-		const formattedDate = createdAt.toDate();
-		return formattedDate.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-	};
 
 	if (!jobDetails) {
 		return (
@@ -30,14 +22,23 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 		);
 	}
 
+	const formatDate = (createdAt: Timestamp): string => {
+		const formattedDate = createdAt.toDate();
+		return formattedDate.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+	};
+
 	const getGeocodeInformation = async () => {
-		const geocodeData = await getCityFromPostalCode("M4C1B5", "CA");
+		const geocodeData = await getCityFromPostalCode(jobDetails.zipcode, "CA");
 		setGeocode(geocodeData);
 	};
 
 	useEffect(() => {
 		getGeocodeInformation();
-	});
+	}, []);
 
 	const numberOfImages = jobDetails.imageUrls?.length || 0;
 	return (

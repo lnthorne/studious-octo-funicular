@@ -4,12 +4,13 @@ import { useUser } from "@/contexts/userContext";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { fetchJobsWithBidsByStatus } from "@/services/post";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
+import { useJobContext } from "@/contexts/jobContext";
 
 export default function closedJobs() {
 	const { user } = useUser<IHomeOwnerEntity>();
-	const [closedJobs, setClosedJobs] = useState<IPostEntity[]>([]);
+	const { jobs, setJobs, setSelectedJob } = useJobContext();
 	const [loading, setLoading] = useState(true);
 	const [isRefresh, setIsRefresh] = useState(false);
 
@@ -18,7 +19,7 @@ export default function closedJobs() {
 		if (!isRefreshing) setLoading(true);
 		try {
 			const jobs = await fetchJobsWithBidsByStatus(user.uid, [JobStatus.completed]);
-			setClosedJobs(jobs);
+			setJobs(jobs);
 		} catch (error) {
 			console.error("Failed to fetch closed jobs:", error);
 		} finally {
@@ -41,15 +42,21 @@ export default function closedJobs() {
 		fetchClosedJobs(true);
 	};
 
+	const handleJobSelection = (selectedJob: IPostEntity) => {
+		setSelectedJob(selectedJob);
+		router.navigate("/homeowner/jobDetailsPage");
+	};
+
 	if (loading) {
 		return <ActivityIndicator size={"large"} />;
 	}
 
 	return (
 		<ORHomeownerJobListing
-			data={closedJobs}
+			data={jobs}
 			isRefresh={isRefresh}
 			onRefresh={onRefresh}
+			onPress={handleJobSelection}
 			chipLabel="View"
 		/>
 	);

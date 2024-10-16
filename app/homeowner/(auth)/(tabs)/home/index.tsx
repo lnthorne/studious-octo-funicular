@@ -3,14 +3,15 @@ import { useUser } from "@/contexts/userContext";
 import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { ActivityIndicator } from "react-native";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
+import { useJobContext } from "@/contexts/jobContext";
 
 export default function HomeScreen() {
 	const { user } = useUser<IHomeOwnerEntity>();
-	const [jobsWithBids, setJobsWithBids] = useState<IPostEntity[]>([]);
+	const { jobs, setJobs, setSelectedJob } = useJobContext();
 	const [loading, setLoading] = useState(true);
 	const [isRefresh, setIsRefresh] = useState(false);
 
@@ -19,8 +20,7 @@ export default function HomeScreen() {
 		if (!isRefreshing) setLoading(true);
 		try {
 			const jobs = await fetchJobsWithBidsByStatus(user.uid, [JobStatus.open]);
-			setJobsWithBids(jobs);
-			console.log(jobs[0]);
+			setJobs(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs and bids:", error);
 		} finally {
@@ -43,14 +43,20 @@ export default function HomeScreen() {
 		fetchJobsAndBids(true);
 	};
 
+	const handleJobSelection = (selectedJob: IPostEntity) => {
+		setSelectedJob(selectedJob);
+		router.navigate("/homeowner/jobDetailsPage");
+	};
+
 	if (loading) {
 		return <ActivityIndicator size={"large"} />;
 	}
 	return (
 		<ORHomeownerJobListing
-			data={jobsWithBids}
+			data={jobs}
 			isRefresh={isRefresh}
 			onRefresh={onRefresh}
+			onPress={handleJobSelection}
 			chipLabel="View Bids"
 		/>
 	);

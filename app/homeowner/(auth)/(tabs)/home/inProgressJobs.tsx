@@ -4,12 +4,13 @@ import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { fetchJobsWithBidsByStatus } from "@/services/post";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
+import { useJobContext } from "@/contexts/jobContext";
 
 export default function inProgressJobs() {
 	const { user } = useUser<IHomeOwnerEntity>();
-	const [jobsInProgress, setJobsInProgress] = useState<IPostEntity[]>([]);
+	const { jobs, setJobs, setSelectedJob } = useJobContext();
 	const [loading, setLoading] = useState(true);
 	const [isRefresh, setIsRefresh] = useState(false);
 
@@ -18,7 +19,7 @@ export default function inProgressJobs() {
 		if (!isRefreshing) setLoading(true);
 		try {
 			const jobs = await fetchJobsWithBidsByStatus(user.uid, [JobStatus.inprogress]);
-			setJobsInProgress(jobs);
+			setJobs(jobs);
 		} catch (error) {
 			console.error("Failed to fetch jobs in progress:", error);
 		} finally {
@@ -41,14 +42,20 @@ export default function inProgressJobs() {
 		fetchJobsInProgress(true);
 	};
 
+	const handleJobSelection = (selectedJob: IPostEntity) => {
+		setSelectedJob(selectedJob);
+		router.navigate("/homeowner/jobDetailsPage");
+	};
+
 	if (loading) {
 		return <ActivityIndicator size={"large"} />;
 	}
 	return (
 		<ORHomeownerJobListing
-			data={jobsInProgress}
+			data={jobs}
 			isRefresh={isRefresh}
 			onRefresh={onRefresh}
+			onPress={handleJobSelection}
 			chipLabel="View"
 		/>
 	);

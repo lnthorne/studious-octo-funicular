@@ -1,7 +1,14 @@
-import { FlatList, RefreshControl, StyleSheet, Text, View, Image } from "react-native";
+import {
+	FlatList,
+	RefreshControl,
+	StyleSheet,
+	Text,
+	View,
+	Image,
+	ListRenderItem,
+} from "react-native";
 import React from "react";
 import { Timestamp } from "@react-native-firebase/firestore";
-import { router } from "expo-router";
 import ATChip from "../atoms/Chips";
 import { ATText } from "../atoms/Text";
 import { IPostEntity } from "@/typings/jobs.inter";
@@ -10,6 +17,7 @@ interface ListingProps {
 	data: IPostEntity[];
 	isRefresh: boolean;
 	onRefresh: () => void;
+	onPress: (job: IPostEntity) => void;
 	chipLabel: string;
 }
 
@@ -17,6 +25,7 @@ export default function ORHomeownerJobListing({
 	data,
 	isRefresh,
 	onRefresh,
+	onPress,
 	chipLabel,
 }: ListingProps) {
 	const getpostImage = (uri: string | undefined) => {
@@ -45,27 +54,28 @@ export default function ORHomeownerJobListing({
 		}
 		return title;
 	};
+
+	const renderItem: ListRenderItem<IPostEntity> = ({ item }) => {
+		return (
+			<View style={styles.postContainer}>
+				<Image source={getpostImage(item.imageUrls?.[0])} style={styles.image} />
+				<View style={styles.column}>
+					<ATText typography="body">{shortenTitle(item.title)}</ATText>
+					<ATText typography="secondary" color="secondaryTextColor">
+						{getDaysAgo(item.createdAt as Timestamp)}
+					</ATText>
+				</View>
+				<ATChip label={chipLabel} isToggled={false} onPress={() => onPress(item)} />
+			</View>
+		);
+	};
+
 	return (
 		<View style={styles.container}>
 			<FlatList
 				data={data}
 				keyExtractor={(item) => item.pid}
-				renderItem={({ item }) => (
-					<View style={styles.postContainer}>
-						<Image source={getpostImage(item.imageUrls?.[0])} style={styles.image} />
-						<View style={styles.column}>
-							<ATText typography="body">{shortenTitle(item.title)}</ATText>
-							<ATText typography="secondary" color="secondaryTextColor">
-								{getDaysAgo(item.createdAt as Timestamp)}
-							</ATText>
-						</View>
-						<ATChip
-							label={chipLabel}
-							isToggled={false}
-							onPress={() => router.navigate(`/homeowner/jobDetails/${item.pid}`)}
-						/>
-					</View>
-				)}
+				renderItem={renderItem}
 				ListEmptyComponent={<Text>You have no open jobs.</Text>}
 				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
 			/>

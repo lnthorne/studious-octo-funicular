@@ -20,7 +20,7 @@ export default function AuthenticateRootLayout() {
 		<Stack screenOptions={{ headerShown: false }}>
 			<Stack.Screen name="(tabs)" />
 			<Stack.Screen
-				name="jobDetails/[postId]"
+				name="jobDetailsPage"
 				options={{
 					headerShown: true,
 					headerTransparent: true,

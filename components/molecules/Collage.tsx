@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
 	image: {
 		flex: 1,
 		resizeMode: "cover",
+		margin: 3,
 	},
 	fullScreen: {
 		flex: 1,
