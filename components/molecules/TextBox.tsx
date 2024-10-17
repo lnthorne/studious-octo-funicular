@@ -18,6 +18,8 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 	value,
 	keyboardType,
 	onBlur,
+	multiline = false,
+	numberOfLines,
 }) => {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry);
 
@@ -36,9 +38,12 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 					placeholderTextColor={Colors.secondaryTextColor}
 					secureTextEntry={secureTextEntry && isPasswordVisible}
 					onChangeText={onChangeText}
-					style={styles.textField}
+					style={multiline ? styles.textArea : styles.textField}
 					keyboardType={keyboardType}
 					onBlur={onBlur}
+					multiline={multiline}
+					numberOfLines={numberOfLines}
+					allowFontScaling={false}
 				/>
 
 				{secureTextEntry && (
@@ -81,12 +86,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 17,
 	},
 	textField: {
-		flex: 1,
 		height: 56,
 		width: 290,
 		...Typography.textBoxText,
 		color: Colors.primaryTextColor,
-		textAlignVertical: "center",
+		textAlignVertical: "auto",
+	},
+	textArea: {
+		minHeight: 144,
+		maxHeight: 170,
+		minWidth: 290,
+		marginVertical: 10,
+		...Typography.textBoxText,
+		color: Colors.primaryTextColor,
+		textAlignVertical: "top",
 	},
 	iconContainer: {
 		justifyContent: "center",

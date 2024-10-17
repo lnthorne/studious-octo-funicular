@@ -9,13 +9,14 @@ import {
 } from "react-native";
 import { Link, usePathname } from "expo-router";
 import { ATText } from "@/components/atoms/Text";
+import { Colors } from "react-native-ui-lib";
 
 export default function HomeownerHomeLayout() {
 	const currentRoute = usePathname();
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<View style={styles.container}>
+		<SafeAreaView style={styles.safeAreaContainer}>
+			<View style={{ marginTop: 30, flex: 1 }}>
 				<View style={styles.tabContainer}>
 					<TouchableOpacity
 						onPress={() => router.navigate("/homeowner/home")}
@@ -78,9 +79,9 @@ export default function HomeownerHomeLayout() {
 }
 
 const styles = StyleSheet.create({
-	container: {
+	safeAreaContainer: {
 		flex: 1,
-		marginTop: 30,
+		backgroundColor: Colors.backgroundColor,
 	},
 	tabContainer: {
 		flexDirection: "row",

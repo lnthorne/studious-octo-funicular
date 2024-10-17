@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
@@ -7,6 +7,7 @@ import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { router, useFocusEffect } from "expo-router";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
+import { Colors } from "react-native-ui-lib";
 
 export default function inProgressJobs() {
 	const { user } = useUser<IHomeOwnerEntity>();
@@ -48,39 +49,28 @@ export default function inProgressJobs() {
 	};
 
 	if (loading) {
-		return <ActivityIndicator size={"large"} />;
+		return (
+			<View style={styles.container}>
+				<ActivityIndicator size={"large"} />
+			</View>
+		);
 	}
 	return (
-		<ORHomeownerJobListing
-			data={jobs}
-			isRefresh={isRefresh}
-			onRefresh={onRefresh}
-			onPress={handleJobSelection}
-			chipLabel="View"
-		/>
+		<View style={styles.container}>
+			<ORHomeownerJobListing
+				data={jobs}
+				isRefresh={isRefresh}
+				onRefresh={onRefresh}
+				onPress={handleJobSelection}
+				chipLabel="View"
+			/>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 16,
-	},
-	postContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		minHeight: 76,
-	},
-	column: {
-		flex: 1,
-		marginRight: 4,
-		paddingHorizontal: 10,
-	},
-	image: {
-		height: 56,
-		width: 56,
-		borderRadius: 8,
+		backgroundColor: Colors.backgroundColor,
 	},
 });

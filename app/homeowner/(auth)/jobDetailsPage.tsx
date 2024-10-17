@@ -2,14 +2,16 @@ import { ActivityIndicator, SafeAreaView, StyleSheet, View, FlatList } from "rea
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { checkAndClosePostingAndBid, updatePostCompletionStatus } from "@/services/post";
-import { IPostEntity } from "@/typings/jobs.inter";
+import { IBidEntity, IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import ORJobDetails from "@/components/organisms/JobDetails";
 import ORBidList from "@/components/organisms/BidList";
 import { useJobContext } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
+import { MLButton } from "@/components/molecules/Button";
+import GeneralModal from "@/components/generalModal";
 
 export default function JobDetails() {
-	const { selectedJob } = useJobContext();
+	const { selectedJob, setSelectedBid } = useJobContext();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -30,6 +32,31 @@ export default function JobDetails() {
 		}
 	};
 
+	const handleButtonType = () => {
+		if (selectedJob?.jobStatus === JobStatus.inprogress) {
+			const label = isCompanyCompletionPending ? "In Progress" : "Job Complete";
+			return (
+				<>
+					<MLButton
+						disabled={isCompanyCompletionPending}
+						label={label}
+						onPress={() => setModalVisible(true)}
+						style={{ marginVertical: 0 }}
+					/>
+					{isCompanyCompletionPending && (
+						<ATText
+							typography="secondaryText"
+							color="secondaryTextColor"
+							style={styles.buttonDisclaimer}
+						>
+							Job completion must first be confirmed by the landscaper.
+						</ATText>
+					)}
+				</>
+			);
+		}
+	};
+
 	const handleModalClose = () => {
 		setModalVisible(false);
 	};
@@ -38,6 +65,11 @@ export default function JobDetails() {
 		if (!selectedJob || !selectedJob.bids) return false;
 		const companyId = selectedJob.bids[0].uid;
 		return selectedJob.completionConfirmed[companyId];
+	};
+
+	const handleBidSelected = (selectedBid: IBidEntity) => {
+		setSelectedBid(selectedBid);
+		router.navigate("/homeowner/bidDetailsPage");
 	};
 
 	useEffect(() => {
@@ -67,14 +99,22 @@ export default function JobDetails() {
 			<FlatList
 				data={selectedJob?.bids}
 				keyExtractor={(item) => item.bid}
-				renderItem={({}) => <ORBidList bids={selectedJob?.bids} />}
+				renderItem={({}) => <ORBidList bids={selectedJob?.bids} onPress={handleBidSelected} />}
 				ListHeaderComponent={<ORJobDetails jobDetails={selectedJob} />}
+				ListFooterComponent={handleButtonType}
 				contentContainerStyle={styles.container}
+				showsVerticalScrollIndicator={false}
 				ListEmptyComponent={
 					<ATText typography="secondaryText" color="secondaryTextColor" style={styles.listEmpty}>
 						You have not recieved any bids...
 					</ATText>
 				}
+			/>
+			<GeneralModal
+				visible={modalVisible}
+				description="Are you sure you want to mark this job as completed? You cannot undo this action."
+				onDone={handleJobCompleted}
+				onCancel={handleModalClose}
 			/>
 		</SafeAreaView>
 	);
@@ -98,5 +138,9 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		paddingHorizontal: 20,
+	},
+	buttonDisclaimer: {
+		alignSelf: "center",
+		textAlign: "center",
 	},
 });

@@ -23,7 +23,7 @@ const BidSchema = Yup.object().shape({
 
 export function BidModal({ visible, onClose, onSubmit }: BidModalProps) {
 	return (
-		<Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
+		<Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>
 			<View style={styles.modalOverlay}>
 				<View style={styles.modalContent}>
 					<Text style={styles.modalTitle}>Place Your Bid</Text>

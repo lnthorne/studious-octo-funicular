@@ -30,7 +30,9 @@ const validationSchema = Yup.object().shape({
 	password: Yup.string()
 		.min(6, "Password must be at least 6 characters")
 		.required("Password is required"),
-	zipcode: Yup.string().required("Zip code is required"),
+	zipcode: Yup.string()
+		.length(6, "Please enter valid postal code")
+		.required("Postal code is required"),
 	telephone: Yup.string().required("Phone number is required"),
 });
 

@@ -1,4 +1,4 @@
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
@@ -7,6 +7,7 @@ import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { router, useFocusEffect } from "expo-router";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
+import { Colors } from "react-native-ui-lib";
 
 export default function closedJobs() {
 	const { user } = useUser<IHomeOwnerEntity>();
@@ -48,16 +49,29 @@ export default function closedJobs() {
 	};
 
 	if (loading) {
-		return <ActivityIndicator size={"large"} />;
+		return (
+			<View style={styles.container}>
+				<ActivityIndicator size={"large"} />
+			</View>
+		);
 	}
 
 	return (
-		<ORHomeownerJobListing
-			data={jobs}
-			isRefresh={isRefresh}
-			onRefresh={onRefresh}
-			onPress={handleJobSelection}
-			chipLabel="View"
-		/>
+		<View style={styles.container}>
+			<ORHomeownerJobListing
+				data={jobs}
+				isRefresh={isRefresh}
+				onRefresh={onRefresh}
+				onPress={handleJobSelection}
+				chipLabel="View"
+			/>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: Colors.backgroundColor,
+	},
+});

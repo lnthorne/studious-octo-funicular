@@ -56,7 +56,7 @@ export default function MLCollage({ images, matrix }: CollageProps) {
 			})}
 
 			{selectedImage && (
-				<Modal visible={true} transparent={true} onRequestClose={closeImage}>
+				<Modal animationType="fade" visible={true} transparent={true} onRequestClose={closeImage}>
 					<TouchableOpacity style={styles.fullScreen} onPress={closeImage}>
 						<Image source={{ uri: selectedImage }} style={styles.fullScreenImage} />
 					</TouchableOpacity>

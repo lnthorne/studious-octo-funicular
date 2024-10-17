@@ -3,9 +3,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, Tabs } from "expo-router";
 import { Text, View } from "react-native";
 import { Colors } from "react-native-ui-lib";
-const TabHeader = () => (
+const HomeHeader = () => (
 	<ATText typography="heading" style={{ fontSize: 28 }}>
 		Dashboard
+	</ATText>
+);
+const CreateJobHeader = () => (
+	<ATText typography="heading" style={{ fontSize: 28 }}>
+		New Job
 	</ATText>
 );
 export default function MainLayout() {
@@ -25,7 +30,7 @@ export default function MainLayout() {
 				options={{
 					headerTransparent: true,
 					headerTitleAlign: "left",
-					headerTitle: () => <TabHeader />,
+					headerTitle: () => <HomeHeader />,
 					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons
@@ -39,6 +44,9 @@ export default function MainLayout() {
 			<Tabs.Screen
 				name="createPost"
 				options={{
+					headerTransparent: true,
+					headerTitleAlign: "left",
+					headerTitle: () => <CreateJobHeader />,
 					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons

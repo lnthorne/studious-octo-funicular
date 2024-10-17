@@ -7,6 +7,8 @@ import {
 	StyleSheet,
 	TouchableWithoutFeedback,
 } from "react-native";
+import { ATText } from "./atoms/Text";
+import { MLButton } from "./molecules/Button";
 
 interface GeneralModalProps {
 	visible: boolean;
@@ -25,7 +27,7 @@ export default function GeneralModal({
 		<Modal
 			transparent={true}
 			visible={visible}
-			animationType="slide"
+			animationType="fade"
 			onRequestClose={onCancel} // Close on back button press (Android)
 		>
 			{/* Touch outside the modal to close */}
@@ -33,18 +35,17 @@ export default function GeneralModal({
 				<View style={styles.modalBackground}>
 					<TouchableWithoutFeedback onPress={() => {}}>
 						<View style={styles.modalContainer}>
-							<Text style={styles.description}>{description}</Text>
+							<ATText style={styles.description}>{description}</ATText>
 
 							<View style={styles.buttonContainer}>
 								{/* Done Button */}
-								<TouchableOpacity onPress={onDone} style={styles.doneButton}>
-									<Text style={styles.buttonText}>Done</Text>
-								</TouchableOpacity>
-
-								{/* Cancel Button */}
-								<TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
-									<Text style={styles.buttonText}>Cancel</Text>
-								</TouchableOpacity>
+								<MLButton label="Done" variant="primary" style={styles.button} onPress={onDone} />
+								<MLButton
+									label="Cancel"
+									variant="secondary"
+									style={styles.button}
+									onPress={onCancel}
+								/>
 							</View>
 						</View>
 					</TouchableWithoutFeedback>
@@ -69,31 +70,17 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	description: {
-		fontSize: 18,
 		marginBottom: 20,
 		textAlign: "center",
 	},
 	buttonContainer: {
 		flexDirection: "row",
-		justifyContent: "space-between",
-		width: "100%",
+		justifyContent: "center",
+		alignItems: "flex-start",
+		alignSelf: "stretch",
+		gap: 5,
 	},
-	doneButton: {
-		backgroundColor: "#4CAF50",
-		padding: 10,
-		borderRadius: 5,
-		width: "45%",
-		alignItems: "center",
-	},
-	cancelButton: {
-		backgroundColor: "#f44336",
-		padding: 10,
-		borderRadius: 5,
-		width: "45%",
-		alignItems: "center",
-	},
-	buttonText: {
-		color: "white",
-		fontSize: 16,
+	button: {
+		width: 120,
 	},
 });

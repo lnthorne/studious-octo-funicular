@@ -7,10 +7,22 @@ const JobDetailsHeader = () => {
 	return <ATText typography="subheading">Job Details</ATText>;
 };
 
+const BidDetailsHeader = () => {
+	return <ATText typography="subheading">Bid Details</ATText>;
+};
+
 const Close = () => {
 	return (
 		<TouchableOpacity onPress={() => router.back()}>
 			<Ionicons name="close-outline" size={35}></Ionicons>
+		</TouchableOpacity>
+	);
+};
+
+const Back = () => {
+	return (
+		<TouchableOpacity onPress={() => router.back()}>
+			<Ionicons name="arrow-back-outline" size={35}></Ionicons>
 		</TouchableOpacity>
 	);
 };
@@ -26,6 +38,16 @@ export default function AuthenticateRootLayout() {
 					headerTransparent: true,
 					headerTitle: () => <JobDetailsHeader />,
 					headerRight: () => <Close />,
+					headerBackVisible: false,
+				}}
+			/>
+			<Stack.Screen
+				name="bidDetailsPage"
+				options={{
+					headerShown: true,
+					headerTransparent: true,
+					headerTitle: () => <BidDetailsHeader />,
+					headerLeft: () => <Back />,
 					headerBackVisible: false,
 				}}
 			/>

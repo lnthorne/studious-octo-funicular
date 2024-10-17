@@ -1,4 +1,4 @@
-import { IPostEntity } from "@/typings/jobs.inter";
+import { IBidEntity, IPostEntity } from "@/typings/jobs.inter";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface JobContextType {
@@ -6,6 +6,8 @@ interface JobContextType {
 	setJobs: (jobs: IPostEntity[]) => void;
 	selectedJob: IPostEntity | null;
 	setSelectedJob: (job: IPostEntity | null) => void;
+	selectedBid: IBidEntity | null;
+	setSelectedBid: (bid: IBidEntity | null) => void;
 }
 
 const JobContext = createContext<JobContextType | undefined>(undefined);
@@ -25,9 +27,12 @@ interface JobProviderProps {
 export function JobProvider({ children }: JobProviderProps) {
 	const [jobs, setJobs] = useState<IPostEntity[]>([]);
 	const [selectedJob, setSelectedJob] = useState<IPostEntity | null>(null);
+	const [selectedBid, setSelectedBid] = useState<IBidEntity | null>(null);
 
 	return (
-		<JobContext.Provider value={{ jobs, setJobs, selectedJob, setSelectedJob }}>
+		<JobContext.Provider
+			value={{ jobs, setJobs, selectedJob, setSelectedJob, selectedBid, setSelectedBid }}
+		>
 			{children}
 		</JobContext.Provider>
 	);

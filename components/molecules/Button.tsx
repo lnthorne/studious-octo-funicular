@@ -3,13 +3,13 @@ import React from "react";
 import { Button, View } from "react-native-ui-lib";
 import { ATText } from "../atoms/Text";
 import { Colors } from "react-native-ui-lib";
-import { TextStyle } from "react-native";
+import { ButtonProps, ViewStyle } from "react-native";
 
-interface CustomButtonProps {
+interface CustomButtonProps extends Omit<ButtonProps, "title"> {
 	label: string;
 	onPress: () => void;
 	variant?: "primary" | "secondary";
-	style?: TextStyle;
+	style?: ViewStyle;
 }
 
 export const MLButton: React.FC<CustomButtonProps> = ({
@@ -17,12 +17,13 @@ export const MLButton: React.FC<CustomButtonProps> = ({
 	onPress,
 	variant = "primary",
 	style,
+	disabled = false,
 }) => {
 	const backgroundColor =
 		variant === "primary" ? Colors.primaryButtonColor : Colors.secondaryButtonColor;
 	const textColor = variant === "primary" ? "primaryButtonTextColor" : "secondaryButtonTextColor";
 
-	const textStyle: TextStyle = {
+	const buttonStyle: ViewStyle = {
 		alignItems: "center",
 		borderRadius: 12,
 		paddingVertical: 21,
@@ -33,7 +34,12 @@ export const MLButton: React.FC<CustomButtonProps> = ({
 
 	return (
 		<View>
-			<Button onPress={onPress} backgroundColor={backgroundColor} style={textStyle}>
+			<Button
+				disabled={disabled}
+				onPress={onPress}
+				backgroundColor={backgroundColor}
+				style={buttonStyle}
+			>
 				<ATText typography="buttonText" color={textColor}>
 					{label}
 				</ATText>

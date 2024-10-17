@@ -1,24 +1,35 @@
-import { FlatList, StyleSheet, Text, View, Image, ListRenderItem } from "react-native";
+import {
+	FlatList,
+	StyleSheet,
+	Text,
+	View,
+	Image,
+	ListRenderItem,
+	TouchableOpacity,
+} from "react-native";
 import React from "react";
 import { ATText } from "../atoms/Text";
 import { IBidEntity } from "@/typings/jobs.inter";
 
 interface BidListProps {
 	bids: IBidEntity[] | undefined;
+	onPress: (selectedBid: IBidEntity) => void;
 }
 
-export default function ORBidList({ bids }: BidListProps) {
+export default function ORBidList({ bids, onPress }: BidListProps) {
 	if (!bids || bids.length < 1) {
 		return <></>;
 	}
 
 	const renderItem: ListRenderItem<IBidEntity> = ({ item }) => (
 		<View style={styles.itemContainer}>
-			<Image source={require("../../assets/images/onboarding.png")} style={styles.image} />
-			<ATText typography="body">{`$${item.bidAmount}`}</ATText>
-			<ATText typography="secondaryText" color="secondaryTextColor">
-				By {item.companyName}
-			</ATText>
+			<TouchableOpacity onPress={() => onPress(item)} style={{ alignItems: "center" }}>
+				<Image source={require("../../assets/images/onboarding.png")} style={styles.image} />
+				<ATText typography="body">{`$${item.bidAmount}`}</ATText>
+				<ATText typography="secondaryText" color="secondaryTextColor">
+					By {item.companyName}
+				</ATText>
+			</TouchableOpacity>
 		</View>
 	);
 	return (
