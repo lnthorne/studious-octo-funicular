@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { View, Image, TouchableOpacity, Modal, StyleSheet, ImageStyle } from "react-native";
+import { View, Image, TouchableOpacity, Modal, StyleSheet, ImageStyle, Alert } from "react-native";
 import { ATText } from "../atoms/Text";
 
 interface CollageProps {
 	images: string[] | undefined;
 	matrix: number[];
+	onLongPress?: (selectedImage: string) => void;
 }
 
-export default function MLCollage({ images, matrix }: CollageProps) {
+export default function MLCollage({ images, matrix, onLongPress }: CollageProps) {
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
 	const openImage = (image: string) => {
@@ -41,7 +42,12 @@ export default function MLCollage({ images, matrix }: CollageProps) {
 				return (
 					<View key={rowIndex} style={styles.rowContainer}>
 						{rowImages.map((image, idx) => (
-							<TouchableOpacity key={idx} onPress={() => openImage(image)} style={{ flex: 1 }}>
+							<TouchableOpacity
+								key={idx}
+								onPress={() => openImage(image)}
+								onLongPress={() => onLongPress?.(image)}
+								style={{ flex: 1 }}
+							>
 								<Image
 									source={{ uri: image }}
 									style={[

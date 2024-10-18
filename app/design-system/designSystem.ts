@@ -15,6 +15,7 @@ Colors.loadColors({
 	tabBarColor: "#F7FAFA",
 	tabBorderTopColor: "#E8EDF2",
 	tabIconColor: "#4F7A94",
+	timestamp: "#999",
 });
 
 Typography.loadTypographies({
@@ -32,6 +33,7 @@ Typography.loadTypographies({
 	secondaryText: { fontSize: 14, fontWeight: "400", lineHeight: 21, fontStyle: "normal" },
 	error: { fontSize: 14, fontWeight: "400", lineHeight: 20 },
 	body: { fontSize: 16, fontWeight: "500", lineHeight: 24, fontStyle: "normal" },
+	messageText: { fontSize: 15, fontWeight: "400", lineHeight: 18, fontStyle: "normal" },
 });
 
 Colors.loadSchemes({

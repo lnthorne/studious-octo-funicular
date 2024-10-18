@@ -13,6 +13,12 @@ const CreateJobHeader = () => (
 		New Job
 	</ATText>
 );
+
+const ConversationHeader = () => (
+	<ATText typography="heading" style={{ fontSize: 28 }}>
+		Messages
+	</ATText>
+);
 export default function MainLayout() {
 	return (
 		<Tabs
@@ -60,6 +66,9 @@ export default function MainLayout() {
 			<Tabs.Screen
 				name="conversations"
 				options={{
+					headerTransparent: true,
+					headerTitleAlign: "left",
+					headerTitle: () => <ConversationHeader />,
 					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons

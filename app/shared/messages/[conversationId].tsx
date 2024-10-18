@@ -16,9 +16,11 @@ import { router, useLocalSearchParams } from "expo-router";
 import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/messaging"; // Your service
 import { IMessage, IMessageEntity, MessageType } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
+import { ATText } from "@/components/atoms/Text";
+import { Colors } from "react-native-ui-lib";
 
 export default function MessagesPage() {
-	const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
+	const { conversationId, name } = useLocalSearchParams<{ conversationId: string; name: string }>();
 	const [messages, setMessages] = useState<IMessageEntity[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 	const { user } = useUser();
@@ -54,37 +56,62 @@ export default function MessagesPage() {
 		}
 	};
 
+	const formatMessageDate = (timestamp: number): string => {
+		const messageDate = new Date(timestamp);
+		const today = new Date();
+
+		// Check if the date is today
+		const isToday =
+			messageDate.getDate() === today.getDate() &&
+			messageDate.getMonth() === today.getMonth() &&
+			messageDate.getFullYear() === today.getFullYear();
+
+		if (isToday) {
+			// If today, return the time in the format "HH:MM AM/PM"
+			return messageDate.toLocaleTimeString([], {
+				hour: "2-digit",
+				minute: "2-digit",
+				hour12: true,
+			});
+		} else {
+			// Otherwise, return the date in the format "MM/DD/YY"
+			return `${messageDate.getMonth() + 1}/${messageDate.getDate()}/${messageDate
+				.getFullYear()
+				.toString()
+				.slice(-2)}`;
+		}
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
 				style={styles.container}
-				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
-				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust if needed
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0}
 			>
-				<View style={styles.heading}>
-					<TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-						<Image
-							source={require("../../../assets/images/back-icon.png")}
-							resizeMode={"stretch"}
-							style={styles.backIcon}
-						/>
-					</TouchableOpacity>
-				</View>
 				<FlatList
 					data={messages}
+					showsVerticalScrollIndicator={false}
 					keyExtractor={(item) => new Date(item.timestamp).getTime().toString()}
 					ref={flatListRef}
 					onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
 					onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
 					renderItem={({ item }) => (
-						<View
-							style={[
-								styles.messageBubble,
-								item.senderId === user?.uid ? styles.userMessage : styles.otherMessage,
-							]}
-						>
-							<Text>{item.body}</Text>
-							<Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleTimeString()}</Text>
+						<View style={styles.messageContainer}>
+							<View
+								style={[
+									styles.messageBubble,
+									item.senderId === user?.uid ? styles.userMessage : styles.otherMessage,
+								]}
+								key={item.messageId}
+							>
+								<ATText typography="messageText">{item.body}</ATText>
+							</View>
+							<Text
+								style={item.senderId === user?.uid ? styles.userTimestamp : styles.otherTimestamp}
+							>
+								{formatMessageDate(item.timestamp)}
+							</Text>
 						</View>
 					)}
 				/>
@@ -108,6 +135,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 10,
 		justifyContent: "flex-end",
+		backgroundColor: Colors.backgroundColor,
 	},
 	heading: {
 		flexDirection: "row",
@@ -126,6 +154,9 @@ const styles = StyleSheet.create({
 		height: 24,
 		marginTop: 28,
 	},
+	messageContainer: {
+		paddingVertical: 2,
+	},
 	messageBubble: {
 		padding: 10,
 		borderRadius: 8,
@@ -133,18 +164,25 @@ const styles = StyleSheet.create({
 		maxWidth: "75%",
 	},
 	userMessage: {
-		backgroundColor: "#6200ee",
+		// backgroundColor: "#6200ee",
+		backgroundColor: Colors.primaryButtonColor,
 		alignSelf: "flex-end",
 		color: "#fff",
 	},
 	otherMessage: {
-		backgroundColor: "#e0e0e0",
+		// backgroundColor: "#e0e0e0",
+		backgroundColor: Colors.secondaryButtonColor,
 		alignSelf: "flex-start",
 	},
-	timestamp: {
+	userTimestamp: {
 		fontSize: 10,
-		color: "#999",
+		color: Colors.timestamp,
 		textAlign: "right",
+	},
+	otherTimestamp: {
+		fontSize: 10,
+		color: Colors.timestamp,
+		textAlign: "left",
 	},
 	inputContainer: {
 		flexDirection: "row",

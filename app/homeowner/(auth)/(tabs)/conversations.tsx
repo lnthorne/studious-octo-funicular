@@ -6,12 +6,16 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 	ActivityIndicator,
+	SafeAreaView,
+	Image,
 } from "react-native";
 import { router } from "expo-router";
 import { subscribeToConversations } from "@/services/messaging"; // Your service
 import { IConversation } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext"; // Assuming you have user context
 import { IHomeOwnerEntity } from "@/typings/user.inter";
+import { Colors } from "react-native-ui-lib";
+import { ATText } from "@/components/atoms/Text";
 
 export default function ConversationsPage() {
 	const [conversations, setConversations] = useState<IConversation[]>([]);
@@ -29,47 +33,97 @@ export default function ConversationsPage() {
 		return () => unsubscribe();
 	}, [user]);
 
+	const formatMessageDate = (timestamp: number): string => {
+		const messageDate = new Date(timestamp);
+		const today = new Date();
+
+		// Check if the date is today
+		const isToday =
+			messageDate.getDate() === today.getDate() &&
+			messageDate.getMonth() === today.getMonth() &&
+			messageDate.getFullYear() === today.getFullYear();
+
+		if (isToday) {
+			// If today, return the time in the format "HH:MM AM/PM"
+			return messageDate.toLocaleTimeString([], {
+				hour: "2-digit",
+				minute: "2-digit",
+				hour12: true,
+			});
+		} else {
+			// Otherwise, return the date in the format "MM/DD/YY"
+			return `${messageDate.getMonth() + 1}/${messageDate.getDate()}/${messageDate
+				.getFullYear()
+				.toString()
+				.slice(-2)}`;
+		}
+	};
+
+	const handlePress = (conversationId: string, name: string) => {
+		// Navigate to the conversation details screen and pass conversationId and userName
+		router.push({
+			pathname: "/shared/messages/[conversationId]",
+			params: {
+				conversationId,
+				name,
+			},
+		});
+	};
+
 	if (loading) {
 		return <ActivityIndicator size={"large"} />;
 	}
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<FlatList
+				style={{ marginTop: 40 }}
 				data={conversations}
 				keyExtractor={(item) => item.conversationId}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						style={styles.conversationItem}
-						onPress={() => router.push(`/shared/messages/${item.conversationId}`)}
+						onPress={() => handlePress(item.conversationId, "John Doe")}
 					>
-						<Text style={styles.conversationTitle}>{Object.keys(item.members).join(", ")}</Text>
-						<Text style={styles.lastMessage}>{item.lastMessage}</Text>
-						<Text style={styles.timestamp}>
-							{new Date(item.lastMessageTimestamp).toLocaleTimeString()}
-						</Text>
+						<Image
+							source={require("../../../../assets/images/onboarding.png")}
+							style={styles.avatar}
+						/>
+						<View style={{ flex: 1 }}>
+							{/* Name and Username */}
+							<ATText>Thorne Landscaping Services</ATText>
+
+							{/* Message */}
+							<ATText typography="secondaryText" color="secondaryTextColor">
+								{item.lastMessage}
+							</ATText>
+						</View>
+
+						{/* Date */}
+						<Text style={styles.timestamp}>{formatMessageDate(item.lastMessageTimestamp)}</Text>
 					</TouchableOpacity>
 				)}
 			/>
-		</View>
+		</SafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 10,
+		backgroundColor: Colors.backgroundColor,
 	},
 	conversationItem: {
-		padding: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: "#ddd",
+		flexDirection: "row", // Align avatar and content horizontally
+		alignItems: "center", // Vertically align the avatar with text
+		paddingVertical: 12,
+		paddingHorizontal: 16,
 	},
-	conversationTitle: {
-		fontWeight: "bold",
-	},
-	lastMessage: {
-		color: "#666",
+	avatar: {
+		width: 48, // Avatar size
+		height: 48,
+		borderRadius: 24, // Makes the avatar circular
+		marginRight: 12, // Space between avatar and text
 	},
 	timestamp: {
 		fontSize: 12,

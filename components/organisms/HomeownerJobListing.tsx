@@ -77,7 +77,15 @@ export default function ORHomeownerJobListing({
 				data={data}
 				keyExtractor={(item) => item.pid}
 				renderItem={renderItem}
-				ListEmptyComponent={<Text>You have no open jobs.</Text>}
+				ListEmptyComponent={
+					<ATText
+						typography="secondaryText"
+						color="secondaryTextColor"
+						style={{ alignSelf: "center" }}
+					>
+						No jobs found...
+					</ATText>
+				}
 				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
 			/>
 		</View>

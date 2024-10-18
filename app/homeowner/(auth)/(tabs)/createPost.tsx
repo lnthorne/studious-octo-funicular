@@ -115,6 +115,26 @@ export default function CreatePostScreen() {
 		);
 	};
 
+	const handImageLongPress = (selectedImage: string) => {
+		Alert.alert(
+			"Delete Image",
+			"Are you sure you want to delete this image?",
+			[
+				{ text: "Cancel", style: "cancel" },
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: () => deleteImage(selectedImage), // Call delete function on confirmation
+				},
+			],
+			{ cancelable: true }
+		);
+	};
+
+	const deleteImage = (selectedImage: string) => {
+		setImageUris(imageUris.filter((img) => img !== selectedImage));
+	};
+
 	const handleModalClose = () => {
 		setModalVisible(false);
 	};
@@ -191,7 +211,7 @@ export default function CreatePostScreen() {
 										keyboardType="numeric"
 									/>
 									<View style={styles.fieldContainer}>
-										<ATText style={styles.fieldHeader}>Estimated start date</ATText>
+										<ATText style={styles.fieldHeader}>Estimated completion date</ATText>
 										<TouchableOpacity
 											onPress={() => setModalVisible(true)}
 											style={styles.textFieldContainer}
@@ -211,7 +231,11 @@ export default function CreatePostScreen() {
 											</TouchableOpacity>
 										) : (
 											<>
-												<MLCollage images={imageUris} matrix={matrixLayout[imageUris.length]} />
+												<MLCollage
+													images={imageUris}
+													matrix={matrixLayout[imageUris.length]}
+													onLongPress={handImageLongPress}
+												/>
 												<TouchableOpacity
 													style={styles.morePhotos}
 													onPress={showImagePickerOptions}
