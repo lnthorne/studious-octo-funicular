@@ -20,7 +20,7 @@ import { ATText } from "@/components/atoms/Text";
 import { Colors } from "react-native-ui-lib";
 
 export default function MessagesPage() {
-	const { conversationId, name } = useLocalSearchParams<{ conversationId: string; name: string }>();
+	const { conversationId } = useLocalSearchParams<{ conversationId: string; name: string }>();
 	const [messages, setMessages] = useState<IMessageEntity[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 	const { user } = useUser();

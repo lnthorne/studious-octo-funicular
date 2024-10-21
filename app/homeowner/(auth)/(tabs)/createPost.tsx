@@ -85,7 +85,6 @@ export default function CreatePostScreen() {
 		if (fromCamera) {
 			result = await ImagePicker.launchCameraAsync({
 				allowsEditing: true,
-				aspect: [4, 3],
 				quality: 1,
 			});
 		} else {

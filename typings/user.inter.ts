@@ -12,6 +12,7 @@ export interface IHomeOwner {
 	password: string;
 	zipcode: string;
 	telephone: string;
+	profileImage?: string;
 }
 
 export interface ICompanyOwner {
@@ -20,6 +21,7 @@ export interface ICompanyOwner {
 	password: string;
 	zipcode: string;
 	telephone: string;
+	profileImage?: string;
 }
 
 export interface IHomeOwnerEntity extends IHomeOwner {

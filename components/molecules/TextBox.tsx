@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInputProps, View } from "react-native";
-import { Text, Colors, Typography, TextField, TouchableOpacity } from "react-native-ui-lib";
+import { Colors, Typography, TextField, TouchableOpacity } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { ATText } from "../atoms/Text";
 
@@ -20,6 +20,7 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 	onBlur,
 	multiline = false,
 	numberOfLines,
+	editable = true,
 }) => {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry);
 
@@ -31,19 +32,23 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 				</ATText>
 			)}
 
-			<View style={styles.textFieldContainer}>
+			<View style={[styles.textFieldContainer]}>
 				<TextField
 					value={value}
 					placeholder={placeholder}
 					placeholderTextColor={Colors.secondaryTextColor}
 					secureTextEntry={secureTextEntry && isPasswordVisible}
 					onChangeText={onChangeText}
-					style={multiline ? styles.textArea : styles.textField}
+					style={[
+						multiline ? styles.textArea : styles.textField,
+						!editable && styles.textAreaDisabled,
+					]}
 					keyboardType={keyboardType}
 					onBlur={onBlur}
 					multiline={multiline}
 					numberOfLines={numberOfLines}
 					allowFontScaling={false}
+					editable={editable}
 				/>
 
 				{secureTextEntry && (
@@ -100,6 +105,9 @@ const styles = StyleSheet.create({
 		...Typography.textBoxText,
 		color: Colors.primaryTextColor,
 		textAlignVertical: "top",
+	},
+	textAreaDisabled: {
+		color: Colors.secondaryTextColor,
 	},
 	iconContainer: {
 		justifyContent: "center",

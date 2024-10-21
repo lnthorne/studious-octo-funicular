@@ -61,7 +61,6 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 				const rowImages = imagesToDisplay.slice(imageIndex, imageIndex + numImagesInRow);
 				const currentRowStartIndex = imageIndex;
 				imageIndex += numImagesInRow;
-				// console.log("Image index", imageIndex);
 
 				return (
 					<View key={rowIndex} style={styles.rowContainer}>

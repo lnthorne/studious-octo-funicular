@@ -1,8 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import storage, { deleteObject, uploadBytes } from "@react-native-firebase/storage";
 
-import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
+import {
+	ICompanyOwner,
+	ICompanyOwnerEntity,
+	IHomeOwner,
+	IHomeOwnerEntity,
+	UserType,
+} from "@/typings/user.inter";
 
 /**
  * get the current user ID
@@ -70,6 +77,50 @@ export async function identifyUserType(uid: string = ""): Promise<UserType | nul
 		return null;
 	} catch (error) {
 		console.error("Error identifying user type", error);
+		throw error;
+	}
+}
+
+/**
+ *
+ * @param user either IHomeOwner or ICompanyOwner
+ * @param userType type of the user
+ * @returns updated user upon success, else throws an error
+ */
+
+export async function updateUser<T extends IHomeOwner | ICompanyOwner>(
+	uid: string,
+	user: T,
+	userType: UserType,
+	newProfileImage?: string
+): Promise<T> {
+	try {
+		const userDocRef = firestore().collection(userType).doc(uid);
+
+		if (newProfileImage) {
+			const existingUserDoc = await userDocRef.get();
+			const existingUserData = existingUserDoc.data();
+
+			if (existingUserData?.profileImage) {
+				const oldImageRef = storage().ref(`profileImages/${uid}`);
+				await deleteObject(oldImageRef);
+			}
+			const response = await fetch(newProfileImage);
+			const blob = await response.blob();
+			const imageRef = storage().ref(`profileImages/${uid}`);
+			await imageRef.put(blob);
+			const imageUrl = await imageRef.getDownloadURL();
+
+			user.profileImage = imageUrl;
+		}
+
+		await userDocRef.update({
+			...user,
+		});
+
+		return user;
+	} catch (error) {
+		console.error("Error updating user:", error);
 		throw error;
 	}
 }

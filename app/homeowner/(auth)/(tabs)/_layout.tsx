@@ -19,6 +19,12 @@ const ConversationHeader = () => (
 		Messages
 	</ATText>
 );
+
+const ProfileHeader = () => (
+	<ATText typography="heading" style={{ fontSize: 28 }}>
+		Profile
+	</ATText>
+);
 export default function MainLayout() {
 	return (
 		<Tabs
@@ -82,6 +88,9 @@ export default function MainLayout() {
 			<Tabs.Screen
 				name="settings"
 				options={{
+					headerTransparent: true,
+					headerTitleAlign: "left",
+					headerTitle: () => <ProfileHeader />,
 					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons
