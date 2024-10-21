@@ -10,9 +10,9 @@ import {
 	Image,
 } from "react-native";
 import { router } from "expo-router";
-import { subscribeToConversations } from "@/services/messaging"; // Your service
+import { subscribeToConversations } from "@/services/messaging";
 import { IConversation } from "@/typings/messaging.inter";
-import { useUser } from "@/contexts/userContext"; // Assuming you have user context
+import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { Colors } from "react-native-ui-lib";
 import { ATText } from "@/components/atoms/Text";
@@ -71,7 +71,11 @@ export default function ConversationsPage() {
 	};
 
 	if (loading) {
-		return <ActivityIndicator size={"large"} />;
+		return (
+			<View style={styles.container}>
+				<ActivityIndicator size={"large"} />
+			</View>
+		);
 	}
 
 	return (
@@ -118,16 +122,21 @@ const styles = StyleSheet.create({
 		alignItems: "center", // Vertically align the avatar with text
 		paddingVertical: 12,
 		paddingHorizontal: 16,
+		borderBottomColor: Colors.borderBottomColor,
+		borderBottomWidth: 1,
+		borderBottomStartRadius: 30,
+		borderBottomEndRadius: 30,
+		height: 70,
 	},
 	avatar: {
-		width: 48, // Avatar size
+		width: 48,
 		height: 48,
-		borderRadius: 24, // Makes the avatar circular
-		marginRight: 12, // Space between avatar and text
+		borderRadius: 24,
+		marginRight: 12,
 	},
 	timestamp: {
 		fontSize: 12,
-		color: "#999",
+		color: Colors.timestamp,
 		textAlign: "right",
 	},
 });

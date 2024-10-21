@@ -1,6 +1,16 @@
 import React, { useState } from "react";
-import { View, Image, TouchableOpacity, Modal, StyleSheet, ImageStyle, Alert } from "react-native";
+import {
+	View,
+	Image,
+	TouchableOpacity,
+	Modal,
+	StyleSheet,
+	ImageStyle,
+	Alert,
+	TouchableWithoutFeedback,
+} from "react-native";
 import { ATText } from "../atoms/Text";
+import { Ionicons } from "@expo/vector-icons";
 
 interface CollageProps {
 	images: string[] | undefined;
@@ -9,14 +19,14 @@ interface CollageProps {
 }
 
 export default function MLCollage({ images, matrix, onLongPress }: CollageProps) {
-	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+	const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
-	const openImage = (image: string) => {
-		setSelectedImage(image);
+	const openImage = (index: number) => {
+		setSelectedImageIndex(index);
 	};
 
 	const closeImage = () => {
-		setSelectedImage(null);
+		setSelectedImageIndex(null);
 	};
 
 	if (!images || images?.length < 1) {
@@ -26,6 +36,18 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 			</ATText>
 		);
 	}
+
+	const goToNextImage = () => {
+		if (selectedImageIndex !== null && selectedImageIndex < images.length - 1) {
+			setSelectedImageIndex(selectedImageIndex + 1);
+		}
+	};
+
+	const goToPreviousImage = () => {
+		if (selectedImageIndex !== null && selectedImageIndex > 0) {
+			setSelectedImageIndex(selectedImageIndex - 1);
+		}
+	};
 
 	const totalImagesInMatrix = matrix.reduce((sum, num) => sum + num, 0);
 
@@ -37,14 +59,16 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 		<View style={styles.collageContainer}>
 			{matrix.map((numImagesInRow, rowIndex) => {
 				const rowImages = imagesToDisplay.slice(imageIndex, imageIndex + numImagesInRow);
+				const currentRowStartIndex = imageIndex;
 				imageIndex += numImagesInRow;
+				// console.log("Image index", imageIndex);
 
 				return (
 					<View key={rowIndex} style={styles.rowContainer}>
 						{rowImages.map((image, idx) => (
 							<TouchableOpacity
 								key={idx}
-								onPress={() => openImage(image)}
+								onPress={() => openImage(currentRowStartIndex + idx)}
 								onLongPress={() => onLongPress?.(image)}
 								style={{ flex: 1 }}
 							>
@@ -61,11 +85,25 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 				);
 			})}
 
-			{selectedImage && (
+			{selectedImageIndex !== null && (
 				<Modal animationType="fade" visible={true} transparent={true} onRequestClose={closeImage}>
-					<TouchableOpacity style={styles.fullScreen} onPress={closeImage}>
-						<Image source={{ uri: selectedImage }} style={styles.fullScreenImage} />
-					</TouchableOpacity>
+					<View style={styles.fullScreen}>
+						<TouchableWithoutFeedback onPress={closeImage}>
+							<Image source={{ uri: images[selectedImageIndex] }} style={styles.fullScreenImage} />
+						</TouchableWithoutFeedback>
+
+						{selectedImageIndex > 0 && (
+							<TouchableOpacity onPress={goToPreviousImage} style={styles.prevButton}>
+								<Ionicons name="chevron-back" size={32} color={"white"} />
+							</TouchableOpacity>
+						)}
+
+						{selectedImageIndex < images.length - 1 && (
+							<TouchableOpacity onPress={goToNextImage} style={styles.nextButton}>
+								<Ionicons name="chevron-forward" size={32} color={"white"} />
+							</TouchableOpacity>
+						)}
+					</View>
 				</Modal>
 			)}
 		</View>
@@ -130,5 +168,19 @@ const styles = StyleSheet.create({
 	noImage: {
 		alignSelf: "center",
 		marginVertical: 15,
+	},
+	prevButton: {
+		position: "absolute",
+		left: 10,
+		padding: 10,
+		borderRadius: 16,
+		backgroundColor: "rgba(0, 0, 0, 0.4)",
+	},
+	nextButton: {
+		position: "absolute",
+		right: 10,
+		padding: 10,
+		borderRadius: 16,
+		backgroundColor: "rgba(0, 0, 0, 0.4)",
 	},
 });

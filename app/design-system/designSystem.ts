@@ -16,6 +16,7 @@ Colors.loadColors({
 	tabBorderTopColor: "#E8EDF2",
 	tabIconColor: "#4F7A94",
 	timestamp: "#999",
+	borderBottomColor: "#ddd",
 });
 
 Typography.loadTypographies({
