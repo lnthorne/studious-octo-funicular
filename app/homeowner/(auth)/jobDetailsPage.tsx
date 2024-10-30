@@ -9,12 +9,14 @@ import { useJobContext } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
 import { MLButton } from "@/components/molecules/Button";
 import GeneralModal from "@/components/generalModal";
+import ReviewBottomSheet from "@/components/ReviewBottomSheet";
 
 export default function JobDetails() {
 	const { selectedJob, setSelectedBid } = useJobContext();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
+	const [bottomSheetVisible, setBottomSheetVisible] = useState(true);
 	const [isCompanyCompletionPending, setIsCompanyCompletionPending] = useState(true);
 
 	const handleJobCompleted = async () => {
@@ -115,6 +117,10 @@ export default function JobDetails() {
 				description="Are you sure you want to mark this job as completed? You cannot undo this action."
 				onDone={handleJobCompleted}
 				onCancel={handleModalClose}
+			/>
+			<ReviewBottomSheet
+				visible={bottomSheetVisible}
+				onClose={() => setBottomSheetVisible(false)}
 			/>
 		</SafeAreaView>
 	);
