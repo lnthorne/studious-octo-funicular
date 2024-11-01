@@ -1,6 +1,6 @@
 import { ActivityIndicator, SafeAreaView, StyleSheet, View, FlatList } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { checkAndClosePostingAndBid, updatePostCompletionStatus } from "@/services/post";
 import { IBidEntity, JobStatus } from "@/typings/jobs.inter";
 import ORJobDetails from "@/components/organisms/JobDetails";
@@ -11,26 +11,35 @@ import { MLButton } from "@/components/molecules/Button";
 import GeneralModal from "@/components/generalModal";
 import BottomSheet from "@gorhom/bottom-sheet";
 import ReviewBottomSheet from "@/components/Test";
+import { IReview, ReviewForm } from "@/typings/reviews.inter";
+import { Close } from "./_layout";
+import { CreateReview } from "@/services/review";
+import { useUser } from "@/contexts/userContext";
+import { IHomeOwnerEntity } from "@/typings/user.inter";
 
 export default function JobDetails() {
 	const bottomSheetRef = useRef<BottomSheet>(null);
+	const navigationOptions = useNavigation();
+	const { user } = useUser<IHomeOwnerEntity>();
 	const { selectedJob, setSelectedBid } = useJobContext();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
+	const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 	const [isCompanyCompletionPending, setIsCompanyCompletionPending] = useState(true);
 
 	const handleJobCompleted = async () => {
 		if (!selectedJob || !selectedJob.winningBidId) return;
 		try {
-			// await updatePostCompletionStatus(selectedJob.pid, selectedJob.uid);
-			// await checkAndClosePostingAndBid(selectedJob.pid, selectedJob.winningBidId);
+			await updatePostCompletionStatus(selectedJob.pid, selectedJob.uid);
+			await checkAndClosePostingAndBid(selectedJob.pid, selectedJob.winningBidId);
 		} catch (error) {
 			console.error("Failed to update job status:", error);
 			setError("Failed to update job status");
 			setModalVisible(false);
 		} finally {
 			setModalVisible(false);
+			setBottomSheetVisible(true);
 			bottomSheetRef.current?.snapToIndex(0);
 		}
 	};
@@ -64,9 +73,30 @@ export default function JobDetails() {
 		setModalVisible(false);
 	};
 
-	const handleReviewSubmit = () => {
-		bottomSheetRef.current?.close();
-		router.back();
+	const handleReviewSubmit = async (reviewData: ReviewForm) => {
+		if (!selectedJob || !selectedJob.bids || !user) {
+			setBottomSheetVisible(false);
+			bottomSheetRef.current?.close();
+			router.back();
+			return;
+		}
+		const data: IReview = {
+			...reviewData,
+			homeownerId: user.uid,
+			homeownerFirstName: user.firstname,
+			homeownerLastName: user.lastname,
+			companyOwnerId: selectedJob.bids[0].uid,
+		};
+
+		try {
+			await CreateReview(data);
+		} catch (error) {
+			console.error("There was an error submitting review", error);
+		} finally {
+			setBottomSheetVisible(false);
+			bottomSheetRef.current?.close();
+			router.back();
+		}
 	};
 
 	const hasCompanyCompletedJob = () => {
@@ -83,6 +113,15 @@ export default function JobDetails() {
 	useEffect(() => {
 		setIsCompanyCompletionPending(!hasCompanyCompletedJob());
 	}, [selectedJob]);
+
+	useEffect(() => {
+		if (bottomSheetVisible) {
+			navigationOptions.setOptions({
+				headerRight: () => <Close isDisabled={true} />,
+				gestureEnabled: !bottomSheetVisible,
+			});
+		}
+	}, [bottomSheetVisible]);
 
 	if (loading) {
 		return (
@@ -124,7 +163,6 @@ export default function JobDetails() {
 				onDone={handleJobCompleted}
 				onCancel={handleModalClose}
 			/>
-
 			<ReviewBottomSheet onSubmit={handleReviewSubmit} ref={bottomSheetRef} />
 		</SafeAreaView>
 	);

@@ -7,15 +7,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { ATText } from "./atoms/Text";
 import { Formik, FormikHelpers } from "formik";
 import { MLButton } from "./molecules/Button";
+import { ReviewForm } from "@/typings/reviews.inter";
 
 interface ReviewBottomSheetProps {
 	onSubmit: (reviewData: ReviewForm) => void;
-}
-
-interface ReviewForm {
-	rating: number;
-	title?: string;
-	text?: string;
 }
 
 const ReviewSchema = Yup.object().shape({
@@ -39,6 +34,7 @@ const ReviewBottomSheet = React.forwardRef<BottomSheet, ReviewBottomSheetProps>(
 		return (
 			<BottomSheet
 				ref={ref}
+				index={-1}
 				snapPoints={snapPoints}
 				backgroundStyle={{ backgroundColor: Colors.backgroundColor }}
 				style={styles.shadow}

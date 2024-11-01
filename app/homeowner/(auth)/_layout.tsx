@@ -11,9 +11,9 @@ const BidDetailsHeader = () => {
 	return <ATText typography="subheading">Bid Details</ATText>;
 };
 
-const Close = () => {
+export const Close = ({ isDisabled = false }) => {
 	return (
-		<TouchableOpacity onPress={() => router.back()}>
+		<TouchableOpacity onPress={() => router.back()} disabled={isDisabled}>
 			<Ionicons name="close-outline" size={35}></Ionicons>
 		</TouchableOpacity>
 	);
