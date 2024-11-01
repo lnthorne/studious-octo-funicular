@@ -1,15 +1,8 @@
-import {
-	FlatList,
-	StyleSheet,
-	Text,
-	View,
-	Image,
-	ListRenderItem,
-	TouchableOpacity,
-} from "react-native";
+import { FlatList, StyleSheet, View, Image, ListRenderItem, TouchableOpacity } from "react-native";
 import React from "react";
 import { ATText } from "../atoms/Text";
-import { IBidEntity } from "@/typings/jobs.inter";
+import { IBidEntity, JobStatus } from "@/typings/jobs.inter";
+import { useJobContext } from "@/contexts/jobContext";
 
 interface BidListProps {
 	bids: IBidEntity[] | undefined;
@@ -17,6 +10,7 @@ interface BidListProps {
 }
 
 export default function ORBidList({ bids, onPress }: BidListProps) {
+	const { selectedJob } = useJobContext();
 	if (!bids || bids.length < 1) {
 		return <></>;
 	}
@@ -32,22 +26,35 @@ export default function ORBidList({ bids, onPress }: BidListProps) {
 			</TouchableOpacity>
 		</View>
 	);
-	return (
-		<View>
-			<ATText typography="heading" style={styles.heading}>
-				Bids Received
-			</ATText>
-			<ATText typography="body">{`You've received ${
-				bids.length > 1 ? `${bids.length} bids` : `1 bid`
-			}
+
+	const renderHeading = () => {
+		if (selectedJob?.jobStatus === JobStatus.inprogress) {
+			return (
+				<ATText typography="heading" style={styles.heading}>
+					Winning Bid
+				</ATText>
+			);
+		}
+		return (
+			<>
+				<ATText typography="heading" style={styles.heading}>
+					Bids Recieved
+				</ATText>
+				<ATText typography="body">{`You've received ${
+					bids.length > 1 ? `${bids.length} bids` : `1 bid`
+				}
 			`}</ATText>
-			<FlatList
-				data={bids}
-				keyExtractor={(item) => item.bid}
-				numColumns={2}
-				renderItem={renderItem}
-			/>
-		</View>
+			</>
+		);
+	};
+	return (
+		<FlatList
+			data={bids}
+			keyExtractor={(item) => item.bid}
+			numColumns={2}
+			ListHeaderComponent={renderHeading}
+			renderItem={renderItem}
+		/>
 	);
 }
 

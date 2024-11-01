@@ -10,7 +10,7 @@ import { ATText } from "@/components/atoms/Text";
 import { MLButton } from "@/components/molecules/Button";
 import GeneralModal from "@/components/generalModal";
 import BottomSheet from "@gorhom/bottom-sheet";
-import ReviewBottomSheet from "@/components/Test";
+import ReviewBottomSheet from "@/components/BottomSheetReview";
 import { IReview, ReviewForm } from "@/typings/reviews.inter";
 import { Close } from "./_layout";
 import { CreateReview } from "@/services/review";
