@@ -1,36 +1,37 @@
 import { ActivityIndicator, SafeAreaView, StyleSheet, View, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { checkAndClosePostingAndBid, updatePostCompletionStatus } from "@/services/post";
-import { IBidEntity, IPostEntity, JobStatus } from "@/typings/jobs.inter";
+import { IBidEntity, JobStatus } from "@/typings/jobs.inter";
 import ORJobDetails from "@/components/organisms/JobDetails";
 import ORBidList from "@/components/organisms/BidList";
 import { useJobContext } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
 import { MLButton } from "@/components/molecules/Button";
 import GeneralModal from "@/components/generalModal";
-import ReviewBottomSheet from "@/components/ReviewBottomSheet";
+import BottomSheet from "@gorhom/bottom-sheet";
+import ReviewBottomSheet from "@/components/Test";
 
 export default function JobDetails() {
+	const bottomSheetRef = useRef<BottomSheet>(null);
 	const { selectedJob, setSelectedBid } = useJobContext();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
-	const [bottomSheetVisible, setBottomSheetVisible] = useState(true);
 	const [isCompanyCompletionPending, setIsCompanyCompletionPending] = useState(true);
 
 	const handleJobCompleted = async () => {
 		if (!selectedJob || !selectedJob.winningBidId) return;
 		try {
-			await updatePostCompletionStatus(selectedJob.pid, selectedJob.uid);
-			await checkAndClosePostingAndBid(selectedJob.pid, selectedJob.winningBidId);
+			// await updatePostCompletionStatus(selectedJob.pid, selectedJob.uid);
+			// await checkAndClosePostingAndBid(selectedJob.pid, selectedJob.winningBidId);
 		} catch (error) {
 			console.error("Failed to update job status:", error);
 			setError("Failed to update job status");
 			setModalVisible(false);
 		} finally {
 			setModalVisible(false);
-			router.back();
+			bottomSheetRef.current?.snapToIndex(0);
 		}
 	};
 
@@ -61,6 +62,11 @@ export default function JobDetails() {
 
 	const handleModalClose = () => {
 		setModalVisible(false);
+	};
+
+	const handleReviewSubmit = () => {
+		bottomSheetRef.current?.close();
+		router.back();
 	};
 
 	const hasCompanyCompletedJob = () => {
@@ -118,10 +124,8 @@ export default function JobDetails() {
 				onDone={handleJobCompleted}
 				onCancel={handleModalClose}
 			/>
-			<ReviewBottomSheet
-				visible={bottomSheetVisible}
-				onClose={() => setBottomSheetVisible(false)}
-			/>
+
+			<ReviewBottomSheet onSubmit={handleReviewSubmit} ref={bottomSheetRef} />
 		</SafeAreaView>
 	);
 }
