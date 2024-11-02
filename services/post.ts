@@ -2,6 +2,7 @@ import { BidStatus, IBidEntity, IPost, IPostEntity, JobStatus } from "@/typings/
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import { fetchBidFromBid } from "./bid";
+import compressImageToWebP from "./image";
 
 export async function CreateNewPost(newPostContent: IPost, imageUris: string[]) {
 	try {
@@ -20,15 +21,21 @@ export async function CreateNewPost(newPostContent: IPost, imageUris: string[]) 
 		const postId = postRef.id;
 
 		const uploadPromises = imageUris.map(async (uri, index) => {
-			const response = await fetch(uri);
-			const blob = await response.blob();
+			const compressedImage = await compressImageToWebP(uri);
+			if (compressedImage) {
+				const response = await fetch(compressedImage);
+				const blob = await response.blob();
 
-			const imageRef = storage().ref(`posts/${postId}/image_${index + 1}.jpg`);
-			await imageRef.put(blob);
-			return await imageRef.getDownloadURL();
+				const imageRef = storage().ref(`posts/${postId}/image_${index + 1}.jpg`);
+				await imageRef.put(blob);
+				return await imageRef.getDownloadURL();
+			}
+			return undefined;
 		});
 
-		const imageUrls: string[] = await Promise.all(uploadPromises);
+		const imageUrls: string[] = (await Promise.all(uploadPromises)).filter(
+			(url): url is string => url !== undefined
+		);
 
 		await postRef.update({
 			imageUrls,
