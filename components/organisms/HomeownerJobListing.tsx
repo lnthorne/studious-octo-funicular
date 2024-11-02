@@ -6,8 +6,9 @@ import {
 	View,
 	Image,
 	ListRenderItem,
+	ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Timestamp } from "@react-native-firebase/firestore";
 import ATChip from "../atoms/Chips";
 import { ATText } from "../atoms/Text";
@@ -59,7 +60,14 @@ export default function ORHomeownerJobListing({
 	const renderItem: ListRenderItem<IPostEntity> = ({ item }) => {
 		return (
 			<View style={styles.postContainer}>
-				<Image source={getpostImage(item.imageUrls?.[0])} style={styles.image} />
+				<View style={styles.imageContainer}>
+					<ActivityIndicator
+						style={styles.loadingIndicator}
+						size="small"
+						color={Colors.primaryButtonColor}
+					/>
+					<Image source={getpostImage(item.imageUrls?.[0])} style={styles.image} />
+				</View>
 				<View style={styles.column}>
 					<ATText typography="body">{shortenTitle(item.title)}</ATText>
 					<ATText typography="secondary" color="secondaryTextColor">
@@ -109,9 +117,19 @@ const styles = StyleSheet.create({
 		marginRight: 4,
 		paddingHorizontal: 10,
 	},
-	image: {
+	imageContainer: {
+		justifyContent: "center",
+		alignItems: "center",
+		position: "relative",
 		height: 56,
 		width: 56,
+	},
+	loadingIndicator: {
+		position: "absolute",
+	},
+	image: {
+		width: "100%",
+		height: "100%",
 		borderRadius: 8,
 	},
 });

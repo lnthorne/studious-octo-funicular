@@ -8,9 +8,11 @@ import {
 	ImageStyle,
 	Alert,
 	TouchableWithoutFeedback,
+	ActivityIndicator,
 } from "react-native";
 import { ATText } from "../atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "react-native-ui-lib";
 
 interface CollageProps {
 	images: string[] | undefined;
@@ -20,6 +22,16 @@ interface CollageProps {
 
 export default function MLCollage({ images, matrix, onLongPress }: CollageProps) {
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+	const [imagesLoading, setImagesLoading] = useState(true);
+	const [modalLoading, setModalLoading] = useState(true);
+
+	const handleFirstImageLoad = () => {
+		setImagesLoading(false);
+	};
+
+	const handleModalLoaded = () => {
+		setModalLoading(false);
+	};
 
 	const openImage = (index: number) => {
 		setSelectedImageIndex(index);
@@ -57,6 +69,13 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 
 	return (
 		<View style={styles.collageContainer}>
+			{imagesLoading && (
+				<ActivityIndicator
+					style={styles.loadingIndicator}
+					size="large"
+					color={Colors.primaryButtonColor}
+				/>
+			)}
 			{matrix.map((numImagesInRow, rowIndex) => {
 				const rowImages = imagesToDisplay.slice(imageIndex, imageIndex + numImagesInRow);
 				const currentRowStartIndex = imageIndex;
@@ -77,6 +96,7 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 										styles.image,
 										getImageStyle(rowIndex, idx, numImagesInRow, matrix.length),
 									]}
+									onLoadEnd={handleFirstImageLoad}
 								/>
 							</TouchableOpacity>
 						))}
@@ -87,8 +107,20 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 			{selectedImageIndex !== null && (
 				<Modal animationType="fade" visible={true} transparent={true} onRequestClose={closeImage}>
 					<View style={styles.fullScreen}>
+						{modalLoading && (
+							<ActivityIndicator
+								size="large"
+								color={Colors.backgroundColor}
+								style={styles.modalLoadingIndicator}
+							/>
+						)}
 						<TouchableWithoutFeedback onPress={closeImage}>
-							<Image source={{ uri: images[selectedImageIndex] }} style={styles.fullScreenImage} />
+							<Image
+								source={{ uri: images[selectedImageIndex] }}
+								style={styles.fullScreenImage}
+								onLoadEnd={handleModalLoaded}
+								onLoadStart={() => setModalLoading(true)}
+							/>
 						</TouchableWithoutFeedback>
 
 						{selectedImageIndex > 0 && (
@@ -143,6 +175,7 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 		overflow: "hidden",
 		alignSelf: "stretch",
+		position: "relative",
 	},
 	rowContainer: {
 		flexDirection: "row",
@@ -181,5 +214,17 @@ const styles = StyleSheet.create({
 		padding: 10,
 		borderRadius: 16,
 		backgroundColor: "rgba(0, 0, 0, 0.4)",
+	},
+	loadingIndicator: {
+		position: "absolute",
+		top: "50%",
+		left: "50%",
+		marginLeft: -12, // Center the spinner
+		marginTop: -12,
+		zIndex: 1, // Ensure it overlays the images
+	},
+	modalLoadingIndicator: {
+		position: "absolute", // Positioned on top of the image
+		zIndex: 1,
 	},
 });

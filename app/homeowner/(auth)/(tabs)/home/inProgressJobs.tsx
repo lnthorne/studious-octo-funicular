@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
@@ -12,7 +12,7 @@ import { Colors } from "react-native-ui-lib";
 export default function inProgressJobs() {
 	const { user } = useUser<IHomeOwnerEntity>();
 	const { jobs, setJobs, setSelectedJob } = useJobContext();
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [isRefresh, setIsRefresh] = useState(false);
 
 	const fetchJobsInProgress = async (isRefreshing: boolean = false) => {
@@ -50,9 +50,9 @@ export default function inProgressJobs() {
 
 	if (loading) {
 		return (
-			<View style={styles.container}>
-				<ActivityIndicator size={"large"} />
-			</View>
+			<SafeAreaView style={styles.container}>
+				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
+			</SafeAreaView>
 		);
 	}
 	return (

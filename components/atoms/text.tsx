@@ -5,8 +5,8 @@ import { Colors, Typography } from "react-native-ui-lib";
 
 interface CustomTextProps {
 	children: React.ReactNode;
-	typography?: keyof typeof Typography;
-	color?: keyof typeof Colors;
+	typography?: keyof typeof Typography | string;
+	color?: keyof typeof Colors | string;
 	style?: TextStyle;
 }
 

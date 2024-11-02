@@ -19,13 +19,14 @@ import { ATText } from "@/components/atoms/Text";
 
 export default function ConversationsPage() {
 	const [conversations, setConversations] = useState<IConversation[]>([]);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const { user } = useUser<IHomeOwnerEntity>();
 
 	useEffect(() => {
 		setLoading(true);
 		if (!user) return;
-		const unsubscribe = subscribeToConversations(user.uid, (updatedConversations) => {
+		const usersName = user.firstname + " " + user.lastname;
+		const unsubscribe = subscribeToConversations(user.uid, usersName, (updatedConversations) => {
 			setConversations(updatedConversations);
 			setLoading(false);
 		});
@@ -70,11 +71,15 @@ export default function ConversationsPage() {
 		});
 	};
 
+	function getOtherUserName(members: { [userId: string]: string }): string | undefined {
+		return Object.entries(members).find(([userId]) => userId !== user?.uid)?.[1];
+	}
+
 	if (loading) {
 		return (
-			<View style={styles.container}>
-				<ActivityIndicator size={"large"} />
-			</View>
+			<SafeAreaView style={styles.container}>
+				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
+			</SafeAreaView>
 		);
 	}
 
@@ -84,10 +89,21 @@ export default function ConversationsPage() {
 				style={{ marginTop: 40 }}
 				data={conversations}
 				keyExtractor={(item) => item.conversationId}
+				ListEmptyComponent={
+					<ATText
+						typography="secondaryText"
+						color="secondaryTextColor"
+						style={{ alignSelf: "center" }}
+					>
+						You have no messages...
+					</ATText>
+				}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						style={styles.conversationItem}
-						onPress={() => handlePress(item.conversationId, "John Doe")}
+						onPress={() =>
+							handlePress(item.conversationId, getOtherUserName(item.members) || "Error")
+						}
 					>
 						<Image
 							source={require("../../../../assets/images/onboarding.png")}
@@ -95,7 +111,7 @@ export default function ConversationsPage() {
 						/>
 						<View style={{ flex: 1 }}>
 							{/* Name and Username */}
-							<ATText>Thorne Landscaping Services</ATText>
+							<ATText>{getOtherUserName(item.members) || "Error"}</ATText>
 
 							{/* Message */}
 							<ATText typography="secondaryText" color="secondaryTextColor">

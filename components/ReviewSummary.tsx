@@ -1,5 +1,4 @@
-// TODO, move the review summary stuff to here, maybe make it part of design system
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React from "react";
 import * as Progress from "react-native-progress";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,7 +19,7 @@ export default function ReviewStats({
 	return (
 		<View style={styles.container}>
 			<View style={styles.ratingContainer}>
-				<ATText typography="heading" style={{ fontSize: 32 }}>
+				<ATText typography="heading" style={{ fontSize: 30 }}>
 					{averageRating?.toFixed(1)}
 				</ATText>
 				<View style={styles.starContainer}>
@@ -62,9 +61,9 @@ export default function ReviewStats({
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
+		justifyContent: "space-between",
 		alignContent: "center",
 		paddingVertical: 16,
-		gap: 32,
 	},
 	ratingContainer: {
 		flexDirection: "column",

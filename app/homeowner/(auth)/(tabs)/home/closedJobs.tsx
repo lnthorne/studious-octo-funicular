@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
@@ -50,9 +50,9 @@ export default function closedJobs() {
 
 	if (loading) {
 		return (
-			<View style={styles.container}>
-				<ActivityIndicator size={"large"} />
-			</View>
+			<SafeAreaView style={styles.container}>
+				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
+			</SafeAreaView>
 		);
 	}
 

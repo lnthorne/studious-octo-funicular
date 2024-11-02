@@ -5,7 +5,7 @@ import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
 import { Colors } from "react-native-ui-lib";
@@ -13,7 +13,7 @@ import { Colors } from "react-native-ui-lib";
 export default function HomeScreen() {
 	const { user } = useUser<IHomeOwnerEntity>();
 	const { jobs, setJobs, setSelectedJob } = useJobContext();
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [isRefresh, setIsRefresh] = useState(false);
 
 	const fetchJobsAndBids = async (isRefreshing: boolean = false) => {
@@ -51,9 +51,9 @@ export default function HomeScreen() {
 
 	if (loading) {
 		return (
-			<View style={styles.container}>
-				<ActivityIndicator size={"large"} />
-			</View>
+			<SafeAreaView style={styles.container}>
+				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
+			</SafeAreaView>
 		);
 	}
 	return (

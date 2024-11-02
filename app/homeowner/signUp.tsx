@@ -127,7 +127,7 @@ export default function SignUp() {
 								/>
 
 								{loading ? (
-									<ActivityIndicator size="small" color="#0000ff" />
+									<ActivityIndicator size="small" color={Colors.primaryButtonColor} />
 								) : (
 									<MLButton label="Sign up" variant="primary" onPress={handleSubmit} />
 								)}

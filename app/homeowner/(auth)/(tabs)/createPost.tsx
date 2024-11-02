@@ -63,6 +63,7 @@ export default function CreatePostScreen() {
 		} finally {
 			setLoading(false);
 			resetForm();
+			setImageUris([]);
 			router.back();
 		}
 	};
@@ -85,12 +86,12 @@ export default function CreatePostScreen() {
 		if (fromCamera) {
 			result = await ImagePicker.launchCameraAsync({
 				allowsEditing: true,
-				quality: 1,
+				quality: 0.6,
 			});
 		} else {
 			result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				quality: 1,
+				quality: 0.6,
 				allowsMultipleSelection: true,
 			});
 		}
@@ -180,6 +181,7 @@ export default function CreatePostScreen() {
 										errorText={touched.title && errors.title ? errors.title : undefined}
 									/>
 									<MLTextBox
+										placeholder="Write your description..."
 										onChangeText={handleChange("description")}
 										onBlur={handleBlur("description")}
 										heading="Description"
@@ -256,7 +258,7 @@ export default function CreatePostScreen() {
 										visible={modalVisible}
 									/>
 									{loading ? (
-										<ActivityIndicator size="small" color="#0000ff" />
+										<ActivityIndicator size="small" color={Colors.primaryButtonColor} />
 									) : (
 										<MLButton label="Post Job" onPress={handleSubmit as () => void} />
 									)}

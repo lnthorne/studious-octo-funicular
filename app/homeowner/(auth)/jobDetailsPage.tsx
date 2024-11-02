@@ -16,6 +16,7 @@ import { Close } from "./_layout";
 import { CreateReview } from "@/services/review";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
+import { Colors } from "react-native-ui-lib";
 
 export default function JobDetails() {
 	const bottomSheetRef = useRef<BottomSheet>(null);
@@ -125,9 +126,9 @@ export default function JobDetails() {
 
 	if (loading) {
 		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color="#007BFF" />
-			</View>
+			<SafeAreaView style={styles.container}>
+				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
+			</SafeAreaView>
 		);
 	}
 
@@ -142,7 +143,7 @@ export default function JobDetails() {
 	}
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ flex: 1, backgroundColor: Colors.backgroundColor }}>
 			<FlatList
 				data={selectedJob?.bids}
 				keyExtractor={(item) => item.bid}
@@ -163,6 +164,7 @@ export default function JobDetails() {
 				onDone={handleJobCompleted}
 				onCancel={handleModalClose}
 			/>
+
 			<ReviewBottomSheet onSubmit={handleReviewSubmit} ref={bottomSheetRef} />
 		</SafeAreaView>
 	);

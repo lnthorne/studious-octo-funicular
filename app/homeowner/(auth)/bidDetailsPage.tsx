@@ -5,6 +5,8 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	View,
+	Image,
+	ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useJobContext } from "@/contexts/jobContext";
@@ -21,12 +23,13 @@ import { IReviewEntity, ReviewSummary } from "@/typings/reviews.inter";
 import { calculateReviewSummary, fetchCompanyReviews } from "@/services/review";
 import { JobStatus } from "@/typings/jobs.inter";
 import ReviewStats from "@/components/ReviewSummary";
+import { Timestamp } from "@react-native-firebase/firestore";
 
 export default function bidDetailsPage() {
 	const { selectedBid, selectedJob } = useJobContext();
 	const { user } = useUser<IHomeOwnerEntity>();
 	const [reviewData, setReviewData] = useState<ReviewSummary>();
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		getReviewData();
@@ -53,19 +56,38 @@ export default function bidDetailsPage() {
 			return;
 		}
 		try {
-			const conversationId = await startNewConversation(user.uid, selectedBid.uid);
-			// TODO: figure out name stuff
+			const usersName = user.firstname + " " + user.lastname;
+			const conversationId = await startNewConversation(
+				user.uid,
+				selectedBid.uid,
+				usersName,
+				selectedBid.companyName
+			);
 			router.navigate({
 				pathname: "/shared/messages/[conversationId]",
 				params: {
 					conversationId,
-					name: "John Doe",
+					name: selectedBid.companyName,
 				},
 			});
 		} catch (error) {
 			console.error("Error creating conversation:", error);
 			Alert.alert("Error creating conversation. Please try again.");
 		}
+	};
+
+	const getDaysAgo = (createdAt: Timestamp) => {
+		const createdDate = createdAt.toDate();
+		const currentDate = new Date();
+
+		const diffTime = currentDate.getTime() - createdDate.getTime();
+
+		// Convert the time difference to days
+		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 1000 ms * 60 s * 60 m * 24 h
+
+		if (diffDays === 0) return "Today";
+		if (diffDays === 1) return "1d ago";
+		return `${diffDays}d ago`;
 	};
 
 	const handleAcceptBid = async () => {
@@ -81,35 +103,49 @@ export default function bidDetailsPage() {
 		}
 	};
 
-	// if (loading) {
-	// 	return (
-	// 		<View style={styles.container}>
-	// 			<ActivityIndicator size={"large"} />
-	// 		</View>
-	// 	);
-	// }
+	if (loading) {
+		return (
+			<SafeAreaView style={styles.container}>
+				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
+			</SafeAreaView>
+		);
+	}
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={{ flex: 1, paddingHorizontal: 16 }}>
-				<ReviewStats
-					totalReviews={reviewData?.totalReviews}
-					averageRating={reviewData?.averageRating}
-					ratingPercentages={reviewData?.ratingPercentages}
-				/>
-				<ATText>{selectedBid?.companyName}</ATText>
-				<View style={styles.subHeader}>
-					<ATText typography="subheading">Message Bidder</ATText>
+			<ScrollView>
+				<View style={{ flex: 1, paddingHorizontal: 16 }}>
+					<ATText typography="heading">{selectedBid?.companyName}</ATText>
+					<ReviewStats
+						totalReviews={reviewData?.totalReviews}
+						averageRating={reviewData?.averageRating}
+						ratingPercentages={reviewData?.ratingPercentages}
+					/>
+					<View style={styles.detailsContainer}>
+						<Image source={require("../../../assets/images/onboarding.png")} style={styles.image} />
+						<View style={{ flex: 1 }}>
+							<ATText>{`$${selectedBid?.bidAmount}`}</ATText>
+							<ATText typography="secondaryText" color="secondaryTextColor">
+								{selectedBid?.description}
+							</ATText>
+						</View>
+						<ATText typography="secondaryText" color="secondaryTextColor">
+							{getDaysAgo(selectedBid?.createdAt as Timestamp)}
+						</ATText>
+					</View>
+					<View style={styles.subHeader}>
+						<ATText typography="subheading">Message Bidder</ATText>
+					</View>
+					<TouchableOpacity style={styles.messageContainer} onPress={handleCreateConversation}>
+						<ATText typography="textBoxText" style={{ flexDirection: "column" }}>
+							{`Start a conversation with ${selectedBid?.companyName}`}
+						</ATText>
+						<Ionicons name="send" size={24} style={{ flexDirection: "column" }} />
+					</TouchableOpacity>
+					{selectedJob?.jobStatus === JobStatus.open && (
+						<MLButton label="Accept Bid" onPress={handleAcceptBid} />
+					)}
 				</View>
-				<TouchableOpacity style={styles.row}>
-					<ATText typography="textBoxText" style={{ flexDirection: "column" }}>
-						Start a conversation with Liam
-					</ATText>
-					<Ionicons name="send" size={24} style={{ flexDirection: "column" }} />
-				</TouchableOpacity>
-				{selectedJob?.jobStatus === JobStatus.open && (
-					<MLButton label="Accept Bid" onPress={handleAcceptBid} />
-				)}
-			</View>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }
@@ -118,14 +154,27 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: Colors.backgroundColor,
+		paddingHorizontal: 20,
+		paddingVertical: 20,
+	},
+	detailsContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		gap: 12,
+		paddingVertical: 12,
+	},
+	image: {
+		width: 48,
+		height: 48,
+		borderRadius: 8,
 	},
 	subHeader: {
 		alignItems: "flex-start",
 		alignSelf: "stretch",
 	},
-	row: {
+	messageContainer: {
+		paddingTop: 8,
 		flexDirection: "row",
-		height: 56,
 		justifyContent: "space-between",
 		alignItems: "center",
 		alignSelf: "stretch",

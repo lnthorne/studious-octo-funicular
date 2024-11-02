@@ -48,7 +48,9 @@ export function calculateReviewSummary(reviews: IReviewEntity[]): ReviewSummary 
 	});
 
 	const averageRating = totalRating / totalReviews;
-	const ratingPercentages = ratingCounts.map((count) => (count / totalReviews).toFixed(2));
+	const ratingPercentages = ratingCounts.map((count) =>
+		parseFloat((count / totalReviews).toFixed(2))
+	);
 
 	return {
 		totalReviews,
