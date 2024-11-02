@@ -9,7 +9,7 @@ import * as ImageManipulator from "expo-image-manipulator";
  */
 async function compressImageToWebP(
 	uri: string,
-	quality: number = 0.6,
+	quality: number = 0.5,
 	width: number = 1080
 ): Promise<string | null> {
 	try {

@@ -10,6 +10,7 @@ import {
 	IHomeOwnerEntity,
 	UserType,
 } from "@/typings/user.inter";
+import compressImageToWebP from "./image";
 
 /**
  * get the current user ID
@@ -98,6 +99,10 @@ export async function updateUser<T extends IHomeOwner | ICompanyOwner>(
 		const userDocRef = firestore().collection(userType).doc(uid);
 
 		if (newProfileImage) {
+			const compressedImage = await compressImageToWebP(newProfileImage);
+			if (!compressedImage) {
+				throw new Error("There was an error compressing the profile image");
+			}
 			const existingUserDoc = await userDocRef.get();
 			const existingUserData = existingUserDoc.data();
 
@@ -105,7 +110,7 @@ export async function updateUser<T extends IHomeOwner | ICompanyOwner>(
 				const oldImageRef = storage().ref(`profileImages/${uid}`);
 				await deleteObject(oldImageRef);
 			}
-			const response = await fetch(newProfileImage);
+			const response = await fetch(compressedImage);
 			const blob = await response.blob();
 			const imageRef = storage().ref(`profileImages/${uid}`);
 			await imageRef.put(blob);

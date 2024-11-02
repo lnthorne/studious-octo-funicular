@@ -72,12 +72,12 @@ export default function SettingsScreen() {
 		if (fromCamera) {
 			result = await ImagePicker.launchCameraAsync({
 				allowsEditing: true,
-				quality: 1,
+				quality: 0.6,
 			});
 		} else {
 			result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				quality: 1,
+				quality: 0.6,
 			});
 		}
 
@@ -103,6 +103,7 @@ export default function SettingsScreen() {
 
 	const handProfileUpdate = async (values: IHomeOwner) => {
 		const newProfileImage = isNewProfileImage ? profileImage : undefined;
+		setLoading(true);
 		try {
 			const updatedUser = await updateUser<IHomeOwner>(
 				user.uid,
@@ -110,19 +111,20 @@ export default function SettingsScreen() {
 				UserType.homeowner,
 				newProfileImage
 			);
-			if (!updateUser) {
+			if (!updatedUser) {
 				console.error("There was an error updating the user");
 				return;
 			}
 
 			setUser({ ...user, ...updatedUser });
+			setProfileImage(updatedUser.profileImage);
 			console.log("user", user);
 		} catch (error) {
 			console.error("There was an error updating the user");
 		} finally {
 			setIsEditing(false);
 			setIsNewProfileImage(false);
-			setProfileImage(user.profileImage);
+			setLoading(false);
 		}
 	};
 
@@ -232,24 +234,27 @@ export default function SettingsScreen() {
 									editable={isEditing}
 								/>
 
-								{isEditing ? (
-									<View style={styles.buttonRow}>
-										<MLButton label="Save" onPress={handleSubmit} style={styles.button} />
-										<MLButton
-											label="Cancel"
-											variant="secondary"
-											style={styles.button}
-											onPress={() => {
-												setValues(initialValues);
-												setProfileImage(user.profileImage);
-												setIsNewProfileImage(false);
-												setIsEditing(false);
-											}}
-										/>
-									</View>
-								) : (
-									<MLButton label="Edit" onPress={() => setIsEditing(true)} />
-								)}
+								{loading && <ActivityIndicator size="large" color={Colors.primaryButtonColor} />}
+
+								{!loading &&
+									(isEditing ? (
+										<View style={styles.buttonRow}>
+											<MLButton label="Save" onPress={handleSubmit} style={styles.button} />
+											<MLButton
+												label="Cancel"
+												variant="secondary"
+												style={styles.button}
+												onPress={() => {
+													setValues(initialValues);
+													setProfileImage(user.profileImage);
+													setIsNewProfileImage(false);
+													setIsEditing(false);
+												}}
+											/>
+										</View>
+									) : (
+										<MLButton label="Edit" onPress={() => setIsEditing(true)} />
+									))}
 							</View>
 						)}
 					</Formik>
