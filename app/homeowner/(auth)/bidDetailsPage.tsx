@@ -1,5 +1,12 @@
-import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import {
+	ActivityIndicator,
+	Alert,
+	SafeAreaView,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { useJobContext } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
 import { useUser } from "@/contexts/userContext";
@@ -10,10 +17,35 @@ import { MLButton } from "@/components/molecules/Button";
 import { Colors } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { acceptBidAndCloseOtherBids } from "@/services/bid";
+import { IReviewEntity, ReviewSummary } from "@/typings/reviews.inter";
+import { calculateReviewSummary, fetchCompanyReviews } from "@/services/review";
+import { JobStatus } from "@/typings/jobs.inter";
+import ReviewStats from "@/components/ReviewSummary";
 
 export default function bidDetailsPage() {
-	const { selectedBid } = useJobContext();
+	const { selectedBid, selectedJob } = useJobContext();
 	const { user } = useUser<IHomeOwnerEntity>();
+	const [reviewData, setReviewData] = useState<ReviewSummary>();
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		getReviewData();
+		console.log("REview data", reviewData);
+	}, [selectedBid]);
+
+	const getReviewData = async () => {
+		if (!selectedBid) return;
+		setLoading(true);
+		try {
+			const reviews = await fetchCompanyReviews(selectedBid.uid);
+			const summary = calculateReviewSummary(reviews);
+			setReviewData(summary);
+		} catch (error) {
+			console.error("There was an error getting review data", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	const handleCreateConversation = async () => {
 		if (!user || !selectedBid) {
@@ -48,20 +80,36 @@ export default function bidDetailsPage() {
 			Alert.alert("Failed to accept bid. Please try again.");
 		}
 	};
+
+	// if (loading) {
+	// 	return (
+	// 		<View style={styles.container}>
+	// 			<ActivityIndicator size={"large"} />
+	// 		</View>
+	// 	);
+	// }
 	return (
 		<SafeAreaView style={styles.container}>
-			<ATText>{selectedBid?.companyName}</ATText>
-			<View style={styles.subHeader}>
-				<ATText typography="subheading">Message Bidder</ATText>
+			<View style={{ flex: 1, paddingHorizontal: 16 }}>
+				<ReviewStats
+					totalReviews={reviewData?.totalReviews}
+					averageRating={reviewData?.averageRating}
+					ratingPercentages={reviewData?.ratingPercentages}
+				/>
+				<ATText>{selectedBid?.companyName}</ATText>
+				<View style={styles.subHeader}>
+					<ATText typography="subheading">Message Bidder</ATText>
+				</View>
+				<TouchableOpacity style={styles.row}>
+					<ATText typography="textBoxText" style={{ flexDirection: "column" }}>
+						Start a conversation with Liam
+					</ATText>
+					<Ionicons name="send" size={24} style={{ flexDirection: "column" }} />
+				</TouchableOpacity>
+				{selectedJob?.jobStatus === JobStatus.open && (
+					<MLButton label="Accept Bid" onPress={handleAcceptBid} />
+				)}
 			</View>
-			<TouchableOpacity style={styles.row}>
-				<ATText typography="textBoxText" style={{ flexDirection: "column" }}>
-					Start a conversation with Liam
-				</ATText>
-				<Ionicons name="send" size={24} style={{ flexDirection: "column" }} />
-			</TouchableOpacity>
-			<MLButton label="Start Conversation" onPress={handleCreateConversation} />
-			<MLButton label="Accept Bid" onPress={handleAcceptBid} />
 		</SafeAreaView>
 	);
 }
@@ -72,14 +120,12 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.backgroundColor,
 	},
 	subHeader: {
-		paddingHorizontal: 16,
 		alignItems: "flex-start",
 		alignSelf: "stretch",
 	},
 	row: {
 		flexDirection: "row",
 		height: 56,
-		paddingHorizontal: 16,
 		justifyContent: "space-between",
 		alignItems: "center",
 		alignSelf: "stretch",

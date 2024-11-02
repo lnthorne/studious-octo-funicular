@@ -1,4 +1,5 @@
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+import { number } from "yup";
 
 export interface IReview {
 	homeownerId: string;
@@ -19,4 +20,10 @@ export interface ReviewForm {
 	rating: number;
 	title?: string;
 	text?: string;
+}
+
+export interface ReviewSummary {
+	totalReviews: number;
+	averageRating: number;
+	ratingPercentages: number[];
 }
