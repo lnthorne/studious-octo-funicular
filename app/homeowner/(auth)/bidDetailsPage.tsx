@@ -112,7 +112,7 @@ export default function bidDetailsPage() {
 	}
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView>
+			<ScrollView style={{ paddingVertical: 12 }}>
 				<View style={{ flex: 1, paddingHorizontal: 16 }}>
 					<ATText typography="heading">{selectedBid?.companyName}</ATText>
 					<ReviewStats
