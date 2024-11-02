@@ -52,7 +52,7 @@ export default function SignIn() {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView>
+			<ScrollView keyboardDismissMode="on-drag">
 				<Formik
 					initialValues={initialValues}
 					validationSchema={validationSchema}

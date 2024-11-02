@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: Colors.backgroundColor,
 		paddingHorizontal: 20,
-		paddingVertical: 20,
+		paddingVertical: 40,
 	},
 	detailsContainer: {
 		flexDirection: "row",

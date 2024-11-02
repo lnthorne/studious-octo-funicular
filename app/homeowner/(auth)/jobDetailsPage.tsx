@@ -143,7 +143,7 @@ export default function JobDetails() {
 	}
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: Colors.backgroundColor }}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: Colors.backgroundColor, paddingVertical: 40 }}>
 			<FlatList
 				data={selectedJob?.bids}
 				keyExtractor={(item) => item.bid}

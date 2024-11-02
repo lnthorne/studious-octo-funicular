@@ -96,6 +96,7 @@ export default function MessagesPage() {
 					ref={flatListRef}
 					onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
 					onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+					keyboardDismissMode="on-drag"
 					renderItem={({ item }) => (
 						<View style={styles.messageContainer}>
 							<View

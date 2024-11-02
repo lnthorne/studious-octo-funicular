@@ -155,7 +155,7 @@ export default function CreatePostScreen() {
 				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
 				keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0} // Adjust if needed
 			>
-				<ScrollView>
+				<ScrollView keyboardDismissMode="on-drag">
 					<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 						<Formik
 							initialValues={initialValues}
