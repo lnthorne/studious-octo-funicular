@@ -1,18 +1,12 @@
 // app/home/createPost.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
 	View,
-	TextInput,
-	Button,
-	Text,
-	Image,
 	StyleSheet,
 	Alert,
 	ActivityIndicator,
 	KeyboardAvoidingView,
 	Platform,
-	Keyboard,
-	TouchableWithoutFeedback,
 	SafeAreaView,
 	ScrollView,
 	TouchableOpacity,
@@ -156,116 +150,111 @@ export default function CreatePostScreen() {
 				keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0} // Adjust if needed
 			>
 				<ScrollView keyboardDismissMode="on-drag">
-					<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-						<Formik
-							initialValues={initialValues}
-							validationSchema={PostSchema}
-							onSubmit={handlePostSubmit}
-						>
-							{({
-								handleChange,
-								handleBlur,
-								handleSubmit,
-								values,
-								errors,
-								setFieldValue,
-								touched,
-							}) => (
-								<View>
-									<MLTextBox
-										onChangeText={handleChange("title")}
-										onBlur={handleBlur("title")}
-										placeholder="Title"
-										heading="Title"
-										value={values.title}
-										errorText={touched.title && errors.title ? errors.title : undefined}
-									/>
-									<MLTextBox
-										placeholder="Write your description..."
-										onChangeText={handleChange("description")}
-										onBlur={handleBlur("description")}
-										heading="Description"
-										value={values.description}
-										errorText={
-											touched.description && errors.description ? errors.description : undefined
-										}
-										multiline={true}
-										numberOfLines={5}
-									/>
-									<MLTextBox
-										onChangeText={handleChange("zipcode")}
-										onBlur={handleBlur("zipcode")}
-										placeholder="Postal code"
-										heading="Postal code"
-										value={values.zipcode}
-										errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
-									/>
-									<MLTextBox
-										onChangeText={(budget) => {
-											const numericValue = budget.replace(/[^0-9.]/g, "");
-											setFieldValue("budget", numericValue);
-										}}
-										onBlur={handleBlur("budget")}
-										placeholder="Budget"
-										heading="Budget"
-										value={values.budget ? `$${values.budget}` : ""}
-										keyboardType="numeric"
-									/>
-									<View style={styles.fieldContainer}>
-										<ATText style={styles.fieldHeader}>Estimated completion date</ATText>
+					<Formik
+						initialValues={initialValues}
+						validationSchema={PostSchema}
+						onSubmit={handlePostSubmit}
+					>
+						{({
+							handleChange,
+							handleBlur,
+							handleSubmit,
+							values,
+							errors,
+							setFieldValue,
+							touched,
+						}) => (
+							<View>
+								<MLTextBox
+									onChangeText={handleChange("title")}
+									onBlur={handleBlur("title")}
+									placeholder="Title"
+									heading="Title"
+									value={values.title}
+									errorText={touched.title && errors.title ? errors.title : undefined}
+								/>
+								<MLTextBox
+									placeholder="Write your description..."
+									onChangeText={handleChange("description")}
+									onBlur={handleBlur("description")}
+									heading="Description"
+									value={values.description}
+									errorText={
+										touched.description && errors.description ? errors.description : undefined
+									}
+									multiline={true}
+									numberOfLines={5}
+								/>
+								<MLTextBox
+									onChangeText={handleChange("zipcode")}
+									onBlur={handleBlur("zipcode")}
+									placeholder="Postal code"
+									heading="Postal code"
+									value={values.zipcode}
+									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
+								/>
+								<MLTextBox
+									onChangeText={(budget) => {
+										const numericValue = budget.replace(/[^0-9.]/g, "");
+										setFieldValue("budget", numericValue);
+									}}
+									onBlur={handleBlur("budget")}
+									placeholder="Budget"
+									heading="Budget"
+									value={values.budget ? `$${values.budget}` : ""}
+									keyboardType="numeric"
+								/>
+								<View style={styles.fieldContainer}>
+									<ATText style={styles.fieldHeader}>Estimated completion date</ATText>
+									<TouchableOpacity
+										onPress={() => setModalVisible(true)}
+										style={styles.textFieldContainer}
+									>
+										<Ionicons name="calendar" size={23} />
+										<ATText>{values.estimatedStartDate.toLocaleDateString()}</ATText>
+									</TouchableOpacity>
+								</View>
+								<View style={styles.fieldContainer}>
+									<ATText style={styles.fieldHeader}>Add Photos</ATText>
+									{imageUris.length < 1 ? (
 										<TouchableOpacity
-											onPress={() => setModalVisible(true)}
-											style={styles.textFieldContainer}
+											style={styles.addIconContainer}
+											onPress={showImagePickerOptions}
 										>
-											<Ionicons name="calendar" size={23} />
-											<ATText>{values.estimatedStartDate.toLocaleDateString()}</ATText>
+											<Ionicons name="add" size={32} />
 										</TouchableOpacity>
-									</View>
-									<View style={styles.fieldContainer}>
-										<ATText style={styles.fieldHeader}>Add Photos</ATText>
-										{imageUris.length < 1 ? (
-											<TouchableOpacity
-												style={styles.addIconContainer}
-												onPress={showImagePickerOptions}
-											>
-												<Ionicons name="add" size={32} />
-											</TouchableOpacity>
-										) : (
-											<>
-												<MLCollage
-													images={imageUris}
-													matrix={matrixLayout[imageUris.length]}
-													onLongPress={handImageLongPress}
-												/>
-												<TouchableOpacity
-													style={styles.morePhotos}
-													onPress={showImagePickerOptions}
-												>
-													<ATText typography="secondaryText" color="secondaryTextColor">
-														Add more photos...
-													</ATText>
-												</TouchableOpacity>
-											</>
-										)}
-									</View>
-									<ORDatePickerModal
-										onClose={handleModalClose}
-										onChange={(newDate) => {
-											setSelectedDate(newDate);
-											setFieldValue("estimatedStartDate", newDate);
-										}}
-										selectedDate={selectedDate}
-										visible={modalVisible}
-									/>
-									{loading ? (
-										<ActivityIndicator size="small" color={Colors.primaryButtonColor} />
 									) : (
-										<MLButton label="Post Job" onPress={handleSubmit as () => void} />
+										<>
+											<MLCollage
+												images={imageUris}
+												matrix={matrixLayout[imageUris.length]}
+												onLongPress={handImageLongPress}
+											/>
+											<TouchableOpacity style={styles.morePhotos} onPress={showImagePickerOptions}>
+												<ATText typography="secondaryText" color="secondaryTextColor">
+													Add more photos...
+												</ATText>
+											</TouchableOpacity>
+										</>
 									)}
 								</View>
-							)}
-						</Formik>
-					</TouchableWithoutFeedback>
+								<ORDatePickerModal
+									onClose={handleModalClose}
+									onChange={(newDate) => {
+										setSelectedDate(newDate);
+										setFieldValue("estimatedStartDate", newDate);
+									}}
+									selectedDate={selectedDate}
+									visible={modalVisible}
+								/>
+								{loading ? (
+									<ActivityIndicator size="small" color={Colors.primaryButtonColor} />
+								) : (
+									<MLButton label="Post Job" onPress={handleSubmit as () => void} />
+								)}
+							</View>
+						)}
+					</Formik>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

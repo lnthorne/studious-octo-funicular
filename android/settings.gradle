@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'debug'
+rootProject.name = 'Spade'
 
 dependencyResolutionManagement {
   versionCatalogs {

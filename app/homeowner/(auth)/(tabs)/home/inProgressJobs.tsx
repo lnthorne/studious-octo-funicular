@@ -1,5 +1,5 @@
-import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import { ActivityIndicator, Animated, SafeAreaView, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
@@ -10,6 +10,7 @@ import { useJobContext } from "@/contexts/jobContext";
 import { Colors } from "react-native-ui-lib";
 
 export default function inProgressJobs() {
+	const opacity = useRef(new Animated.Value(0)).current;
 	const { user } = useUser<IHomeOwnerEntity>();
 	const { jobs, setJobs, setSelectedJob } = useJobContext();
 	const [loading, setLoading] = useState(false);
@@ -34,9 +35,20 @@ export default function inProgressJobs() {
 
 	useFocusEffect(
 		useCallback(() => {
+			opacity.setValue(0);
 			fetchJobsInProgress();
 		}, [user])
 	);
+
+	useEffect(() => {
+		if (!loading) {
+			Animated.timing(opacity, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [loading]);
 
 	const onRefresh = () => {
 		setIsRefresh(true);
@@ -57,13 +69,15 @@ export default function inProgressJobs() {
 	}
 	return (
 		<View style={styles.container}>
-			<ORHomeownerJobListing
-				data={jobs}
-				isRefresh={isRefresh}
-				onRefresh={onRefresh}
-				onPress={handleJobSelection}
-				chipLabel="View"
-			/>
+			<Animated.View style={[{ flex: 1 }, { opacity }]}>
+				<ORHomeownerJobListing
+					data={jobs}
+					isRefresh={isRefresh}
+					onRefresh={onRefresh}
+					onPress={handleJobSelection}
+					chipLabel="View"
+				/>
+			</Animated.View>
 		</View>
 	);
 }

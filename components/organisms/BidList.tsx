@@ -15,18 +15,6 @@ export default function ORBidList({ bids, onPress }: BidListProps) {
 		return <></>;
 	}
 
-	const renderItem: ListRenderItem<IBidEntity> = ({ item }) => (
-		<View style={styles.itemContainer}>
-			<TouchableOpacity onPress={() => onPress(item)} style={{ alignItems: "center" }}>
-				<Image source={require("../../assets/images/onboarding.png")} style={styles.image} />
-				<ATText typography="body">{`$${item.bidAmount}`}</ATText>
-				<ATText typography="secondaryText" color="secondaryTextColor">
-					By {item.companyName}
-				</ATText>
-			</TouchableOpacity>
-		</View>
-	);
-
 	const renderHeading = () => {
 		if (selectedJob?.jobStatus === JobStatus.inprogress) {
 			return (
@@ -48,13 +36,24 @@ export default function ORBidList({ bids, onPress }: BidListProps) {
 		);
 	};
 	return (
-		<FlatList
-			data={bids}
-			keyExtractor={(item) => item.bid}
-			numColumns={2}
-			ListHeaderComponent={renderHeading}
-			renderItem={renderItem}
-		/>
+		<View style={styles.container}>
+			{renderHeading()}
+			<View style={styles.gridContainer}>
+				{bids.map((item, index) => (
+					<View key={item.bid} style={styles.itemWrapper}>
+						<TouchableOpacity onPress={() => onPress(item)} style={styles.itemContainer}>
+							<Image source={require("../../assets/images/onboarding.png")} style={styles.image} />
+							<ATText typography="body">{`$${item.bidAmount}`}</ATText>
+							<ATText typography="secondaryText" color="secondaryTextColor">
+								By {item.companyName}
+							</ATText>
+						</TouchableOpacity>
+						{/* Add spacing on the right for even items in the first column */}
+						{index % 2 === 0 && <View style={styles.spacer} />}
+					</View>
+				))}
+			</View>
+		</View>
 	);
 }
 
@@ -76,5 +75,22 @@ const styles = StyleSheet.create({
 		height: 140,
 		borderRadius: 70,
 		marginBottom: 10,
+	},
+	container: {
+		flex: 1,
+	},
+
+	gridContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-between",
+	},
+	itemWrapper: {
+		flexDirection: "row",
+		flexBasis: "48%", // Occupy 48% width to create two columns with space between
+		marginBottom: 10,
+	},
+	spacer: {
+		flexBasis: "4%", // Adds space between two items in a row
 	},
 });

@@ -11,6 +11,7 @@ import {
 	Image,
 	Alert,
 	TouchableOpacity,
+	Animated,
 } from "react-native";
 import { signOut } from "@/services/auth";
 import { Colors } from "react-native-ui-lib";
@@ -19,7 +20,7 @@ import { useUser } from "@/contexts/userContext";
 import { IHomeOwner, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
@@ -43,6 +44,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function SettingsScreen() {
+	const imageOpacity = useRef(new Animated.Value(0)).current;
 	const { user, setUser } = useUser<IHomeOwnerEntity>();
 	const [isEditing, setIsEditing] = useState(false);
 	const [profileImage, setProfileImage] = useState(user?.profileImage);
@@ -128,6 +130,14 @@ export default function SettingsScreen() {
 		}
 	};
 
+	const handleImageLoad = () => {
+		Animated.timing(imageOpacity, {
+			toValue: 1,
+			duration: 500,
+			useNativeDriver: true,
+		}).start();
+	};
+
 	const initialValues: IHomeOwner = {
 		firstname: user.firstname,
 		lastname: user.lastname,
@@ -150,7 +160,11 @@ export default function SettingsScreen() {
 							disabled={!isEditing}
 							style={styles.imageContainer}
 						>
-							<Image style={styles.image} source={{ uri: profileImage }} />
+							<Animated.Image
+								style={[styles.image, { opacity: imageOpacity }]}
+								source={{ uri: profileImage }}
+								onLoadEnd={handleImageLoad}
+							/>
 							{isEditing && (
 								<>
 									<View style={styles.imageTint} />

@@ -52,7 +52,12 @@ export default function RootLayout() {
 			<UserProvider>
 				<UserContextWrapper>
 					<JobProvider>
-						<Stack screenOptions={{ headerShown: false }}>
+						<Stack
+							screenOptions={{
+								headerShown: false,
+								contentStyle: { backgroundColor: Colors.backgroundColor },
+							}}
+						>
 							<Stack.Screen name="index" />
 							<Stack.Screen
 								name="shared/messages/[conversationId]"

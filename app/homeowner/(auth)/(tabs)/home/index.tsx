@@ -4,13 +4,14 @@ import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
-import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
 import { Colors } from "react-native-ui-lib";
 
 export default function HomeScreen() {
+	const opacity = useRef(new Animated.Value(0)).current;
 	const { user } = useUser<IHomeOwnerEntity>();
 	const { jobs, setJobs, setSelectedJob } = useJobContext();
 	const [loading, setLoading] = useState(false);
@@ -35,9 +36,20 @@ export default function HomeScreen() {
 
 	useFocusEffect(
 		useCallback(() => {
+			opacity.setValue(0);
 			fetchJobsAndBids();
 		}, [user])
 	);
+
+	useEffect(() => {
+		if (!loading) {
+			Animated.timing(opacity, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [loading]);
 
 	const onRefresh = () => {
 		setIsRefresh(true);
@@ -58,13 +70,15 @@ export default function HomeScreen() {
 	}
 	return (
 		<View style={styles.container}>
-			<ORHomeownerJobListing
-				data={jobs}
-				isRefresh={isRefresh}
-				onRefresh={onRefresh}
-				onPress={handleJobSelection}
-				chipLabel="View Bids"
-			/>
+			<Animated.View style={[{ flex: 1 }, { opacity }]}>
+				<ORHomeownerJobListing
+					data={jobs}
+					isRefresh={isRefresh}
+					onRefresh={onRefresh}
+					onPress={handleJobSelection}
+					chipLabel="View Bids"
+				/>
+			</Animated.View>
 		</View>
 	);
 }

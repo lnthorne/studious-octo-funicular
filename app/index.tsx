@@ -1,13 +1,10 @@
 import React from "react";
-import { StyleSheet, Image, TouchableOpacity, View, Text, SafeAreaView } from "react-native";
-import { Colors, Typography } from "react-native-ui-lib";
-import { useRouter } from "expo-router";
+import { StyleSheet, Image, View, SafeAreaView } from "react-native";
+import { Colors } from "react-native-ui-lib";
 import { ATText } from "@/components/atoms/Text";
 import ORCoursel from "@/components/organisms/Coursel";
 
 export default function Onboarding() {
-	const router = useRouter();
-
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.column}>

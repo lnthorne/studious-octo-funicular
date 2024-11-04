@@ -39,7 +39,7 @@ export default function ReviewStats({
 					<View style={styles.progressBarConatiner}>
 						<ATText>{index + 1}</ATText>
 						<Progress.Bar
-							progress={percentage}
+							progress={percentage || 0}
 							width={200}
 							animationType="decay"
 							color={Colors.primaryButtonColor}

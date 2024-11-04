@@ -32,7 +32,7 @@ export default function MainLayout() {
 				headerShown: true,
 				tabBarStyle: {
 					backgroundColor: Colors.tabBarColor,
-					borderTopWidth: 2,
+					borderTopWidth: 1,
 					borderTopColor: Colors.tabBorderTopColor,
 				},
 			}}

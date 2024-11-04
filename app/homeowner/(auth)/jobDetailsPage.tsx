@@ -1,4 +1,4 @@
-import { ActivityIndicator, SafeAreaView, StyleSheet, View, FlatList } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { router, useNavigation } from "expo-router";
 import { checkAndClosePostingAndBid, updatePostCompletionStatus } from "@/services/post";
@@ -144,20 +144,17 @@ export default function JobDetails() {
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: Colors.backgroundColor, paddingVertical: 40 }}>
-			<FlatList
-				data={selectedJob?.bids}
-				keyExtractor={(item) => item.bid}
-				renderItem={({}) => <ORBidList bids={selectedJob?.bids} onPress={handleBidSelected} />}
-				ListHeaderComponent={<ORJobDetails jobDetails={selectedJob} />}
-				ListFooterComponent={handleButtonType}
-				contentContainerStyle={styles.container}
-				showsVerticalScrollIndicator={false}
-				ListEmptyComponent={
+			<ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+				<ORJobDetails jobDetails={selectedJob} />
+				{selectedJob?.bids ? (
+					<ORBidList bids={selectedJob.bids} onPress={handleBidSelected} />
+				) : (
 					<ATText typography="secondaryText" color="secondaryTextColor" style={styles.listEmpty}>
-						You have not recieved any bids...
+						You have not received any bids...
 					</ATText>
-				}
-			/>
+				)}
+				{handleButtonType()}
+			</ScrollView>
 			<GeneralModal
 				visible={modalVisible}
 				description="Are you sure you want to mark this job as completed? You cannot undo this action."

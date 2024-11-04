@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	View,
 	Text,
@@ -8,6 +8,7 @@ import {
 	ActivityIndicator,
 	SafeAreaView,
 	Image,
+	Animated,
 } from "react-native";
 import { router } from "expo-router";
 import { subscribeToConversations } from "@/services/messaging";
@@ -18,9 +19,10 @@ import { Colors } from "react-native-ui-lib";
 import { ATText } from "@/components/atoms/Text";
 
 export default function ConversationsPage() {
+	const fadeAnim = useRef<Animated.Value[]>([]).current;
+	const { user } = useUser<IHomeOwnerEntity>();
 	const [conversations, setConversations] = useState<IConversation[]>([]);
 	const [loading, setLoading] = useState(false);
-	const { user } = useUser<IHomeOwnerEntity>();
 
 	useEffect(() => {
 		setLoading(true);
@@ -33,6 +35,23 @@ export default function ConversationsPage() {
 
 		return () => unsubscribe();
 	}, [user]);
+
+	useEffect(() => {
+		if (conversations) {
+			conversations.forEach((_, index) => {
+				fadeAnim[index] = new Animated.Value(0);
+			});
+		}
+	}, [conversations]);
+
+	const handleFadeIn = (index: number) => {
+		Animated.timing(fadeAnim[index], {
+			toValue: 1,
+			duration: 500,
+			delay: index * 100, // Stagger each item's fade-in by 100ms
+			useNativeDriver: true,
+		}).start();
+	};
 
 	const formatMessageDate = (timestamp: number): string => {
 		const messageDate = new Date(timestamp);
@@ -78,7 +97,11 @@ export default function ConversationsPage() {
 	if (loading) {
 		return (
 			<SafeAreaView style={styles.container}>
-				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
+				<ActivityIndicator
+					size={"large"}
+					color={Colors.primaryButtonColor}
+					style={{ marginTop: 50 }}
+				/>
 			</SafeAreaView>
 		);
 	}
@@ -98,30 +121,37 @@ export default function ConversationsPage() {
 						You have no messages...
 					</ATText>
 				}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						style={styles.conversationItem}
-						onPress={() =>
-							handlePress(item.conversationId, getOtherUserName(item.members) || "Error")
-						}
+				renderItem={({ item, index }) => (
+					<View
+						style={styles.itemWrapper}
+						onLayout={() => handleFadeIn(index)} // Trigger animation on layout
 					>
-						<Image
-							source={require("../../../../assets/images/onboarding.png")}
-							style={styles.avatar}
-						/>
-						<View style={{ flex: 1 }}>
-							{/* Name and Username */}
-							<ATText>{getOtherUserName(item.members) || "Error"}</ATText>
+						<Animated.View style={[styles.conversationItem, { opacity: fadeAnim[index] }]}>
+							<TouchableOpacity
+								style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+								onPress={() =>
+									handlePress(item.conversationId, getOtherUserName(item.members) || "Error")
+								}
+							>
+								<Image
+									source={require("../../../../assets/images/onboarding.png")}
+									style={styles.avatar}
+								/>
+								<View style={{ flex: 1 }}>
+									{/* Name and Username */}
+									<ATText>{getOtherUserName(item.members) || "Error"}</ATText>
 
-							{/* Message */}
-							<ATText typography="secondaryText" color="secondaryTextColor">
-								{item.lastMessage}
-							</ATText>
-						</View>
+									{/* Message */}
+									<ATText typography="secondaryText" color="secondaryTextColor">
+										{item.lastMessage}
+									</ATText>
+								</View>
 
-						{/* Date */}
-						<Text style={styles.timestamp}>{formatMessageDate(item.lastMessageTimestamp)}</Text>
-					</TouchableOpacity>
+								{/* Date */}
+								<Text style={styles.timestamp}>{formatMessageDate(item.lastMessageTimestamp)}</Text>
+							</TouchableOpacity>
+						</Animated.View>
+					</View>
 				)}
 			/>
 		</SafeAreaView>
@@ -129,6 +159,9 @@ export default function ConversationsPage() {
 }
 
 const styles = StyleSheet.create({
+	itemWrapper: {
+		overflow: "hidden", // Ensures each item fits within its container
+	},
 	container: {
 		flex: 1,
 		backgroundColor: Colors.backgroundColor,

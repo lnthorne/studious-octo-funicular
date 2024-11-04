@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
 	View,
 	Image,
@@ -9,6 +9,7 @@ import {
 	Alert,
 	TouchableWithoutFeedback,
 	ActivityIndicator,
+	Animated,
 } from "react-native";
 import { ATText } from "../atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,10 +25,6 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 	const [imagesLoading, setImagesLoading] = useState(true);
 	const [modalLoading, setModalLoading] = useState(true);
-
-	const handleFirstImageLoad = () => {
-		setImagesLoading(false);
-	};
 
 	const handleModalLoaded = () => {
 		setModalLoading(false);
@@ -83,23 +80,38 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 
 				return (
 					<View key={rowIndex} style={styles.rowContainer}>
-						{rowImages.map((image, idx) => (
-							<TouchableOpacity
-								key={idx}
-								onPress={() => openImage(currentRowStartIndex + idx)}
-								onLongPress={() => onLongPress?.(image)}
-								style={{ flex: 1 }}
-							>
-								<Image
-									source={{ uri: image }}
-									style={[
-										styles.image,
-										getImageStyle(rowIndex, idx, numImagesInRow, matrix.length),
-									]}
-									onLoadEnd={handleFirstImageLoad}
-								/>
-							</TouchableOpacity>
-						))}
+						{rowImages.map((image, idx) => {
+							// Create an animated opacity for each image
+							const imageOpacity = useRef(new Animated.Value(0)).current;
+
+							const handleImageLoad = () => {
+								Animated.timing(imageOpacity, {
+									toValue: 1,
+									duration: 500,
+									useNativeDriver: true,
+								}).start();
+								setImagesLoading(false);
+							};
+
+							return (
+								<TouchableOpacity
+									key={idx}
+									onPress={() => openImage(currentRowStartIndex + idx)}
+									onLongPress={() => onLongPress?.(image)}
+									style={{ flex: 1 }}
+								>
+									<Animated.Image
+										source={{ uri: image }}
+										style={[
+											styles.image,
+											getImageStyle(rowIndex, idx, numImagesInRow, matrix.length),
+											{ opacity: imageOpacity }, // Apply animated opacity
+										]}
+										onLoadEnd={handleImageLoad}
+									/>
+								</TouchableOpacity>
+							);
+						})}
 					</View>
 				);
 			})}

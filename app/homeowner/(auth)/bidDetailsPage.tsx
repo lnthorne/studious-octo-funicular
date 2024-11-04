@@ -7,8 +7,9 @@ import {
 	View,
 	Image,
 	ScrollView,
+	Animated,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useJobContext } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
 import { useUser } from "@/contexts/userContext";
@@ -26,6 +27,7 @@ import ReviewStats from "@/components/ReviewSummary";
 import { Timestamp } from "@react-native-firebase/firestore";
 
 export default function bidDetailsPage() {
+	const opacity = useRef(new Animated.Value(0)).current;
 	const { selectedBid, selectedJob } = useJobContext();
 	const { user } = useUser<IHomeOwnerEntity>();
 	const [reviewData, setReviewData] = useState<ReviewSummary>();
@@ -33,8 +35,17 @@ export default function bidDetailsPage() {
 
 	useEffect(() => {
 		getReviewData();
-		console.log("REview data", reviewData);
 	}, [selectedBid]);
+
+	useEffect(() => {
+		if (!loading) {
+			Animated.timing(opacity, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [loading]);
 
 	const getReviewData = async () => {
 		if (!selectedBid) return;
@@ -113,7 +124,7 @@ export default function bidDetailsPage() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView style={{ paddingVertical: 12 }}>
-				<View style={{ flex: 1, paddingHorizontal: 16 }}>
+				<Animated.View style={[{ flex: 1, paddingHorizontal: 16 }, { opacity }]}>
 					<ATText typography="heading">{selectedBid?.companyName}</ATText>
 					<ReviewStats
 						totalReviews={reviewData?.totalReviews}
@@ -144,7 +155,7 @@ export default function bidDetailsPage() {
 					{selectedJob?.jobStatus === JobStatus.open && (
 						<MLButton label="Accept Bid" onPress={handleAcceptBid} />
 					)}
-				</View>
+				</Animated.View>
 			</ScrollView>
 		</SafeAreaView>
 	);
@@ -169,11 +180,14 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 	},
 	subHeader: {
+		paddingTop: 16,
 		alignItems: "flex-start",
 		alignSelf: "stretch",
 	},
 	messageContainer: {
 		paddingTop: 8,
+		height: 40,
+		marginBottom: 25,
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",

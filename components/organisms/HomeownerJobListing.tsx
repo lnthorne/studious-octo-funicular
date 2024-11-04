@@ -7,8 +7,9 @@ import {
 	Image,
 	ListRenderItem,
 	ActivityIndicator,
+	Animated,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Timestamp } from "@react-native-firebase/firestore";
 import ATChip from "../atoms/Chips";
 import { ATText } from "../atoms/Text";
@@ -30,6 +31,17 @@ export default function ORHomeownerJobListing({
 	onPress,
 	chipLabel,
 }: ListingProps) {
+	const fadeAnim = useRef<Animated.Value[]>([]).current;
+
+	const handleFadeIn = (index: number) => {
+		Animated.timing(fadeAnim[index], {
+			toValue: 1,
+			duration: 500,
+			delay: index * 100, // Stagger each item's fade-in by 100ms
+			useNativeDriver: true,
+		}).start();
+	};
+
 	const getpostImage = (uri: string | undefined) => {
 		if (uri) return { uri };
 
@@ -94,7 +106,14 @@ export default function ORHomeownerJobListing({
 						No jobs found...
 					</ATText>
 				}
-				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
+				refreshControl={
+					<RefreshControl
+						refreshing={isRefresh}
+						onRefresh={onRefresh}
+						progressBackgroundColor={Colors.primaryButtonColor}
+						tintColor={Colors.primaryButtonColor}
+					/>
+				}
 			/>
 		</View>
 	);

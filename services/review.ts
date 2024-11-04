@@ -42,6 +42,14 @@ export function calculateReviewSummary(reviews: IReviewEntity[]): ReviewSummary 
 
 	let totalRating = 0;
 
+	if (totalReviews < 1) {
+		return {
+			totalReviews: 0,
+			averageRating: 0,
+			ratingPercentages: [0, 0, 0, 0, 0],
+		};
+	}
+
 	reviews.forEach((review) => {
 		totalRating += review.rating;
 		ratingCounts[review.rating - 1] += 1;
