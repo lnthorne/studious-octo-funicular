@@ -104,8 +104,8 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 							return (
 								<TouchableOpacity
 									key={idx}
-									onPress={() => openImage(currentRowStartIndex + idx)}
-									onLongPress={() => onLongPress?.(idx)}
+									onPress={() => openImage(absoluteIndex)}
+									onLongPress={() => onLongPress?.(absoluteIndex)}
 									style={{ flex: 1 }}
 								>
 									<Animated.Image
