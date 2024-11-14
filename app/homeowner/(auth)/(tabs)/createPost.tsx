@@ -1,5 +1,5 @@
 // app/home/createPost.tsx
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
 	View,
 	StyleSheet,
@@ -109,7 +109,7 @@ export default function CreatePostScreen() {
 		);
 	};
 
-	const handImageLongPress = (selectedImage: string) => {
+	const handImageLongPress = (selectedImage: number) => {
 		Alert.alert(
 			"Delete Image",
 			"Are you sure you want to delete this image?",
@@ -125,8 +125,8 @@ export default function CreatePostScreen() {
 		);
 	};
 
-	const deleteImage = (selectedImage: string) => {
-		setImageUris(imageUris.filter((img) => img !== selectedImage));
+	const deleteImage = (selectedImage: number) => {
+		setImageUris((currentUris) => currentUris.filter((_, index) => index !== selectedImage));
 	};
 
 	const handleModalClose = () => {
@@ -134,7 +134,7 @@ export default function CreatePostScreen() {
 	};
 
 	const initialValues: IPost = {
-		uid: "",
+		uid: user?.uid || "",
 		description: "",
 		title: "",
 		estimatedStartDate: new Date(),

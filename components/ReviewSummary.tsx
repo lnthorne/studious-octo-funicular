@@ -23,9 +23,9 @@ export default function ReviewStats({
 					{averageRating?.toFixed(1)}
 				</ATText>
 				<View style={styles.starContainer}>
-					{[1, 2, 3, 4, 5].map((star) => (
+					{[1, 2, 3, 4, 5].map((star, idx) => (
 						<Ionicons
-							key={star}
+							key={idx}
 							name={star <= Math.round(averageRating ?? 0) ? "star" : "star-outline"}
 							size={20}
 							color={Colors.primaryButtonColor}

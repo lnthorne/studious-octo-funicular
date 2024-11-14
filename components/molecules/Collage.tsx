@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	View,
 	Image,
@@ -18,13 +18,21 @@ import { Colors } from "react-native-ui-lib";
 interface CollageProps {
 	images: string[] | undefined;
 	matrix: number[];
-	onLongPress?: (selectedImage: string) => void;
+	onLongPress?: (selectedImage: number) => void;
 }
 
 export default function MLCollage({ images, matrix, onLongPress }: CollageProps) {
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+	const [imageOpacities, setImageOpacities] = useState<Animated.Value[]>([]);
 	const [imagesLoading, setImagesLoading] = useState(true);
 	const [modalLoading, setModalLoading] = useState(true);
+
+	useEffect(() => {
+		const newImageOpacities = imagesToDisplay.map(
+			(_, index) => imageOpacities[index] || new Animated.Value(0)
+		);
+		setImageOpacities(newImageOpacities);
+	}, [images]);
 
 	const handleModalLoaded = () => {
 		setModalLoading(false);
@@ -81,8 +89,8 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 				return (
 					<View key={rowIndex} style={styles.rowContainer}>
 						{rowImages.map((image, idx) => {
-							// Create an animated opacity for each image
-							const imageOpacity = useRef(new Animated.Value(0)).current;
+							const absoluteIndex = currentRowStartIndex + idx;
+							const imageOpacity = imageOpacities[absoluteIndex];
 
 							const handleImageLoad = () => {
 								Animated.timing(imageOpacity, {
@@ -97,7 +105,7 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 								<TouchableOpacity
 									key={idx}
 									onPress={() => openImage(currentRowStartIndex + idx)}
-									onLongPress={() => onLongPress?.(image)}
+									onLongPress={() => onLongPress?.(idx)}
 									style={{ flex: 1 }}
 								>
 									<Animated.Image
