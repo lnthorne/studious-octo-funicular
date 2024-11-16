@@ -1,14 +1,11 @@
 import {
 	View,
-	Text,
-	Button,
 	ActivityIndicator,
 	SafeAreaView,
 	StyleSheet,
 	KeyboardAvoidingView,
 	Platform,
 	ScrollView,
-	Image,
 	Alert,
 	TouchableOpacity,
 	Animated,
@@ -25,6 +22,7 @@ import { MLTextBox } from "@/components/molecules/TextBox";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { updateUser } from "@/services/user";
+import { useMutation } from "@tanstack/react-query";
 
 const validationSchema = Yup.object().shape({
 	firstname: Yup.string()
@@ -49,7 +47,21 @@ export default function SettingsScreen() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [profileImage, setProfileImage] = useState(user?.profileImage);
 	const [isNewProfileImage, setIsNewProfileImage] = useState(false);
-	const [loading, setLoading] = useState(false);
+	const { mutate, isPending } = useMutation({
+		mutationFn: ({
+			uid,
+			values,
+			userType,
+			newProfileImage,
+		}: {
+			uid: string;
+			values: IHomeOwner;
+			userType: UserType;
+			newProfileImage?: string;
+		}) => {
+			return updateUser<IHomeOwner>(uid, values, userType, newProfileImage);
+		},
+	});
 
 	if (!user) {
 		Alert.alert("Error", "Please try again.");
@@ -105,29 +117,30 @@ export default function SettingsScreen() {
 
 	const handProfileUpdate = async (values: IHomeOwner) => {
 		const newProfileImage = isNewProfileImage ? profileImage : undefined;
-		setLoading(true);
-		try {
-			const updatedUser = await updateUser<IHomeOwner>(
-				user.uid,
+		mutate(
+			{
+				uid: user.uid,
 				values,
-				UserType.homeowner,
-				newProfileImage
-			);
-			if (!updatedUser) {
-				console.error("There was an error updating the user");
-				return;
+				userType: UserType.homeowner,
+				newProfileImage,
+			},
+			{
+				onSuccess: (updatedUser) => {
+					setIsEditing(false);
+					setIsNewProfileImage(false);
+					setUser({ ...user, ...updatedUser });
+					if (isNewProfileImage) {
+						setProfileImage(updatedUser.profileImage);
+					}
+					console.log("USER", user);
+				},
+				onError: () => {
+					setIsEditing(false);
+					setIsNewProfileImage(false);
+					Alert.alert("There was an error updating your profile. Please try again.");
+				},
 			}
-
-			setUser({ ...user, ...updatedUser });
-			setProfileImage(updatedUser.profileImage);
-			console.log("user", user);
-		} catch (error) {
-			console.error("There was an error updating the user");
-		} finally {
-			setIsEditing(false);
-			setIsNewProfileImage(false);
-			setLoading(false);
-		}
+		);
 	};
 
 	const handleImageLoad = () => {
@@ -248,9 +261,9 @@ export default function SettingsScreen() {
 									editable={isEditing}
 								/>
 
-								{loading && <ActivityIndicator size="large" color={Colors.primaryButtonColor} />}
+								{isPending && <ActivityIndicator size="large" color={Colors.primaryButtonColor} />}
 
-								{!loading &&
+								{!isPending &&
 									(isEditing ? (
 										<View style={styles.buttonRow}>
 											<MLButton label="Save" onPress={handleSubmit} style={styles.button} />

@@ -1,11 +1,11 @@
 import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { IPostEntity } from "@/typings/jobs.inter";
 import { ATText } from "../atoms/Text";
 import MLCollage from "../molecules/Collage";
 import { Timestamp } from "@react-native-firebase/firestore";
 import { getCityFromPostalCode } from "@/services/geocode";
-import { GeocodeInformation } from "@/typings/geocode.inter";
+import { useQuery } from "@tanstack/react-query";
 
 interface JobDetailProps {
 	jobDetails: IPostEntity | null;
@@ -14,7 +14,14 @@ interface JobDetailProps {
 const matrixLayout = [[], [1], [1, 1], [2, 1], [2, 2], [3, 2], [2, 3, 1]];
 
 export default function ORJobDetails({ jobDetails }: JobDetailProps) {
-	const [geocode, setGeocode] = useState<GeocodeInformation>();
+	const { data } = useQuery({
+		queryKey: ["geolocation", jobDetails?.zipcode],
+		enabled: !!jobDetails?.zipcode,
+		staleTime: Infinity,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		queryFn: () => getCityFromPostalCode(jobDetails!.zipcode, "CA"),
+	});
 
 	if (!jobDetails) {
 		return (
@@ -38,15 +45,6 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 		});
 	};
 
-	const getGeocodeInformation = async () => {
-		const geocodeData = await getCityFromPostalCode(jobDetails.zipcode, "CA");
-		setGeocode(geocodeData);
-	};
-
-	useEffect(() => {
-		getGeocodeInformation();
-	}, []);
-
 	const numberOfImages = jobDetails.imageUrls?.length || 0;
 	return (
 		<View>
@@ -62,7 +60,7 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 				</ATText>
 			</View>
 			<View style={styles.textContainer}>
-				<ATText>{`${geocode?.city}, ${geocode?.province}`}</ATText>
+				<ATText>{`${data?.city}, ${data?.province}`}</ATText>
 				<ATText typography="secondaryText" color="secondaryTextColor">
 					Location
 				</ATText>

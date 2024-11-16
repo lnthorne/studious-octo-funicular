@@ -43,6 +43,12 @@ export default function JobDetails() {
 		},
 	});
 
+	const { mutate: reviewMutate } = useMutation({
+		mutationFn: async (data: IReview) => {
+			await CreateReview(data);
+		},
+	});
+
 	const handleJobCompleted = async () => {
 		if (!selectedJob || !selectedJob.winningBidId) return;
 		mutate(
@@ -111,15 +117,14 @@ export default function JobDetails() {
 			companyOwnerId: selectedJob.bids[0].uid,
 		};
 
-		try {
-			await CreateReview(data);
-		} catch (error) {
-			console.error("There was an error submitting review", error);
-		} finally {
-			setBottomSheetVisible(false);
-			bottomSheetRef.current?.close();
-			router.back();
-		}
+		reviewMutate(data, {
+			onError: () => {
+				Alert.alert("Failed to post review.");
+			},
+		});
+		setBottomSheetVisible(false);
+		bottomSheetRef.current?.close();
+		router.back();
 	};
 
 	const hasCompanyCompletedJob = () => {

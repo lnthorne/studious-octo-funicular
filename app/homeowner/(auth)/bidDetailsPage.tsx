@@ -25,17 +25,18 @@ import { JobStatus } from "@/typings/jobs.inter";
 import ReviewStats from "@/components/ReviewSummary";
 import { Timestamp } from "@react-native-firebase/firestore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { IReviewEntity } from "@/typings/reviews.inter";
 
 export default function bidDetailsPage() {
 	const opacity = useRef(new Animated.Value(0)).current;
 	const queryClient = useQueryClient();
 	const { selectedBid, selectedJob } = useJobContext();
 	const { user } = useUser<IHomeOwnerEntity>();
-	const { data, isLoading, isError } = useQuery({
+	const { data, isLoading } = useQuery({
 		queryKey: ["reviews", selectedBid!.uid],
 		enabled: !!selectedBid,
 		queryFn: () => fetchCompanyReviews(selectedBid!.uid),
-		select: (reviews) => calculateReviewSummary(reviews),
+		select: (reviews: IReviewEntity[]) => calculateReviewSummary(reviews),
 	});
 
 	const { mutate } = useMutation({
