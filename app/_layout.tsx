@@ -10,6 +10,10 @@ import { StatusBar } from "expo-status-bar";
 import { JobProvider } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 export default function RootLayout() {
 	const { name } = useGlobalSearchParams<{ name: string }>();
 	const [initializing, setInitializing] = useState<boolean>(true);
@@ -52,23 +56,25 @@ export default function RootLayout() {
 			<UserProvider>
 				<UserContextWrapper>
 					<JobProvider>
-						<Stack
-							screenOptions={{
-								headerShown: false,
-								contentStyle: { backgroundColor: Colors.backgroundColor },
-							}}
-						>
-							<Stack.Screen name="index" />
-							<Stack.Screen
-								name="shared/messages/[conversationId]"
-								options={{
-									headerShown: true,
-									headerTitle: DirectMessageHeader,
-									headerTransparent: true,
-									headerLeft: () => <DirectMessageBack />,
+						<QueryClientProvider client={queryClient}>
+							<Stack
+								screenOptions={{
+									headerShown: false,
+									contentStyle: { backgroundColor: Colors.backgroundColor },
 								}}
-							/>
-						</Stack>
+							>
+								<Stack.Screen name="index" />
+								<Stack.Screen
+									name="shared/messages/[conversationId]"
+									options={{
+										headerShown: true,
+										headerTitle: DirectMessageHeader,
+										headerTransparent: true,
+										headerLeft: () => <DirectMessageBack />,
+									}}
+								/>
+							</Stack>
+						</QueryClientProvider>
 					</JobProvider>
 				</UserContextWrapper>
 			</UserProvider>

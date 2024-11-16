@@ -15,9 +15,9 @@ import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { CreateNewPost } from "@/services/post";
 import * as ImagePicker from "expo-image-picker";
-import { IPost } from "@/typings/jobs.inter";
+import { IPost, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useUser } from "@/contexts/userContext";
 import ORDatePickerModal from "@/components/DatePickerModal";
 import { MLButton } from "@/components/molecules/Button";
@@ -26,6 +26,7 @@ import { Colors } from "react-native-ui-lib";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { Ionicons } from "@expo/vector-icons";
 import MLCollage from "@/components/molecules/Collage";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const PostSchema = Yup.object().shape({
 	title: Yup.string().required("Title is required"),
@@ -39,27 +40,36 @@ const matrixLayout = [[], [1], [1, 1], [2, 1], [2, 2], [3, 2], [2, 3, 1]];
 
 export default function CreatePostScreen() {
 	const { user } = useUser<IHomeOwnerEntity>();
+	const queryClient = useQueryClient();
 	const [imageUris, setImageUris] = useState<string[]>([]);
-	const [loading, setLoading] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [selectedDate, setSelectedDate] = useState(new Date());
+	const { mutate, isError, isPending } = useMutation({
+		mutationFn: async (newPost: { post: IPost; images: string[] }) => {
+			const { post, images } = newPost;
+			return CreateNewPost(post, images);
+		},
+	});
+
+	useFocusEffect(() => {
+		console.log("Cache on initialization:", queryClient.getQueryData(["jobs", JobStatus.open]));
+	});
 
 	const handlePostSubmit = async (values: IPost, { resetForm }: FormikHelpers<IPost>) => {
-		setLoading(true);
-		try {
-			const postWithUid: IPost = {
-				...values,
-				uid: user!.uid,
-			};
-			await CreateNewPost(postWithUid, imageUris);
-		} catch (error) {
-			console.error("Error creating post: ", error);
-		} finally {
-			setLoading(false);
-			resetForm();
-			setImageUris([]);
-			router.back();
-		}
+		const postWithUid: IPost = {
+			...values,
+			uid: user!.uid,
+		};
+		mutate(
+			{ post: postWithUid, images: imageUris },
+			{
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.open], refetchType: "all" });
+					resetForm();
+					router.back();
+				},
+			}
+		);
 	};
 
 	const pickImage = async (fromCamera: boolean) => {
@@ -247,10 +257,15 @@ export default function CreatePostScreen() {
 									selectedDate={selectedDate}
 									visible={modalVisible}
 								/>
-								{loading ? (
+								{isPending ? (
 									<ActivityIndicator size="small" color={Colors.primaryButtonColor} />
 								) : (
 									<MLButton label="Post Job" onPress={handleSubmit as () => void} />
+								)}
+								{isError && (
+									<ATText typography="error" color="error" style={styles.error}>
+										An error occurred. Please try again.
+									</ATText>
 								)}
 							</View>
 						)}
@@ -309,5 +324,9 @@ const styles = StyleSheet.create({
 	morePhotos: {
 		alignSelf: "center",
 		margin: 9,
+	},
+	error: {
+		alignSelf: "center",
+		paddingBottom: 20,
 	},
 });

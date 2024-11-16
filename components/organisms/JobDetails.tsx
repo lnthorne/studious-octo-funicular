@@ -53,7 +53,7 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 			<ATText typography="heading" style={styles.heading}>
 				{jobDetails.title}
 			</ATText>
-			<MLCollage images={jobDetails.imageUrls} matrix={matrixLayout[numberOfImages]} />
+			<MLCollage images={jobDetails.imageUrls || []} matrix={matrixLayout[numberOfImages]} />
 			<ATText typography="body">{jobDetails.description}</ATText>
 			<View style={styles.textContainer}>
 				<ATText>{`$${jobDetails.budget}`}</ATText>

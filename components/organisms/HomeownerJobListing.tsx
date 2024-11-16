@@ -2,14 +2,12 @@ import {
 	FlatList,
 	RefreshControl,
 	StyleSheet,
-	Text,
 	View,
 	Image,
 	ListRenderItem,
 	ActivityIndicator,
-	Animated,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React from "react";
 import { Timestamp } from "@react-native-firebase/firestore";
 import ATChip from "../atoms/Chips";
 import { ATText } from "../atoms/Text";
@@ -31,17 +29,6 @@ export default function ORHomeownerJobListing({
 	onPress,
 	chipLabel,
 }: ListingProps) {
-	const fadeAnim = useRef<Animated.Value[]>([]).current;
-
-	const handleFadeIn = (index: number) => {
-		Animated.timing(fadeAnim[index], {
-			toValue: 1,
-			duration: 500,
-			delay: index * 100, // Stagger each item's fade-in by 100ms
-			useNativeDriver: true,
-		}).start();
-	};
-
 	const getpostImage = (uri: string | undefined) => {
 		if (uri) return { uri };
 

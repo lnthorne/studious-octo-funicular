@@ -6,7 +6,6 @@ import {
 	Modal,
 	StyleSheet,
 	ImageStyle,
-	Alert,
 	TouchableWithoutFeedback,
 	ActivityIndicator,
 	Animated,
@@ -16,7 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "react-native-ui-lib";
 
 interface CollageProps {
-	images: string[] | undefined;
+	images: string[];
 	matrix: number[];
 	onLongPress?: (selectedImage: number) => void;
 }
@@ -26,13 +25,6 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 	const [imageOpacities, setImageOpacities] = useState<Animated.Value[]>([]);
 	const [imagesLoading, setImagesLoading] = useState(true);
 	const [modalLoading, setModalLoading] = useState(true);
-
-	useEffect(() => {
-		const newImageOpacities = imagesToDisplay.map(
-			(_, index) => imageOpacities[index] || new Animated.Value(0)
-		);
-		setImageOpacities(newImageOpacities);
-	}, [images]);
 
 	const handleModalLoaded = () => {
 		setModalLoading(false);
@@ -71,6 +63,13 @@ export default function MLCollage({ images, matrix, onLongPress }: CollageProps)
 	const imagesToDisplay = images.slice(0, totalImagesInMatrix);
 
 	let imageIndex = 0;
+
+	useEffect(() => {
+		const newImageOpacities = imagesToDisplay.map(
+			(_, index) => imageOpacities[index] || new Animated.Value(0)
+		);
+		setImageOpacities(newImageOpacities);
+	}, [images]);
 
 	return (
 		<View style={styles.collageContainer}>

@@ -4,7 +4,10 @@ import storage from "@react-native-firebase/storage";
 import { fetchBidFromBid } from "./bid";
 import compressImageToWebP from "./image";
 
-export async function CreateNewPost(newPostContent: IPost, imageUris: string[]) {
+export async function CreateNewPost(
+	newPostContent: IPost,
+	imageUris: string[]
+): Promise<IPostEntity> {
 	try {
 		const postRef = firestore().collection("posts").doc();
 		const newPost: IPostEntity = {
@@ -41,7 +44,7 @@ export async function CreateNewPost(newPostContent: IPost, imageUris: string[]) 
 			imageUrls,
 		});
 
-		return { postId, imageUrls };
+		return { ...newPost, imageUrls };
 	} catch (error) {
 		console.error("Error creating post: ", error);
 		throw error;
@@ -125,7 +128,6 @@ export async function fetchJobsWithBidsByStatus(
 					.filter((bid) => bid.status !== BidStatus.rejected);
 			}
 		}
-
 		return posts;
 	} catch (error) {
 		console.error("Error fetching jobs with bids:", error);

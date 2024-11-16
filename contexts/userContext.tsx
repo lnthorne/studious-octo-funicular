@@ -24,7 +24,6 @@ interface UserProviderProps {
 
 export function UserProvider({ children }: UserProviderProps) {
 	const [user, setUser] = useState<IHomeOwnerEntity | ICompanyOwnerEntity | null>(null);
-	console.log("UserProvider user", user);
 
 	return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 }

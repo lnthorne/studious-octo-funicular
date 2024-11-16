@@ -20,46 +20,39 @@ import { MLButton } from "@/components/molecules/Button";
 import { Colors } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { acceptBidAndCloseOtherBids } from "@/services/bid";
-import { IReviewEntity, ReviewSummary } from "@/typings/reviews.inter";
 import { calculateReviewSummary, fetchCompanyReviews } from "@/services/review";
 import { JobStatus } from "@/typings/jobs.inter";
 import ReviewStats from "@/components/ReviewSummary";
 import { Timestamp } from "@react-native-firebase/firestore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function bidDetailsPage() {
 	const opacity = useRef(new Animated.Value(0)).current;
+	const queryClient = useQueryClient();
 	const { selectedBid, selectedJob } = useJobContext();
 	const { user } = useUser<IHomeOwnerEntity>();
-	const [reviewData, setReviewData] = useState<ReviewSummary>();
-	const [loading, setLoading] = useState(false);
+	const { data, isLoading, isError } = useQuery({
+		queryKey: ["reviews", selectedBid!.uid],
+		enabled: !!selectedBid,
+		queryFn: () => fetchCompanyReviews(selectedBid!.uid),
+		select: (reviews) => calculateReviewSummary(reviews),
+	});
+
+	const { mutate } = useMutation({
+		mutationFn: async ({ bid, pid, uid }: { bid: string; pid: string; uid: string }) => {
+			await acceptBidAndCloseOtherBids(bid, pid, uid);
+		},
+	});
 
 	useEffect(() => {
-		getReviewData();
-	}, [selectedBid]);
-
-	useEffect(() => {
-		if (!loading) {
+		if (!isLoading) {
 			Animated.timing(opacity, {
 				toValue: 1,
 				duration: 500,
 				useNativeDriver: true,
 			}).start();
 		}
-	}, [loading]);
-
-	const getReviewData = async () => {
-		if (!selectedBid) return;
-		setLoading(true);
-		try {
-			const reviews = await fetchCompanyReviews(selectedBid.uid);
-			const summary = calculateReviewSummary(reviews);
-			setReviewData(summary);
-		} catch (error) {
-			console.error("There was an error getting review data", error);
-		} finally {
-			setLoading(false);
-		}
-	};
+	}, [isLoading]);
 
 	const handleCreateConversation = async () => {
 		if (!user || !selectedBid) {
@@ -104,32 +97,43 @@ export default function bidDetailsPage() {
 	const handleAcceptBid = async () => {
 		if (!selectedBid) return;
 
-		try {
-			await acceptBidAndCloseOtherBids(selectedBid.bid, selectedBid.pid, selectedBid.uid);
-			Alert.alert("Bid accepted successfully!");
-			router.back();
-		} catch (error) {
-			console.error("Failed to accept bid:", error);
-			Alert.alert("Failed to accept bid. Please try again.");
-		}
+		mutate(
+			{
+				bid: selectedBid.bid,
+				pid: selectedBid.pid,
+				uid: selectedBid.uid,
+			},
+			{
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.inprogress] });
+					queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.open] });
+					Alert.alert("Bid accepted successfully!");
+					router.back();
+				},
+				onError: () => {
+					Alert.alert("Failed to accept bid. Please try again");
+				},
+			}
+		);
 	};
 
-	if (loading) {
+	if (isLoading) {
 		return (
 			<SafeAreaView style={styles.container}>
 				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
 			</SafeAreaView>
 		);
 	}
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView style={{ paddingVertical: 12 }}>
 				<Animated.View style={[{ flex: 1, paddingHorizontal: 16 }, { opacity }]}>
 					<ATText typography="heading">{selectedBid?.companyName}</ATText>
 					<ReviewStats
-						totalReviews={reviewData?.totalReviews}
-						averageRating={reviewData?.averageRating}
-						ratingPercentages={reviewData?.ratingPercentages}
+						totalReviews={data?.totalReviews}
+						averageRating={data?.averageRating}
+						ratingPercentages={data?.ratingPercentages}
 					/>
 					<View style={styles.detailsContainer}>
 						<Image source={require("../../../assets/images/onboarding.png")} style={styles.image} />
