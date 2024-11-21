@@ -38,8 +38,8 @@ export default function JobDetails() {
 			uid: string;
 			winningBidId: string;
 		}) => {
-			await updatePostCompletionStatus(pid, uid); // First API call
-			await checkAndClosePostingAndBid(pid, winningBidId); // Second API call
+			await updatePostCompletionStatus(pid, uid);
+			await checkAndClosePostingAndBid(pid, winningBidId);
 		},
 	});
 

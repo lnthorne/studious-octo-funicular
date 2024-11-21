@@ -1,19 +1,29 @@
 import { subscribeToConversations } from "@/services/messaging";
 import { fetchUserNames } from "@/services/user";
+import { IConversation } from "@/typings/messaging.inter";
 import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
-function useConversations(user: IHomeOwnerEntity | ICompanyOwnerEntity) {
+// TODO: This is fucking awful, but fuck it, it works for now
+type Identity = IHomeOwnerEntity | ICompanyOwnerEntity;
+
+export interface ConversationListing<T extends Identity> extends IConversation {
+	otherUser: T;
+}
+
+export function useConversations<T extends Identity>(
+	user: IHomeOwnerEntity | ICompanyOwnerEntity | null
+) {
 	const queryClient = useQueryClient();
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error>();
 
 	const conversationsQuery = useQuery({
 		queryKey: ["conversations", user?.uid],
-		queryFn: () => Promise.resolve([]),
+		queryFn: () => Promise.resolve([] as ConversationListing<T>[]),
 		enabled: !!user,
-		initialData: [],
+		initialData: [] as ConversationListing<T>[],
 		staleTime: Infinity,
 	});
 
@@ -22,6 +32,8 @@ function useConversations(user: IHomeOwnerEntity | ICompanyOwnerEntity) {
 			setIsLoading(false);
 			return;
 		}
+
+		console.log("caution");
 
 		let isMounted = true;
 
@@ -56,7 +68,6 @@ function useConversations(user: IHomeOwnerEntity | ICompanyOwnerEntity) {
 					};
 				});
 
-				// Update the query data
 				queryClient.setQueryData(["conversations", user.uid], conversationsWithUserData);
 			} catch (err) {
 				console.error("Error fetching conversations:", err);

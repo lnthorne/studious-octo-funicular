@@ -15,15 +15,15 @@ import { subscribeToConversations } from "@/services/messaging";
 import { fetchUserNames } from "@/services/user";
 import { IConversation } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
-import { IHomeOwnerEntity, UserType } from "@/typings/user.inter";
+import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { Colors } from "react-native-ui-lib";
 import { ATText } from "@/components/atoms/Text";
+import { useConversations } from "@/hooks/useConversations";
 
 export default function ConversationsPage() {
 	const opacity = useRef(new Animated.Value(0)).current;
 	const { user } = useUser<IHomeOwnerEntity>();
-	const [conversations, setConversations] = useState<IConversation[]>([]);
-	const [isLoading, setLoading] = useState(false);
+	const { data: conversations, isLoading, error } = useConversations<ICompanyOwnerEntity>(user);
 
 	const formatMessageDate = (timestamp: number): string => {
 		const messageDate = new Date(timestamp);
@@ -60,51 +60,6 @@ export default function ConversationsPage() {
 			},
 		});
 	};
-
-	useEffect(() => {
-		setLoading(true);
-		if (!user) return;
-
-		const unsubscribe = subscribeToConversations(user.uid, async (updatedConversations) => {
-			const otherUserIdsSet = new Set<string>();
-
-			try {
-				updatedConversations.forEach((conversation) => {
-					const memberIds = Object.keys(conversation.members);
-					const otherMemberIds = memberIds.filter((memberId) => memberId !== user.uid);
-					otherMemberIds.forEach((otherUserId) => otherUserIdsSet.add(otherUserId));
-				});
-
-				const otherUserIds = Array.from(otherUserIdsSet);
-
-				const otherUsersData = await fetchUserNames(otherUserIds, UserType.companyowner);
-
-				const userIdToDataMap = otherUsersData.reduce((acc, userData) => {
-					acc[userData.uid] = userData;
-					return acc;
-				}, {} as Record<string, any>);
-
-				const conversationsWithUserData = updatedConversations.map((conversation) => {
-					const memberIds = Object.keys(conversation.members);
-					const otherMemberId = memberIds.find((memberId) => memberId !== user.uid);
-					const otherUserData = userIdToDataMap[otherMemberId!];
-
-					return {
-						...conversation,
-						otherUser: otherUserData,
-					};
-				});
-				setConversations(conversationsWithUserData);
-				console.log("TESSTSTST", conversationsWithUserData);
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		});
-
-		return () => unsubscribe();
-	}, [user]);
 
 	useEffect(() => {
 		if (!isLoading) {
