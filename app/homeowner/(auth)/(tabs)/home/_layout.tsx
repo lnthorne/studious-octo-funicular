@@ -16,7 +16,7 @@ export default function HomeownerHomeLayout() {
 
 	return (
 		<SafeAreaView style={styles.safeAreaContainer}>
-			<View style={{ marginTop: 30, flex: 1 }}>
+			<View style={{ flex: 1 }}>
 				<View style={styles.tabContainer}>
 					<TouchableOpacity
 						onPress={() => router.navigate("/homeowner/home")}
@@ -94,13 +94,11 @@ const styles = StyleSheet.create({
 	},
 	tab: {
 		flex: 1,
-		paddingVertical: 10,
 		justifyContent: "center",
 		alignItems: "center",
 	},
 	activeTab: {
 		flex: 1,
-		paddingVertical: 10,
 		justifyContent: "center",
 		alignItems: "center",
 	},

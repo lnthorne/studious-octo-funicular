@@ -11,13 +11,17 @@ import { JobProvider } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useFonts } from "@/hooks/useFonts";
+import * as SplashScreen from "expo-splash-screen";
 
 const queryClient = new QueryClient();
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const { name } = useGlobalSearchParams<{ name: string }>();
 	const [initializing, setInitializing] = useState<boolean>(true);
-
+	const fontsLoaded = useFonts();
 	const onAuthStateChanged = () => {
 		if (initializing) setInitializing(false);
 	};
@@ -26,6 +30,12 @@ export default function RootLayout() {
 		const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
 		return subscriber;
 	}, []);
+
+	useEffect(() => {
+		if (fontsLoaded && !initializing) {
+			SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded, initializing]);
 
 	const DirectMessageHeader = () => <ATText typography="heading">{name}</ATText>;
 	const DirectMessageBack = () => {
@@ -36,7 +46,7 @@ export default function RootLayout() {
 		);
 	};
 
-	if (initializing) {
+	if (initializing || !fontsLoaded) {
 		return (
 			<View
 				style={{

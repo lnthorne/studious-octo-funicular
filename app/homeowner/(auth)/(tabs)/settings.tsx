@@ -162,7 +162,7 @@ export default function SettingsScreen() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
-				style={{ marginTop: 40 }}
+				style={{ paddingTop: 10 }}
 				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
 				keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0} // Adjust if needed
 			>

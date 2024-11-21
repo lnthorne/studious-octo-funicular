@@ -40,7 +40,11 @@ export default function MainLayout() {
 			<Tabs.Screen
 				name="home"
 				options={{
-					headerTransparent: true,
+					headerTransparent: false,
+					headerStyle: {
+						backgroundColor: Colors.backgroundColor,
+						shadowOpacity: 0,
+					},
 					headerTitleAlign: "left",
 					headerTitle: () => <HomeHeader />,
 					tabBarShowLabel: false,
@@ -53,10 +57,15 @@ export default function MainLayout() {
 					),
 				}}
 			/>
+			{/* TODO: Dont make background trans */}
 			<Tabs.Screen
 				name="createPost"
 				options={{
-					headerTransparent: true,
+					headerTransparent: false,
+					headerStyle: {
+						backgroundColor: Colors.backgroundColor,
+						shadowOpacity: 0,
+					},
 					headerTitleAlign: "left",
 					headerTitle: () => <CreateJobHeader />,
 					tabBarShowLabel: false,
@@ -72,7 +81,11 @@ export default function MainLayout() {
 			<Tabs.Screen
 				name="conversations"
 				options={{
-					headerTransparent: true,
+					headerTransparent: false,
+					headerStyle: {
+						backgroundColor: Colors.backgroundColor,
+						shadowOpacity: 0,
+					},
 					headerTitleAlign: "left",
 					headerTitle: () => <ConversationHeader />,
 					tabBarShowLabel: false,
@@ -88,7 +101,11 @@ export default function MainLayout() {
 			<Tabs.Screen
 				name="settings"
 				options={{
-					headerTransparent: true,
+					headerTransparent: false,
+					headerStyle: {
+						backgroundColor: Colors.backgroundColor,
+						shadowOpacity: 0,
+					},
 					headerTitleAlign: "left",
 					headerTitle: () => <ProfileHeader />,
 					tabBarShowLabel: false,

@@ -155,7 +155,6 @@ export default function CreatePostScreen() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
-				style={{ marginTop: 40 }}
 				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
 				keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0} // Adjust if needed
 			>
@@ -280,6 +279,10 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: Colors.backgroundColor,
+	},
+	buffer: {
+		flex: 1,
+		marginTop: 40,
 	},
 	textArea: {
 		height: 120,

@@ -1,6 +1,5 @@
 import React from "react";
 import { Text as RNText, TextStyle } from "react-native";
-import { useFonts } from "@/hooks/useFonts";
 import { Colors, Typography } from "react-native-ui-lib";
 
 interface CustomTextProps {
@@ -16,12 +15,6 @@ export const ATText: React.FC<CustomTextProps> = ({
 	color = "primaryTextColor",
 	style,
 }) => {
-	const fontsLoaded = useFonts();
-
-	if (!fontsLoaded) {
-		return null;
-	}
-
 	const textStyle: TextStyle = {
 		...Typography[typography],
 		color: Colors[color],

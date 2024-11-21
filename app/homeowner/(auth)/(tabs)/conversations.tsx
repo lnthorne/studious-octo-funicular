@@ -11,9 +11,6 @@ import {
 	Animated,
 } from "react-native";
 import { router } from "expo-router";
-import { subscribeToConversations } from "@/services/messaging";
-import { fetchUserNames } from "@/services/user";
-import { IConversation } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
 import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { Colors } from "react-native-ui-lib";
@@ -87,7 +84,7 @@ export default function ConversationsPage() {
 		<SafeAreaView style={styles.container}>
 			<Animated.View style={[{ flex: 1 }, { opacity }]}>
 				<FlatList
-					style={{ marginTop: 40 }}
+					style={{ paddingTop: 10 }}
 					data={conversations}
 					keyExtractor={(item) => item.conversationId}
 					ListEmptyComponent={
@@ -148,7 +145,7 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomStartRadius: 30,
 		borderBottomEndRadius: 30,
-		height: 70,
+		height: 75,
 	},
 	avatar: {
 		width: 48,

@@ -117,3 +117,7 @@
 
 - (We had to do this again) Updated xcode 16 which adds a flag for BoringSSL-GRPC. Update podfile with fix show here(https://stackoverflow.com/questions/78608693/boringssl-grpc-unsupported-option-g-for-target-arm64-apple-ios15-0)
 - Images are huge, and we need to compress them, should be below 1mb. Having issues importing expo package
+
+### Nov, 20, 2024
+
+- The fonts are popping in on load. We need to wait for the font to load before we render the page, otherwise we get this weird pop in
