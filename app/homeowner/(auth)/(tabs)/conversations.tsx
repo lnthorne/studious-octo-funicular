@@ -12,46 +12,18 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { subscribeToConversations } from "@/services/messaging";
+import { fetchUserNames } from "@/services/user";
 import { IConversation } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
-import { IHomeOwnerEntity } from "@/typings/user.inter";
+import { IHomeOwnerEntity, UserType } from "@/typings/user.inter";
 import { Colors } from "react-native-ui-lib";
 import { ATText } from "@/components/atoms/Text";
 
 export default function ConversationsPage() {
-	const fadeAnim = useRef<Animated.Value[]>([]).current;
+	const opacity = useRef(new Animated.Value(0)).current;
 	const { user } = useUser<IHomeOwnerEntity>();
 	const [conversations, setConversations] = useState<IConversation[]>([]);
-	const [loading, setLoading] = useState(false);
-
-	useEffect(() => {
-		setLoading(true);
-		if (!user) return;
-		const usersName = user.firstname + " " + user.lastname;
-		const unsubscribe = subscribeToConversations(user.uid, usersName, (updatedConversations) => {
-			setConversations(updatedConversations);
-			setLoading(false);
-		});
-
-		return () => unsubscribe();
-	}, [user]);
-
-	useEffect(() => {
-		if (conversations) {
-			conversations.forEach((_, index) => {
-				fadeAnim[index] = new Animated.Value(0);
-			});
-		}
-	}, [conversations]);
-
-	const handleFadeIn = (index: number) => {
-		Animated.timing(fadeAnim[index], {
-			toValue: 1,
-			duration: 500,
-			delay: index * 100, // Stagger each item's fade-in by 100ms
-			useNativeDriver: true,
-		}).start();
-	};
+	const [isLoading, setLoading] = useState(false);
 
 	const formatMessageDate = (timestamp: number): string => {
 		const messageDate = new Date(timestamp);
@@ -79,22 +51,72 @@ export default function ConversationsPage() {
 		}
 	};
 
-	const handlePress = (conversationId: string, name: string) => {
-		// Navigate to the conversation details screen and pass conversationId and userName
+	const handlePress = (conversationId: string, otherName: string | undefined) => {
 		router.push({
 			pathname: "/shared/messages/[conversationId]",
 			params: {
 				conversationId,
-				name,
+				name: otherName || "Error",
 			},
 		});
 	};
 
-	function getOtherUserName(members: { [userId: string]: string }): string | undefined {
-		return Object.entries(members).find(([userId]) => userId !== user?.uid)?.[1];
-	}
+	useEffect(() => {
+		setLoading(true);
+		if (!user) return;
 
-	if (loading) {
+		const unsubscribe = subscribeToConversations(user.uid, async (updatedConversations) => {
+			const otherUserIdsSet = new Set<string>();
+
+			try {
+				updatedConversations.forEach((conversation) => {
+					const memberIds = Object.keys(conversation.members);
+					const otherMemberIds = memberIds.filter((memberId) => memberId !== user.uid);
+					otherMemberIds.forEach((otherUserId) => otherUserIdsSet.add(otherUserId));
+				});
+
+				const otherUserIds = Array.from(otherUserIdsSet);
+
+				const otherUsersData = await fetchUserNames(otherUserIds, UserType.companyowner);
+
+				const userIdToDataMap = otherUsersData.reduce((acc, userData) => {
+					acc[userData.uid] = userData;
+					return acc;
+				}, {} as Record<string, any>);
+
+				const conversationsWithUserData = updatedConversations.map((conversation) => {
+					const memberIds = Object.keys(conversation.members);
+					const otherMemberId = memberIds.find((memberId) => memberId !== user.uid);
+					const otherUserData = userIdToDataMap[otherMemberId!];
+
+					return {
+						...conversation,
+						otherUser: otherUserData,
+					};
+				});
+				setConversations(conversationsWithUserData);
+				console.log("TESSTSTST", conversationsWithUserData);
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setLoading(false);
+			}
+		});
+
+		return () => unsubscribe();
+	}, [user]);
+
+	useEffect(() => {
+		if (!isLoading) {
+			Animated.timing(opacity, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [isLoading]);
+
+	if (isLoading) {
 		return (
 			<SafeAreaView style={styles.container}>
 				<ActivityIndicator
@@ -108,52 +130,48 @@ export default function ConversationsPage() {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<FlatList
-				style={{ marginTop: 40 }}
-				data={conversations}
-				keyExtractor={(item) => item.conversationId}
-				ListEmptyComponent={
-					<ATText
-						typography="secondaryText"
-						color="secondaryTextColor"
-						style={{ alignSelf: "center" }}
-					>
-						You have no messages...
-					</ATText>
-				}
-				renderItem={({ item, index }) => (
-					<View
-						style={styles.itemWrapper}
-						onLayout={() => handleFadeIn(index)} // Trigger animation on layout
-					>
-						<Animated.View style={[styles.conversationItem, { opacity: fadeAnim[index] }]}>
-							<TouchableOpacity
-								style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-								onPress={() =>
-									handlePress(item.conversationId, getOtherUserName(item.members) || "Error")
-								}
-							>
-								<Image
-									source={require("../../../../assets/images/onboarding.png")}
-									style={styles.avatar}
-								/>
-								<View style={{ flex: 1 }}>
-									{/* Name and Username */}
-									<ATText>{getOtherUserName(item.members) || "Error"}</ATText>
+			<Animated.View style={[{ flex: 1 }, { opacity }]}>
+				<FlatList
+					style={{ marginTop: 40 }}
+					data={conversations}
+					keyExtractor={(item) => item.conversationId}
+					ListEmptyComponent={
+						<ATText
+							typography="secondaryText"
+							color="secondaryTextColor"
+							style={{ alignSelf: "center" }}
+						>
+							You have no messages...
+						</ATText>
+					}
+					renderItem={({ item }) => (
+						<View style={styles.itemWrapper}>
+							<View style={styles.conversationItem}>
+								<TouchableOpacity
+									style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+									onPress={() => handlePress(item.conversationId, item.otherUser.companyName)}
+								>
+									<Image
+										source={require("../../../../assets/images/onboarding.png")}
+										style={styles.avatar}
+									/>
+									<View style={{ flex: 1 }}>
+										<ATText>{item.otherUser.companyName || "Error"}</ATText>
 
-									{/* Message */}
-									<ATText typography="secondaryText" color="secondaryTextColor">
-										{item.lastMessage}
-									</ATText>
-								</View>
+										<ATText typography="secondaryText" color="secondaryTextColor">
+											{item.lastMessage}
+										</ATText>
+									</View>
 
-								{/* Date */}
-								<Text style={styles.timestamp}>{formatMessageDate(item.lastMessageTimestamp)}</Text>
-							</TouchableOpacity>
-						</Animated.View>
-					</View>
-				)}
-			/>
+									<Text style={styles.timestamp}>
+										{formatMessageDate(item.lastMessageTimestamp)}
+									</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+					)}
+				/>
+			</Animated.View>
 		</SafeAreaView>
 	);
 }

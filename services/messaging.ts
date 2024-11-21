@@ -9,7 +9,6 @@ import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
  */
 export function subscribeToConversations(
 	userId: string,
-	usersName: string,
 	onConversationsUpdate: (conversations: IConversation[]) => void
 ) {
 	const ref = database().ref(`conversations`);
@@ -17,7 +16,7 @@ export function subscribeToConversations(
 	// Listen for updates to the user's conversations
 	const listener = ref
 		.orderByChild(`members/${userId}`)
-		.equalTo(usersName)
+		.equalTo(true)
 		.on("value", (snapshot) => {
 			const conversationsData = snapshot.val();
 			const conversations: IConversation[] = [];
@@ -126,8 +125,6 @@ async function areUsersInConversationTogether(
 export async function startNewConversation(
 	senderId: string,
 	recipientId: string,
-	senderName: string,
-	recipientName: string,
 	initialMessage?: string
 ): Promise<string> {
 	try {
@@ -151,8 +148,8 @@ export async function startNewConversation(
 			lastMessageTimestamp: Date.now(),
 			lastSenderId: senderId,
 			members: {
-				[senderId]: senderName,
-				[recipientId]: recipientName,
+				[senderId]: true,
+				[recipientId]: true,
 			},
 		};
 

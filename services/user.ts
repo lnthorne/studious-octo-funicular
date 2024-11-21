@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import storage, { deleteObject, uploadBytes } from "@react-native-firebase/storage";
 
 import {
@@ -128,4 +128,25 @@ export async function updateUser<T extends IHomeOwner | ICompanyOwner>(
 		console.error("Error updating user:", error);
 		throw error;
 	}
+}
+
+export async function fetchUserNames(
+	userIds: string[],
+	userType: UserType
+): Promise<FirebaseFirestoreTypes.DocumentData[]> {
+	if (userIds.length === 0) return [];
+
+	const batches = [];
+
+	while (userIds.length) {
+		const batchIds = userIds.splice(0, 10);
+		const userQuery = firestore()
+			.collection(userType)
+			.where(firestore.FieldPath.documentId(), "in", batchIds);
+		batches.push(userQuery.get());
+	}
+
+	const results = await Promise.all(batches);
+	const usersData = results.flatMap((result) => result.docs.map((doc) => doc.data()));
+	return usersData;
 }

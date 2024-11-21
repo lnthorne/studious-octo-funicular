@@ -17,7 +17,7 @@ export interface IConversation {
 	lastMessage: string;
 	lastMessageTimestamp: number; // Unix timestamp
 	lastSenderId: string;
-	members: { [userId: string]: string }; // An object where keys are userIds and values are always true
+	members: { [userId: string]: true }; // An object where keys are userIds and values are always true
 }
 
 export interface IMessage {

@@ -61,13 +61,7 @@ export default function bidDetailsPage() {
 			return;
 		}
 		try {
-			const usersName = user.firstname + " " + user.lastname;
-			const conversationId = await startNewConversation(
-				user.uid,
-				selectedBid.uid,
-				usersName,
-				selectedBid.companyName
-			);
+			const conversationId = await startNewConversation(user.uid, selectedBid.uid);
 			router.navigate({
 				pathname: "/shared/messages/[conversationId]",
 				params: {
