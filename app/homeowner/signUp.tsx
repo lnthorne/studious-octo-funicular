@@ -17,7 +17,7 @@ import { IHomeOwner, UserType } from "@/typings/user.inter";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { MLButton } from "@/components/molecules/Button";
 import { ATText } from "@/components/atoms/Text";
-import { Colors } from "react-native-ui-lib";
+import { Colors } from "../design-system/designSystem";
 
 const validationSchema = Yup.object().shape({
 	firstname: Yup.string()

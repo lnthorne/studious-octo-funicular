@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, Image, View, SafeAreaView } from "react-native";
-import { Colors } from "react-native-ui-lib";
 import { ATText } from "@/components/atoms/Text";
 import ORCoursel from "@/components/organisms/Coursel";
+import { Colors } from "./design-system/designSystem";
 
 export default function Onboarding() {
 	return (

@@ -8,9 +8,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
-import { Colors } from "react-native-ui-lib";
 import { useQuery } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function HomeScreen() {
 	const opacity = useRef(new Animated.Value(0)).current;

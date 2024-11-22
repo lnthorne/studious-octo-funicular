@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInputProps, View } from "react-native";
-import { Colors, Typography, TextField, TouchableOpacity } from "react-native-ui-lib";
+import { Typography, TextField, TouchableOpacity } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { ATText } from "../atoms/Text";
+import { Colors } from "@/app/design-system/designSystem";
 
 interface CustomTextBoxProps extends TextInputProps {
 	heading?: string;

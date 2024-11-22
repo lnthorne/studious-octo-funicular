@@ -1,11 +1,12 @@
+import { ColorKey, Colors } from "@/app/design-system/designSystem";
 import React from "react";
 import { Text as RNText, TextStyle } from "react-native";
-import { Colors, Typography } from "react-native-ui-lib";
+import { Typography } from "react-native-ui-lib";
 
 interface CustomTextProps {
 	children: React.ReactNode;
 	typography?: keyof typeof Typography | string;
-	color?: keyof typeof Colors | string;
+	color?: ColorKey;
 	style?: TextStyle;
 }
 

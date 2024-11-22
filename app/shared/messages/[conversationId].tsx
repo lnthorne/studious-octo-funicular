@@ -17,7 +17,7 @@ import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/
 import { IMessage, IMessageEntity, MessageType } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
 import { ATText } from "@/components/atoms/Text";
-import { Colors } from "react-native-ui-lib";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function MessagesPage() {
 	const { conversationId } = useLocalSearchParams<{ conversationId: string; name: string }>();
@@ -165,13 +165,11 @@ const styles = StyleSheet.create({
 		maxWidth: "75%",
 	},
 	userMessage: {
-		// backgroundColor: "#6200ee",
 		backgroundColor: Colors.primaryButtonColor,
 		alignSelf: "flex-end",
 		color: "#fff",
 	},
 	otherMessage: {
-		// backgroundColor: "#e0e0e0",
 		backgroundColor: Colors.secondaryButtonColor,
 		alignSelf: "flex-start",
 	},

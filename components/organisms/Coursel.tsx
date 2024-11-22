@@ -1,10 +1,11 @@
 import React, { createRef, useRef, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
-import { View, Text, Carousel, PageControl, Colors } from "react-native-ui-lib";
+import { View, Carousel, PageControl } from "react-native-ui-lib";
 import { MLButton } from "../molecules/Button";
 import { router } from "expo-router";
 import { ATText } from "../atoms/Text";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Colors } from "@/app/design-system/designSystem";
 
 const screenWidth = Dimensions.get("window").width;
 

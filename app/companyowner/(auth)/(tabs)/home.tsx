@@ -14,12 +14,17 @@ import { IPostEntity } from "@/typings/jobs.inter";
 import { router, useFocusEffect } from "expo-router";
 import { useUser } from "@/contexts/userContext";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
+import MLSlider from "@/components/molecules/Slider";
+import { MLTextBox } from "@/components/molecules/TextBox";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function ViewPostsScreen() {
 	const { user } = useUser<ICompanyOwnerEntity>();
 	const [posts, setPosts] = useState<IPostEntity[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [isRefresh, setIsRefresh] = useState(false);
+	const [radius, setRadius] = useState(10);
+	const [zipcodeSearch, setZipcodeSearch] = useState<string>();
 
 	const loadPosts = async (isRefreshing: boolean = false) => {
 		if (!user) return;
@@ -63,8 +68,13 @@ export default function ViewPostsScreen() {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>{`Welcome back ${user?.companyName}!`}</Text>
-			<FlatList
+			<MLTextBox
+				placeholder="Enter postal code"
+				value={zipcodeSearch}
+				onChangeText={setZipcodeSearch}
+			/>
+			<MLSlider radius={radius} onRadiusChange={setRadius} />
+			{/* <FlatList
 				data={posts}
 				keyExtractor={(item) => item.pid}
 				renderItem={({ item }) => (
@@ -78,7 +88,7 @@ export default function ViewPostsScreen() {
 				)}
 				ListEmptyComponent={<Text style={styles.title}>No open job posts available.</Text>}
 				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
-			/>
+			/> */}
 		</View>
 	);
 }
@@ -87,10 +97,10 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: "center",
-		paddingHorizontal: 16,
+		backgroundColor: Colors.backgroundColor,
 	},
 	postContainer: {
-		backgroundColor: "#f9f9f9",
+		backgroundColor: Colors.backgroundColor,
 		padding: 16,
 		borderRadius: 8,
 		marginBottom: 16,

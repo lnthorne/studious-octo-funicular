@@ -2,8 +2,8 @@ import { StyleSheet, View } from "react-native";
 import React from "react";
 import * as Progress from "react-native-progress";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "react-native-ui-lib";
 import { ATText } from "./atoms/Text";
+import { Colors } from "@/app/design-system/designSystem";
 
 interface ReviewStatsProps {
 	totalReviews: number | undefined;

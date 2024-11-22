@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { ATText } from "../atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "react-native-ui-lib";
+import { Colors } from "@/app/design-system/designSystem";
 
 interface CollageProps {
 	images: string[];

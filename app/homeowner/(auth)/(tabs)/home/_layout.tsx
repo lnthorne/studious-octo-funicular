@@ -1,15 +1,8 @@
 import { router, Tabs } from "expo-router";
-import {
-	View,
-	Text,
-	StyleSheet,
-	TouchableOpacity,
-	SafeAreaView,
-	TouchableWithoutFeedback,
-} from "react-native";
-import { Link, usePathname } from "expo-router";
+import { View, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
+import { usePathname } from "expo-router";
 import { ATText } from "@/components/atoms/Text";
-import { Colors } from "react-native-ui-lib";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function HomeownerHomeLayout() {
 	const currentRoute = usePathname();

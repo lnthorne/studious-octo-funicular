@@ -13,16 +13,15 @@ import {
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
-import { Form, Formik } from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
 import { FirebaseError } from "firebase/app";
-import { router } from "expo-router";
 import { signUp } from "@/services/auth";
 import { ICompanyOwner, UserType } from "@/typings/user.inter";
 import { MLTextBox } from "@/components/molecules/TextBox";
-import { Colors } from "react-native-ui-lib";
 import { MLButton } from "@/components/molecules/Button";
 import { ATText } from "@/components/atoms/Text";
+import { Colors } from "../design-system/designSystem";
 
 const validationSchema = Yup.object().shape({
 	companyName: Yup.string()

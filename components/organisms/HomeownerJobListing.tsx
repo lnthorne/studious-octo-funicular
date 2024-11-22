@@ -12,7 +12,7 @@ import { Timestamp } from "@react-native-firebase/firestore";
 import ATChip from "../atoms/Chips";
 import { ATText } from "../atoms/Text";
 import { IPostEntity } from "@/typings/jobs.inter";
-import { Colors } from "react-native-ui-lib";
+import { Colors } from "@/app/design-system/designSystem";
 
 interface ListingProps {
 	data: IPostEntity[];

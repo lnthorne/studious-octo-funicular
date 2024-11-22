@@ -11,7 +11,6 @@ import {
 	Animated,
 } from "react-native";
 import { signOut } from "@/services/auth";
-import { Colors } from "react-native-ui-lib";
 import { MLButton } from "@/components/molecules/Button";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwner, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
@@ -23,6 +22,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { updateUser } from "@/services/user";
 import { useMutation } from "@tanstack/react-query";
+import { Colors } from "@/app/design-system/designSystem";
 
 const validationSchema = Yup.object().shape({
 	firstname: Yup.string()

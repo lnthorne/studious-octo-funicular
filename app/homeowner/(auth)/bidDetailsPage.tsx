@@ -17,7 +17,6 @@ import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { startNewConversation } from "@/services/messaging";
 import { router } from "expo-router";
 import { MLButton } from "@/components/molecules/Button";
-import { Colors } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { acceptBidAndCloseOtherBids } from "@/services/bid";
 import { calculateReviewSummary, fetchCompanyReviews } from "@/services/review";
@@ -26,6 +25,7 @@ import ReviewStats from "@/components/ReviewSummary";
 import { Timestamp } from "@react-native-firebase/firestore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IReviewEntity } from "@/typings/reviews.inter";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function bidDetailsPage() {
 	const opacity = useRef(new Animated.Value(0)).current;

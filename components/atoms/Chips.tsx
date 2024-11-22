@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Colors, TouchableOpacity } from "react-native-ui-lib";
+import { TouchableOpacity } from "react-native-ui-lib";
 import { ATText } from "./Text";
+import { Colors } from "@/app/design-system/designSystem";
 
 interface ChipProps {
 	label: string;

@@ -1,6 +1,6 @@
+import { Colors } from "@/app/design-system/designSystem";
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Colors } from "react-native-ui-lib";
 
 interface ProgressDotsProps {
 	totalDots: number;

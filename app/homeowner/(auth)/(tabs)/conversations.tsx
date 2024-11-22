@@ -13,9 +13,9 @@ import {
 import { router } from "expo-router";
 import { useUser } from "@/contexts/userContext";
 import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.inter";
-import { Colors } from "react-native-ui-lib";
 import { ATText } from "@/components/atoms/Text";
 import { useConversations } from "@/hooks/useConversations";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function ConversationsPage() {
 	const opacity = useRef(new Animated.Value(0)).current;

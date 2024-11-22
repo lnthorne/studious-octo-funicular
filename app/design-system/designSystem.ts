@@ -1,6 +1,6 @@
-import { Colors, Typography } from "react-native-ui-lib";
+import { Typography } from "react-native-ui-lib";
 
-Colors.loadColors({
+export const Colors = {
 	primaryButtonColor: "#1F94E0",
 	primaryButtonTextColor: "#F7FAFA",
 	secondaryButtonColor: "#E8EDF2",
@@ -18,7 +18,9 @@ Colors.loadColors({
 	timestamp: "#999",
 	borderBottomColor: "#ddd",
 	shadowColor: "#000",
-});
+} as const;
+
+export type ColorKey = keyof typeof Colors;
 
 Typography.loadTypographies({
 	heading: { fontSize: 24, fontWeight: "700", lineHeight: 30, fontStyle: "normal" },
@@ -36,21 +38,4 @@ Typography.loadTypographies({
 	error: { fontSize: 14, fontWeight: "400", lineHeight: 20 },
 	body: { fontSize: 16, fontWeight: "500", lineHeight: 24, fontStyle: "normal" },
 	messageText: { fontSize: 15, fontWeight: "400", lineHeight: 18, fontStyle: "normal" },
-});
-
-Colors.loadSchemes({
-	light: {
-		screenBG: Colors.backgroundColor,
-		primaryTextColor: Colors.primaryTextColor,
-		secondayTextColor: Colors.secondaryTextColor,
-		primaryButtonBG: Colors.primaryButtonColor,
-		secondaryButtonBG: Colors.secondaryButtonColor,
-	},
-	dark: {
-		screenBG: Colors.backgroundColor,
-		primaryTextColor: Colors.textPrimary,
-		secondayTextColor: Colors.textSecondary,
-		primaryButtonBG: Colors.primaryColor,
-		secondaryButtonBG: Colors.secondaryColor,
-	},
 });

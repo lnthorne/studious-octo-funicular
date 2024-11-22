@@ -21,7 +21,7 @@ import { signIn } from "@/services/auth";
 import { MLButton } from "@/components/molecules/Button";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { ATText } from "@/components/atoms/Text";
-import { Colors } from "react-native-ui-lib";
+import { Colors } from "../design-system/designSystem";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email address").required("Email is required"),

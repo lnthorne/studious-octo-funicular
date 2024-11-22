@@ -22,11 +22,11 @@ import { useUser } from "@/contexts/userContext";
 import ORDatePickerModal from "@/components/DatePickerModal";
 import { MLButton } from "@/components/molecules/Button";
 import { ATText } from "@/components/atoms/Text";
-import { Colors } from "react-native-ui-lib";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { Ionicons } from "@expo/vector-icons";
 import MLCollage from "@/components/molecules/Collage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Colors } from "@/app/design-system/designSystem";
 
 const PostSchema = Yup.object().shape({
 	title: Yup.string().required("Title is required"),

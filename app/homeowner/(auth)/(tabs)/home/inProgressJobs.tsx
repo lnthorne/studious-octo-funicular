@@ -7,9 +7,9 @@ import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { router, useFocusEffect } from "expo-router";
 import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
-import { Colors } from "react-native-ui-lib";
 import { useQuery } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function inProgressJobs() {
 	const opacity = useRef(new Animated.Value(0)).current;

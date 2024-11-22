@@ -1,7 +1,8 @@
 import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import React from "react";
-import { Colors, Modal } from "react-native-ui-lib";
+import { Modal } from "react-native-ui-lib";
+import { Colors } from "@/app/design-system/designSystem";
 
 interface DatePickerProps {
 	visible: boolean;

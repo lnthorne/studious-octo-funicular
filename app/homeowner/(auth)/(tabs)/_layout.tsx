@@ -1,8 +1,7 @@
+import { Colors } from "@/app/design-system/designSystem";
 import { ATText } from "@/components/atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, Tabs } from "expo-router";
-import { Text, View } from "react-native";
-import { Colors } from "react-native-ui-lib";
+import { Tabs } from "expo-router";
 const HomeHeader = () => (
 	<ATText typography="heading" style={{ fontSize: 28 }}>
 		Dashboard
@@ -30,6 +29,7 @@ export default function MainLayout() {
 		<Tabs
 			screenOptions={{
 				headerShown: true,
+				tabBarShowLabel: false,
 				tabBarStyle: {
 					backgroundColor: Colors.tabBarColor,
 					borderTopWidth: 1,
@@ -47,7 +47,6 @@ export default function MainLayout() {
 					},
 					headerTitleAlign: "left",
 					headerTitle: () => <HomeHeader />,
-					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons
 							name={focused ? "home" : "home-outline"}
@@ -88,7 +87,6 @@ export default function MainLayout() {
 					},
 					headerTitleAlign: "left",
 					headerTitle: () => <ConversationHeader />,
-					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons
 							name={focused ? "chatbox" : "chatbox-outline"}
@@ -108,7 +106,6 @@ export default function MainLayout() {
 					},
 					headerTitleAlign: "left",
 					headerTitle: () => <ProfileHeader />,
-					tabBarShowLabel: false,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons
 							name={focused ? "person" : "person-outline"}

@@ -2,8 +2,8 @@ import "../../app/design-system/designSystem";
 import React from "react";
 import { Button, View } from "react-native-ui-lib";
 import { ATText } from "../atoms/Text";
-import { Colors } from "react-native-ui-lib";
 import { ButtonProps, ViewStyle } from "react-native";
+import { Colors } from "../../app/design-system/designSystem";
 
 interface CustomButtonProps extends Omit<ButtonProps, "title"> {
 	label: string;

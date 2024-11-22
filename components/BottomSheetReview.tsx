@@ -2,12 +2,12 @@ import React, { useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import BottomSheet, { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import * as Yup from "yup";
-import { Colors } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { ATText } from "./atoms/Text";
 import { Formik, FormikHelpers } from "formik";
 import { MLButton } from "./molecules/Button";
 import { ReviewForm } from "@/typings/reviews.inter";
+import { Colors } from "@/app/design-system/designSystem";
 
 interface ReviewBottomSheetProps {
 	onSubmit: (reviewData: ReviewForm) => void;

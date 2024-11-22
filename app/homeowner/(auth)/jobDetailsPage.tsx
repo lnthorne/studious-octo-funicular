@@ -16,8 +16,8 @@ import { Close } from "./_layout";
 import { CreateReview } from "@/services/review";
 import { useUser } from "@/contexts/userContext";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
-import { Colors } from "react-native-ui-lib";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function JobDetails() {
 	const bottomSheetRef = useRef<BottomSheet>(null);

@@ -5,7 +5,6 @@ import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { UserProvider } from "@/contexts/userContext";
 import UserContextWrapper from "./userContextWrapper";
-import { Colors } from "react-native-ui-lib";
 import { StatusBar } from "expo-status-bar";
 import { JobProvider } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
@@ -13,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "@/hooks/useFonts";
 import * as SplashScreen from "expo-splash-screen";
+import { Colors } from "./design-system/designSystem";
 
 const queryClient = new QueryClient();
 
