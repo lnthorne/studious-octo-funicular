@@ -36,19 +36,16 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 			<View style={[styles.textFieldContainer]}>
 				<TextField
 					value={value}
+					color={editable ? Colors.primaryTextColor : Colors.secondaryTextColor}
+					fieldStyle={multiline ? styles.textArea : styles.textField}
 					placeholder={placeholder}
 					placeholderTextColor={Colors.secondaryTextColor}
 					secureTextEntry={secureTextEntry && isPasswordVisible}
 					onChangeText={onChangeText}
-					style={[
-						multiline ? styles.textArea : styles.textField,
-						!editable && styles.textAreaDisabled,
-					]}
 					keyboardType={keyboardType}
 					onBlur={onBlur}
 					multiline={multiline}
 					numberOfLines={numberOfLines}
-					allowFontScaling={false}
 					editable={editable}
 				/>
 
@@ -94,18 +91,12 @@ const styles = StyleSheet.create({
 	textField: {
 		height: 56,
 		width: 290,
-		...Typography.textBoxText,
-		color: Colors.primaryTextColor,
-		textAlignVertical: "auto",
 	},
 	textArea: {
 		minHeight: 144,
 		maxHeight: 170,
 		minWidth: 290,
 		marginVertical: 10,
-		...Typography.textBoxText,
-		color: Colors.primaryTextColor,
-		textAlignVertical: "top",
 	},
 	textAreaDisabled: {
 		color: Colors.secondaryTextColor,
