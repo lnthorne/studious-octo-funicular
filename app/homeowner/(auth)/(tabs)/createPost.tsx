@@ -65,8 +65,9 @@ export default function CreatePostScreen() {
 			{
 				onSuccess: () => {
 					queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.open], refetchType: "all" });
+					setImageUris([]);
 					resetForm();
-					router.back();
+					router.navigate("/homeowner/home");
 				},
 			}
 		);

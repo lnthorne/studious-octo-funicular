@@ -4,7 +4,7 @@ import { IPostEntity } from "@/typings/jobs.inter";
 import { ATText } from "../atoms/Text";
 import MLCollage from "../molecules/Collage";
 import { Timestamp } from "@react-native-firebase/firestore";
-import { getCityFromPostalCode } from "@/services/geocode";
+import { getGeoInformation } from "@/services/geocode";
 import { useQuery } from "@tanstack/react-query";
 
 interface JobDetailProps {
@@ -20,7 +20,7 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 		staleTime: Infinity,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
-		queryFn: () => getCityFromPostalCode(jobDetails!.zipcode, "CA"),
+		queryFn: () => getGeoInformation(jobDetails!.zipcode, "CA"),
 	});
 
 	if (!jobDetails) {

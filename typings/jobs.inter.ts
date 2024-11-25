@@ -45,6 +45,9 @@ export interface IPostEntity extends IPost {
 	jobStatus: JobStatus;
 	createdAt: FirebaseFirestoreTypes.FieldValue;
 	completionConfirmed: { [uid: string]: boolean };
+	geohash: string;
+	lat: number;
+	lng: number;
 	winningBidId?: string;
 	bids?: IBidEntity[]; // NOTE: This is not stored in Firestore, but is populated when fetching posts
 }

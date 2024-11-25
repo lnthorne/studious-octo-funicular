@@ -121,3 +121,7 @@
 ### Nov, 20, 2024
 
 - The fonts are popping in on load. We need to wait for the font to load before we render the page, otherwise we get this weird pop in
+
+### Nov, 22, 2024
+
+- RNULIB has a bunch of pre made shit tha you made and its better. Go back and clean that up. Then proceed with Firebase Geostore for lat/long queries

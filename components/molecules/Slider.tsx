@@ -7,13 +7,14 @@ import { Colors } from "@/app/design-system/designSystem";
 interface SliderProps {
 	radius: number;
 	onRadiusChange: (value: number) => void;
+	onSeekEnd?: () => void;
 }
 
-export default function MLSlider({ radius, onRadiusChange }: SliderProps) {
+export default function MLSlider({ radius, onRadiusChange, onSeekEnd }: SliderProps) {
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
-				<ATText>Search Radius (Miles)</ATText>
+				<ATText>Search Radius (Km)</ATText>
 				<ATText typography="secondaryText">{radius}</ATText>
 			</View>
 			<Incubator.Slider
@@ -25,6 +26,7 @@ export default function MLSlider({ radius, onRadiusChange }: SliderProps) {
 				minimumTrackTintColor={Colors.primaryButtonColor}
 				maximumTrackTintColor={Colors.secondaryDotColor}
 				thumbTintColor={Colors.primaryButtonColor}
+				onSeekEnd={onSeekEnd}
 			/>
 		</View>
 	);

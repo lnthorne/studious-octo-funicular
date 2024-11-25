@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInputProps, View } from "react-native";
-import { Typography, TextField, TouchableOpacity } from "react-native-ui-lib";
+import { TextField, TouchableOpacity } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { ATText } from "../atoms/Text";
 import { Colors } from "@/app/design-system/designSystem";
+import { ColorType } from "react-native-ui-lib/src/components/textField/types";
 
 interface CustomTextBoxProps extends TextInputProps {
 	heading?: string;
@@ -22,6 +23,7 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 	multiline = false,
 	numberOfLines,
 	editable = true,
+	...props
 }) => {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry);
 
@@ -33,13 +35,13 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 				</ATText>
 			)}
 
-			<View style={[styles.textFieldContainer]}>
+			<View style={styles.textFieldContainer}>
 				<TextField
 					value={value}
 					color={editable ? Colors.primaryTextColor : Colors.secondaryTextColor}
 					fieldStyle={multiline ? styles.textArea : styles.textField}
 					placeholder={placeholder}
-					placeholderTextColor={Colors.secondaryTextColor}
+					placeholderTextColor={Colors.secondaryTextColor as any}
 					secureTextEntry={secureTextEntry && isPasswordVisible}
 					onChangeText={onChangeText}
 					keyboardType={keyboardType}
@@ -47,6 +49,7 @@ export const MLTextBox: React.FC<CustomTextBoxProps> = ({
 					multiline={multiline}
 					numberOfLines={numberOfLines}
 					editable={editable}
+					{...props}
 				/>
 
 				{secureTextEntry && (

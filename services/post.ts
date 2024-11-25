@@ -1,8 +1,18 @@
 import { BidStatus, IBidEntity, IPost, IPostEntity, JobStatus } from "@/typings/jobs.inter";
-import firestore from "@react-native-firebase/firestore";
+import firestore, {
+	collection,
+	endAt,
+	getDocs,
+	orderBy,
+	query,
+	startAt,
+	where,
+} from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import { fetchBidFromBid } from "./bid";
 import compressImageToWebP from "./image";
+import { getGeoInformation } from "./geocode";
+import { geohashForLocation, geohashQueryBounds, Geopoint } from "geofire-common";
 
 export async function CreateNewPost(
 	newPostContent: IPost,
@@ -10,8 +20,13 @@ export async function CreateNewPost(
 ): Promise<IPostEntity> {
 	try {
 		const postRef = firestore().collection("posts").doc();
+		const { lat, lng } = await getGeoInformation(newPostContent.zipcode, "CA");
+		const hash = geohashForLocation([lat, lng]);
 		const newPost: IPostEntity = {
 			...newPostContent,
+			geohash: hash,
+			lat,
+			lng,
 			pid: postRef.id,
 			createdAt: firestore.FieldValue.serverTimestamp(),
 			jobStatus: JobStatus.open,
@@ -51,27 +66,52 @@ export async function CreateNewPost(
 	}
 }
 
-export async function fetchOpenJobPostsNotBidOn(uid: string): Promise<IPostEntity[]> {
+export async function fetchOpenJobPostsNotBidOn(
+	uid: string,
+	radius: number,
+	center?: Geopoint
+): Promise<IPostEntity[]> {
 	try {
-		const userBidsSnapshot = await firestore().collection("bids").where("uid", "==", uid).get();
+		const db = firestore();
+		const radiusInM = radius * 1000;
 
-		const jobIdsWithUserBids = userBidsSnapshot.docs.map((doc) => {
-			const bid = doc.data() as IBidEntity;
-			return bid.pid;
-		});
+		let postsSnapshots;
 
-		const postsSnapshot = await firestore()
-			.collection("posts")
-			.where("jobStatus", "==", JobStatus.open)
-			.get();
+		if (center && radius) {
+			const bounds = geohashQueryBounds(center, radiusInM);
+			const promises = [];
 
-		// TODO: This should be filtered in the query itself
-		const posts = postsSnapshot.docs
-			.map((doc) => {
-				const data = doc.data() as IPostEntity;
-				return data;
+			for (const b of bounds) {
+				const q = query(
+					collection(db, "posts"),
+					where("jobStatus", "==", JobStatus.open),
+					orderBy("geohash"),
+					startAt(b[0]),
+					endAt(b[1])
+				);
+				promises.push(getDocs(q)); // Execute the query and collect results
+			}
+
+			postsSnapshots = await Promise.all(promises);
+		} else {
+			// If no center is specified, fetch all open jobs
+			const q = query(collection(db, "posts"), where("jobStatus", "==", JobStatus.open));
+			postsSnapshots = [await getDocs(q)];
+		}
+
+		const userBidsSnapshot = await db.collection("bids").where("uid", "==", uid).get();
+
+		const jobIdsWithUserBids = new Set(
+			userBidsSnapshot.docs.map((doc) => {
+				const bid = doc.data() as IBidEntity;
+				return bid.pid;
 			})
-			.filter((post) => !jobIdsWithUserBids.includes(post.pid)); // Filter out jobs with the same ID as in `jobIdsWithUserBids`
+		);
+
+		const posts = postsSnapshots
+			.flatMap((snapshot) => snapshot.docs)
+			.map((doc) => doc.data() as IPostEntity)
+			.filter((post) => !jobIdsWithUserBids.has(post.pid));
 
 		return posts;
 	} catch (error) {
