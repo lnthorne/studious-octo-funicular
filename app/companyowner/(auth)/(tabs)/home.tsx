@@ -1,5 +1,5 @@
 // app/home/createPost.tsx
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
 	View,
 	Text,
@@ -9,6 +9,7 @@ import {
 	TouchableOpacity,
 	RefreshControl,
 	SafeAreaView,
+	Animated,
 } from "react-native";
 import { fetchOpenJobPostsNotBidOn } from "@/services/post";
 import { IPostEntity } from "@/typings/jobs.inter";
@@ -21,15 +22,19 @@ import { Colors } from "@/app/design-system/designSystem";
 import { getGeoInformation } from "@/services/geocode";
 import { useQuery } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
+import ORJobListing from "@/components/organisms/HomeownerJobListing";
+import { useJobContext } from "@/contexts/jobContext";
 
 export default function ViewPostsScreen() {
+	const opacity = useRef(new Animated.Value(0)).current;
 	const { user } = useUser<ICompanyOwnerEntity>();
-	const [isZipValid, seZipValid] = useState(false);
+	const { setSelectedJob } = useJobContext();
+	const [isZipValid, seZipValid] = useState(true);
 	const [radius, setRadius] = useState(10);
 	const [zipcodeSearch, setZipcodeSearch] = useState<string>("");
 	const [isRefresh, setIsRefresh] = useState(false);
 	const { data, isLoading, refetch, isError } = useQuery({
-		queryKey: ["posts", user?.uid, radius, zipcodeSearch],
+		queryKey: ["posts", user?.uid],
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		refetchInterval: 10 * 60 * 1000, // 10 minutes
 		refetchOnWindowFocus: true,
@@ -61,9 +66,20 @@ export default function ViewPostsScreen() {
 		setIsRefresh(false);
 	};
 
-	const handlePostPress = (pid: string) => {
-		router.push(`/companyowner/createBid/${pid}`);
+	const handlePostPress = (selectedJob: IPostEntity) => {
+		setSelectedJob(selectedJob);
+		router.navigate(`/companyowner/jobDetailsPage`);
 	};
+
+	useEffect(() => {
+		if (!isLoading) {
+			Animated.timing(opacity, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [isLoading]);
 
 	if (isLoading) {
 		return (
@@ -94,21 +110,15 @@ export default function ViewPostsScreen() {
 				onEndEditing={() => refetch()}
 			/>
 			<MLSlider radius={radius} onRadiusChange={setRadius} onSeekEnd={() => refetch()} />
-			<FlatList
-				data={data}
-				keyExtractor={(item) => item.pid}
-				renderItem={({ item }) => (
-					<TouchableOpacity onPress={() => handlePostPress(item.pid)}>
-						<View style={styles.postContainer}>
-							<Text style={styles.title}>{item.title}</Text>
-							<Text style={styles.description}>{item.description}</Text>
-							<Text style={styles.status}>Status: {item.jobStatus}</Text>
-						</View>
-					</TouchableOpacity>
-				)}
-				ListEmptyComponent={<Text style={styles.title}>No open job posts available.</Text>}
-				refreshControl={<RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />}
-			/>
+			<Animated.View style={[{ flex: 1 }, { opacity }]}>
+				<ORJobListing
+					data={data || []}
+					isRefresh={isRefresh}
+					onRefresh={onRefresh}
+					onPress={handlePostPress}
+					chipLabel="View"
+				/>
+			</Animated.View>
 		</View>
 	);
 }
@@ -116,7 +126,6 @@ export default function ViewPostsScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: "center",
 		backgroundColor: Colors.backgroundColor,
 	},
 	postContainer: {

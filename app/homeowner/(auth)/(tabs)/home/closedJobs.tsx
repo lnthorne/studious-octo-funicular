@@ -5,7 +5,7 @@ import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { fetchJobsWithBidsByStatus } from "@/services/post";
 import { router, useFocusEffect } from "expo-router";
-import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
+import ORJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
 import { useQuery } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
@@ -66,7 +66,7 @@ export default function closedJobs() {
 	return (
 		<View style={styles.container}>
 			<Animated.View style={[{ flex: 1 }, { opacity }]}>
-				<ORHomeownerJobListing
+				<ORJobListing
 					data={data || []}
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}

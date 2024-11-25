@@ -1,9 +1,11 @@
-// geocodeService.ts
-
 import { GeocodeInformation } from "@/typings/geocode.inter";
+import { getApp } from "@react-native-firebase/app";
+import Constants from "expo-constants";
 
 const GOOGLE_GEOCODING_API_URL = "https://maps.googleapis.com/maps/api/geocode/json";
-const GOOGLE_API_KEY = "AIzaSyCdklhZaheTP04_TN0o6Do5u4Qgt3Pg5yY";
+const app = getApp();
+const apiKey = app.options.apiKey;
+const bundle = Constants.expoConfig?.ios?.bundleIdentifier;
 
 export const getGeoInformation = async (
 	postalCode: string,
@@ -11,10 +13,15 @@ export const getGeoInformation = async (
 ): Promise<GeocodeInformation> => {
 	try {
 		const response = await fetch(
-			`${GOOGLE_GEOCODING_API_URL}?components=postal_code:${postalCode}|country:${countryCode}&key=${GOOGLE_API_KEY}`
+			`${GOOGLE_GEOCODING_API_URL}?components=postal_code:${postalCode}|country:${countryCode}&key=${apiKey}`,
+			{
+				headers: {
+					"X-Ios-Bundle-Identifier": bundle || "",
+				},
+			}
 		);
 		const data = await response.json();
-		console.log("Geo data", data.results[0].geometry.location);
+		console.log("CAUTION", data);
 
 		if (data.status === "OK" && data.results.length > 0) {
 			const city: string = data.results[0].address_components[1].long_name;

@@ -22,7 +22,7 @@ interface ListingProps {
 	chipLabel: string;
 }
 
-export default function ORHomeownerJobListing({
+export default function ORJobListing({
 	data,
 	isRefresh,
 	onRefresh,

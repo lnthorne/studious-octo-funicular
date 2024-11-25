@@ -6,7 +6,7 @@ import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import ORHomeownerJobListing from "@/components/organisms/HomeownerJobListing";
+import ORJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
 import { useQuery } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
@@ -67,7 +67,7 @@ export default function HomeScreen() {
 	return (
 		<View style={styles.container}>
 			<Animated.View style={[{ flex: 1 }, { opacity }]}>
-				<ORHomeownerJobListing
+				<ORJobListing
 					data={data || []}
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}
