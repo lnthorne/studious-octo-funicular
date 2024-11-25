@@ -2,118 +2,149 @@ import { Colors } from "@/app/design-system/designSystem";
 import { IBid } from "@/typings/jobs.inter";
 import BottomSheet, { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Formik, FormikHelpers } from "formik";
-import React, { useMemo, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, TouchableOpacity, View, Keyboard } from "react-native";
 import * as Yup from "yup";
 import { ATText } from "./atoms/Text";
 import ORDatePickerModal from "./DatePickerModal";
 import { Ionicons } from "@expo/vector-icons";
 import { MLButton } from "./molecules/Button";
+import { useUser } from "@/contexts/userContext";
+import { ICompanyOwnerEntity } from "@/typings/user.inter";
 
 interface BidBottomSheetProps {
+	initialValues: IBid;
 	onSubmit: (reviewData: IBid) => void;
 }
 
 const BidSchema = Yup.object().shape({
-	amount: Yup.string().required("Amount is required"),
-	details: Yup.string()
+	bidAmount: Yup.number()
+		.required("Amount is required")
+		.positive("Bid amount must be greater than zero"),
+	description: Yup.string()
 		.min(10, "Description must be at least 10 characters long")
 		.required("Description is required"),
 	date: Yup.date().required("Date is required"),
 });
 
-const BidBottomSheet = React.forwardRef<BottomSheet, BidBottomSheetProps>(({ onSubmit }, ref) => {
-	const snapPoints = useMemo(() => ["60%", "90%"], []);
-	const [modalVisible, setModalVisible] = useState(false);
-	const [selectedDate, setSelectedDate] = useState(new Date());
+const BidBottomSheet = React.forwardRef<BottomSheet, BidBottomSheetProps>(
+	({ onSubmit, initialValues }, ref) => {
+		const snapPoints = useMemo(() => ["72%", "90%"], []);
+		const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+		const [modalVisible, setModalVisible] = useState(false);
+		const [selectedDate, setSelectedDate] = useState(new Date());
 
-	const handleModalClose = () => {
-		setModalVisible(false);
-	};
+		const handleModalClose = () => {
+			setModalVisible(false);
+		};
 
-	return (
-		<BottomSheet
-			ref={ref}
-			index={0}
-			snapPoints={snapPoints}
-			backgroundStyle={{ backgroundColor: Colors.backgroundColor }}
-			style={styles.shadow}
-			enableDynamicSizing={false}
-			handleStyle={{ display: "none" }}
-			keyboardBehavior="extend"
-			enablePanDownToClose={true}
-		>
-			<Formik
-				initialValues={{ amount: 0, details: "", date: new Date() }}
-				validationSchema={BidSchema}
-				onSubmit={(values) => {
-					onSubmit && onSubmit(values);
-				}}
+		useEffect(() => {
+			const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+				setIsKeyboardOpen(true);
+			});
+
+			const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+				setIsKeyboardOpen(false);
+			});
+
+			return () => {
+				keyboardDidShowListener.remove();
+				keyboardDidHideListener.remove();
+			};
+		}, []);
+
+		return (
+			<BottomSheet
+				ref={ref}
+				index={-1}
+				snapPoints={snapPoints}
+				backgroundStyle={{ backgroundColor: Colors.backgroundColor }}
+				style={styles.shadow}
+				enableDynamicSizing={false}
+				handleStyle={{ display: "none" }}
+				keyboardBehavior="extend"
+				enablePanDownToClose={!isKeyboardOpen}
 			>
-				{({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
-					<>
-						<ATText typography="heading" style={styles.text}>
-							Creat a bid
-						</ATText>
-						<View style={[styles.textFieldContainer]}>
-							<BottomSheetTextInput
-								placeholder="Amount"
-								placeholderTextColor={Colors.secondaryTextColor}
-								onChangeText={(budget) => {
-									const numericValue = budget.replace(/[^0-9.]/g, "");
-									setFieldValue("amount", numericValue);
+				<Formik
+					initialValues={initialValues}
+					validationSchema={BidSchema}
+					onSubmit={(values) => {
+						onSubmit && onSubmit(values);
+					}}
+				>
+					{({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
+						<>
+							<ATText typography="heading" style={{ paddingHorizontal: 16 }}>
+								Creat a bid
+							</ATText>
+							<View style={styles.container}>
+								<ATText style={styles.heading} color="primaryTextColor">
+									Amount
+								</ATText>
+								<View style={[styles.textFieldContainer]}>
+									<BottomSheetTextInput
+										placeholder="Amount"
+										placeholderTextColor={Colors.secondaryTextColor}
+										onChangeText={(bidAmount) => {
+											const numericValue = bidAmount.replace(/[^0-9.]/g, "");
+											setFieldValue("bidAmount", numericValue);
+										}}
+										value={values.bidAmount ? `$${values.bidAmount}` : ""}
+										onBlur={handleBlur("amount")}
+										style={styles.textField}
+										keyboardType="numeric"
+									/>
+								</View>
+								{errors.bidAmount && touched.bidAmount && (
+									<ATText color="error">{errors.bidAmount}</ATText>
+								)}
+							</View>
+							<View style={styles.container}>
+								<ATText style={styles.heading} color="primaryTextColor">
+									Details
+								</ATText>
+								<View style={[styles.textFieldContainer]}>
+									<BottomSheetTextInput
+										placeholder="Write your details..."
+										placeholderTextColor={Colors.secondaryTextColor}
+										multiline
+										onChangeText={handleChange("description")}
+										value={values.description}
+										onBlur={handleBlur("details")}
+										style={styles.textArea}
+									/>
+								</View>
+								{errors.description && touched.description && (
+									<ATText color="error">{errors.description}</ATText>
+								)}
+							</View>
+							<View style={styles.container}>
+								<ATText style={styles.heading} color="primaryTextColor">
+									Estimated start date
+								</ATText>
+								<TouchableOpacity onPress={() => setModalVisible(true)} style={styles.dateField}>
+									<Ionicons name="calendar" size={23} />
+									<ATText>{values.date.toLocaleDateString()}</ATText>
+								</TouchableOpacity>
+							</View>
+
+							<ORDatePickerModal
+								onClose={handleModalClose}
+								onChange={(newDate) => {
+									setSelectedDate(newDate);
+									setFieldValue("date", newDate);
 								}}
-								value={values.amount ? `$${values.amount}` : ""}
-								onBlur={handleBlur("amount")}
-								style={styles.textField}
-								keyboardType="numeric"
+								selectedDate={selectedDate}
+								visible={modalVisible}
 							/>
-						</View>
-						{errors.amount && touched.amount && (
-							<ATText color="error" style={styles.text}>
-								{errors.amount}
-							</ATText>
-						)}
-
-						<View style={[styles.textFieldContainer]}>
-							<BottomSheetTextInput
-								placeholder="Write your details..."
-								placeholderTextColor={Colors.secondaryTextColor}
-								multiline
-								onChangeText={handleChange("details")}
-								value={values.details}
-								onBlur={handleBlur("details")}
-								style={styles.textArea}
-							/>
-						</View>
-						{errors.details && touched.details && (
-							<ATText color="error" style={styles.text}>
-								{errors.details}
-							</ATText>
-						)}
-						<View style={styles.dateFieldContainer}>
-							<TouchableOpacity onPress={() => setModalVisible(true)} style={styles.dateField}>
-								<Ionicons name="calendar" size={23} />
-								<ATText>{values.date.toLocaleDateString()}</ATText>
-							</TouchableOpacity>
-						</View>
-
-						<ORDatePickerModal
-							onClose={handleModalClose}
-							onChange={(newDate) => {
-								setSelectedDate(newDate);
-								setFieldValue("date", newDate);
-							}}
-							selectedDate={selectedDate}
-							visible={modalVisible}
-						/>
-						<MLButton variant="primary" label="Apply for this job" onPress={handleSubmit} />
-					</>
-				)}
-			</Formik>
-		</BottomSheet>
-	);
-});
+							<MLButton variant="primary" label="Apply for this job" onPress={handleSubmit} />
+						</>
+					)}
+				</Formik>
+			</BottomSheet>
+		);
+	}
+);
 
 export default BidBottomSheet;
 
@@ -129,8 +160,12 @@ const styles = StyleSheet.create({
 		elevation: 5,
 		paddingVertical: 8,
 	},
-	text: {
-		paddingHorizontal: 16,
+	heading: {
+		marginBottom: 9,
+	},
+	container: {
+		marginVertical: 12,
+		marginHorizontal: 16,
 	},
 	textFieldContainer: {
 		flexDirection: "row",
@@ -139,12 +174,6 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.textBoxBackgroundColor,
 		borderRadius: 12,
 		paddingHorizontal: 17,
-		marginVertical: 12,
-		marginHorizontal: 16,
-	},
-	dateFieldContainer: {
-		paddingVertical: 12,
-		paddingHorizontal: 16,
 	},
 	dateField: {
 		flexDirection: "row",

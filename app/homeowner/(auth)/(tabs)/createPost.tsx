@@ -215,7 +215,7 @@ export default function CreatePostScreen() {
 									keyboardType="numeric"
 								/>
 								<View style={styles.fieldContainer}>
-									<ATText style={styles.fieldHeader}>Estimated completion date</ATText>
+									<ATText style={styles.fieldHeader}>Desired start date</ATText>
 									<TouchableOpacity
 										onPress={() => setModalVisible(true)}
 										style={styles.textFieldContainer}

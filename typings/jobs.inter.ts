@@ -21,6 +21,7 @@ export interface IBid {
 	companyName: string;
 	bidAmount: number;
 	description: string;
+	date: Date;
 }
 
 export interface IBidEntity extends IBid {
