@@ -22,7 +22,7 @@ export default function CompanyownerHomeLayout() {
 							}
 							style={{ textAlign: "center" }}
 						>
-							Accepted
+							In Progress
 						</ATText>
 					</TouchableOpacity>
 					<TouchableOpacity
@@ -54,23 +54,7 @@ export default function CompanyownerHomeLayout() {
 							}
 							style={{ textAlign: "center" }}
 						>
-							Done
-						</ATText>
-					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => router.navigate("/companyowner/bids/expired")}
-						style={styles.tab}
-					>
-						<ATText
-							typography={currentRoute === "/companyowner/bids/expired" ? "body" : "secondaryText"}
-							color={
-								currentRoute === "/companyowner/bids/expired"
-									? "primaryTextColor"
-									: "secondaryTextColor"
-							}
-							style={{ textAlign: "center" }}
-						>
-							Expired
+							Closed
 						</ATText>
 					</TouchableOpacity>
 				</View>
@@ -94,7 +78,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "center",
 		paddingVertical: 10,
-		paddingHorizontal: 10,
 		backgroundColor: "transparent",
 		alignItems: "center",
 		alignSelf: "stretch",

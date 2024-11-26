@@ -1,4 +1,3 @@
-// app/home/index.tsx
 import { Colors } from "@/app/design-system/designSystem";
 import { ATText } from "@/components/atoms/Text";
 import ORJobListing from "@/components/organisms/HomeownerJobListing";
@@ -44,23 +43,37 @@ export default function BidInProgress() {
 		refetchInterval: 10 * 60 * 1000, // 10 minutes
 		refetchOnWindowFocus: true,
 		queryFn: async () => {
-			return fetchBidsFromUid(user!.uid, selectedFilter);
+			const bids = await fetchBidsFromUid(user!.uid, selectedFilter);
+			setBids(bids);
+			return bids;
+		},
+		select: (bids) => {
+			const bidIds = bids!.map((bid) => bid.pid);
+			return bidIds;
 		},
 	});
 
-	const { data, isLoading, isError, refetch } = useQuery({
+	const {
+		data: jobPosts,
+		isLoading: isJobPostsLoading,
+		isError: isJobPostsError,
+		refetch: refetchJobPosts,
+	} = useQuery({
 		queryKey: ["jobPosts", bids],
 		enabled: !!bids && bids.length > 0, // Only fetch if there are bids
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		queryFn: async () => {
-			const bidIds = bids!.map((bid) => bid.pid);
-			return fetchJobPostsByPidAndStaus(bidIds);
+			if (bids) {
+				return fetchJobPostsByPidAndStaus(bids);
+			}
+			return [];
 		},
 	});
 
 	const onRefresh = async () => {
 		setIsRefresh(true);
-		await refetch();
+		await refetchBids();
+		await refetchJobPosts();
 		setIsRefresh(false);
 	};
 
@@ -80,16 +93,16 @@ export default function BidInProgress() {
 	};
 
 	useEffect(() => {
-		if (!isLoading) {
+		if (!isBidsLoading || isJobPostsLoading) {
 			Animated.timing(opacity, {
 				toValue: 1,
 				duration: 500,
 				useNativeDriver: true,
 			}).start();
 		}
-	}, [isLoading]);
+	}, [isBidsLoading, isJobPostsLoading]);
 
-	if (isLoading) {
+	if (isBidsLoading || isJobPostsLoading) {
 		return (
 			<SafeAreaView style={styles.container}>
 				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
@@ -97,7 +110,7 @@ export default function BidInProgress() {
 		);
 	}
 
-	if (isError) {
+	if (isBidsError || isJobPostsError) {
 		return (
 			<SafeAreaView style={[styles.container]}>
 				<ATText typography="error" color="error" style={styles.center}>
@@ -106,6 +119,7 @@ export default function BidInProgress() {
 			</SafeAreaView>
 		);
 	}
+
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity onPress={toggleFilterDropdown} style={styles.filterButton}>
@@ -143,7 +157,7 @@ export default function BidInProgress() {
 			<View style={styles.container}>
 				<Animated.View style={[{ flex: 1 }, { opacity }]}>
 					<ORJobListing
-						data={data || []}
+						data={jobPosts || []}
 						isRefresh={isRefresh}
 						onRefresh={onRefresh}
 						onPress={handleJobSelection}

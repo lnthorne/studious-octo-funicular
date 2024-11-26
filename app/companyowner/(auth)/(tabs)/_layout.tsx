@@ -12,7 +12,7 @@ const HomeHeader = () => (
 
 const BidHeader = () => (
 	<ATText typography="heading" style={{ fontSize: 28 }}>
-		Bids
+		Jobs
 	</ATText>
 );
 

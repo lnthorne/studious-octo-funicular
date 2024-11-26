@@ -41,10 +41,10 @@ const ORCoursel: React.FC = () => {
 			content: (
 				<>
 					<ATText typography="heading" style={styles.heading}>
-						Get your price. Schedule and pay.
+						Home Maintenance Made Easy. Anytime, Anywhere.
 					</ATText>
 					<ATText typography="body" style={styles.body}>
-						Get your yard ready for the season with professional help.
+						Get your home ready for the season with professional help.
 					</ATText>
 					<View style={styles.buttonFullWidthContainer}>
 						<MLButton variant="primary" label="Get Started" onPress={goToNextPage} />
@@ -57,10 +57,10 @@ const ORCoursel: React.FC = () => {
 			content: (
 				<>
 					<ATText typography="heading" style={styles.heading}>
-						Welcome to the future of landscaping.
+						Welcome To The Future of Home Maintenance.
 					</ATText>
 					<ATText typography="body" style={styles.body}>
-						Are you a homeowner or a landscaper?
+						Are you a homeowner or a service provider?
 					</ATText>
 					<View style={styles.buttonContainer}>
 						<MLButton
@@ -70,7 +70,7 @@ const ORCoursel: React.FC = () => {
 							style={styles.button}
 						/>
 						<MLButton
-							label="Landscaper"
+							label="Provider"
 							variant="secondary"
 							onPress={handleLandscaperOnboarding}
 							style={styles.button}
@@ -114,7 +114,6 @@ const ORCoursel: React.FC = () => {
 
 const styles = StyleSheet.create({
 	heading: {
-		paddingHorizontal: 16,
 		paddingTop: 20,
 		paddingBottom: 8,
 		textAlign: "center",

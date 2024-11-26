@@ -11,7 +11,7 @@ export default function Onboarding() {
 				<View style={styles.subHeading}>
 					<ATText typography="heading">Welcome</ATText>
 				</View>
-				<Image source={require("../assets/images/Logo.png")} style={styles.image} />
+				<Image source={require("../assets/images/SpadeLogo.png")} style={styles.image} />
 				<ORCoursel />
 			</View>
 		</SafeAreaView>
