@@ -60,7 +60,12 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 				</ATText>
 			</View>
 			<View style={styles.textContainer}>
-				<ATText>{`${data?.city}, ${data?.province}`}</ATText>
+				{data?.error ? (
+					<ATText>{jobDetails.zipcode.toUpperCase()}</ATText>
+				) : (
+					<ATText>{`${data?.city}, ${data?.province}`}</ATText>
+				)}
+
 				<ATText typography="secondaryText" color="secondaryTextColor">
 					Location
 				</ATText>

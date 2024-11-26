@@ -1,50 +1,78 @@
-import { Tabs } from "expo-router";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import { router, Tabs } from "expo-router";
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from "react-native";
 import { Link, usePathname } from "expo-router";
+import { Colors } from "@/app/design-system/designSystem";
+import { ATText } from "@/components/atoms/Text";
 
 export default function CompanyownerHomeLayout() {
 	const currentRoute = usePathname();
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<View style={styles.container}>
+		<SafeAreaView style={styles.safeAreaContainer}>
+			<View style={{ flex: 1 }}>
 				<View style={styles.tabContainer}>
-					<Link
-						href="/companyowner/bids"
-						style={currentRoute === "/companyowner/bids" ? styles.activeTab : styles.tab}
+					<TouchableOpacity
+						onPress={() => router.navigate("/companyowner/bids")}
+						style={styles.tab}
 					>
-						<Text
-							style={currentRoute === "/companyowner/bids" ? styles.activeTabText : styles.tabText}
-						>
-							In Progress
-						</Text>
-					</Link>
-					<Link
-						href="/companyowner/bids/pending"
-						style={currentRoute === "/companyowner/bids/pending" ? styles.activeTab : styles.tab}
-					>
-						<Text
-							style={
-								currentRoute === "/companyowner/bids/pending"
-									? styles.activeTabText
-									: styles.tabText
+						<ATText
+							typography={currentRoute === "/companyowner/bids" ? "body" : "secondaryText"}
+							color={
+								currentRoute === "/companyowner/bids" ? "primaryTextColor" : "secondaryTextColor"
 							}
+							style={{ textAlign: "center" }}
+						>
+							Accepted
+						</ATText>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => router.navigate("/companyowner/bids/pending")}
+						style={styles.tab}
+					>
+						<ATText
+							typography={currentRoute === "/companyowner/bids/pending" ? "body" : "secondaryText"}
+							color={
+								currentRoute === "/companyowner/bids/pending"
+									? "primaryTextColor"
+									: "secondaryTextColor"
+							}
+							style={{ textAlign: "center" }}
 						>
 							Pending
-						</Text>
-					</Link>
-					<Link
-						href="/companyowner/bids/closed"
-						style={currentRoute === "/companyowner/bids/closed" ? styles.activeTab : styles.tab}
+						</ATText>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => router.navigate("/companyowner/bids/closed")}
+						style={styles.tab}
 					>
-						<Text
-							style={
-								currentRoute === "/companyowner/bids/closed" ? styles.activeTabText : styles.tabText
+						<ATText
+							typography={currentRoute === "/companyowner/bids/closed" ? "body" : "secondaryText"}
+							color={
+								currentRoute === "/companyowner/bids/closed"
+									? "primaryTextColor"
+									: "secondaryTextColor"
 							}
+							style={{ textAlign: "center" }}
 						>
-							Closed
-						</Text>
-					</Link>
+							Done
+						</ATText>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => router.navigate("/companyowner/bids/expired")}
+						style={styles.tab}
+					>
+						<ATText
+							typography={currentRoute === "/companyowner/bids/expired" ? "body" : "secondaryText"}
+							color={
+								currentRoute === "/companyowner/bids/expired"
+									? "primaryTextColor"
+									: "secondaryTextColor"
+							}
+							style={{ textAlign: "center" }}
+						>
+							Expired
+						</ATText>
+					</TouchableOpacity>
 				</View>
 				<Tabs
 					screenOptions={{
@@ -58,32 +86,23 @@ export default function CompanyownerHomeLayout() {
 }
 
 const styles = StyleSheet.create({
-	container: {
+	safeAreaContainer: {
 		flex: 1,
+		backgroundColor: Colors.backgroundColor,
 	},
 	tabContainer: {
 		flexDirection: "row",
-		justifyContent: "space-around",
+		justifyContent: "center",
 		paddingVertical: 10,
+		paddingHorizontal: 10,
 		backgroundColor: "transparent",
+		alignItems: "center",
+		alignSelf: "stretch",
+		gap: 32,
 	},
 	tab: {
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-	},
-	activeTab: {
-		borderBottomWidth: 2,
-		borderBottomColor: "#6200ee", // Indicator for the active tab
-		paddingVertical: 10,
-		paddingHorizontal: 15,
-	},
-	tabText: {
-		fontSize: 16,
-		color: "#999",
-	},
-	activeTabText: {
-		fontSize: 16,
-		fontWeight: "bold",
-		color: "#6200ee",
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });

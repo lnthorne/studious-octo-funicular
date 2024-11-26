@@ -6,6 +6,8 @@ interface JobContextType {
 	setJobs: (jobs: IPostEntity[]) => void;
 	selectedJob: IPostEntity | null;
 	setSelectedJob: (job: IPostEntity | null) => void;
+	bids: IBidEntity[];
+	setBids: (bids: IBidEntity[]) => void;
 	selectedBid: IBidEntity | null;
 	setSelectedBid: (bid: IBidEntity | null) => void;
 }
@@ -26,12 +28,22 @@ interface JobProviderProps {
 
 export function JobProvider({ children }: JobProviderProps) {
 	const [jobs, setJobs] = useState<IPostEntity[]>([]);
+	const [bids, setBids] = useState<IBidEntity[]>([]);
 	const [selectedJob, setSelectedJob] = useState<IPostEntity | null>(null);
 	const [selectedBid, setSelectedBid] = useState<IBidEntity | null>(null);
 
 	return (
 		<JobContext.Provider
-			value={{ jobs, setJobs, selectedJob, setSelectedJob, selectedBid, setSelectedBid }}
+			value={{
+				jobs,
+				setJobs,
+				selectedJob,
+				setSelectedJob,
+				selectedBid,
+				setSelectedBid,
+				bids,
+				setBids,
+			}}
 		>
 			{children}
 		</JobContext.Provider>

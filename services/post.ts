@@ -175,20 +175,6 @@ export async function fetchJobsWithBidsByStatus(
 	}
 }
 
-export async function fetchInProgressPost(pid: string): Promise<IPostEntity | null> {
-	try {
-		const post = await fetchPost(pid);
-		if (!post) return null;
-		if (post.winningBidId) {
-			post.bids = [await fetchBidFromBid(post.winningBidId)];
-		}
-		return post;
-	} catch (error) {
-		console.error("Error fetching in-progress posts: ", error);
-		throw error;
-	}
-}
-
 export async function updatePostCompletionStatus(pid: string, uid: string): Promise<void> {
 	try {
 		const postRef = firestore().collection("posts").doc(pid);
@@ -235,6 +221,29 @@ export async function checkAndClosePostingAndBid(pid: string, bidId: string): Pr
 		await batch.commit();
 	} catch (error) {
 		console.error("Error closing posting: ", error);
+		throw error;
+	}
+}
+
+export async function fetchJobPostsByPidAndStaus(pids: string[]): Promise<IPostEntity[]> {
+	try {
+		const db = firestore();
+
+		const postsCollection = db.collection("posts");
+		const promises = pids.map(async (pid) => {
+			const doc = await postsCollection.doc(pid).get();
+			if (doc.exists) {
+				return {
+					...doc.data(),
+				} as IPostEntity;
+			}
+			return null;
+		});
+
+		const results = await Promise.all(promises);
+		return results.filter((post) => post !== null);
+	} catch (error) {
+		console.error("Error fetching job postings:", error);
 		throw error;
 	}
 }

@@ -11,10 +11,7 @@ export default function HomeownerHomeLayout() {
 		<SafeAreaView style={styles.safeAreaContainer}>
 			<View style={{ flex: 1 }}>
 				<View style={styles.tabContainer}>
-					<TouchableOpacity
-						onPress={() => router.navigate("/homeowner/home")}
-						style={currentRoute === "/homeowner/home" ? styles.activeTab : styles.tab}
-					>
+					<TouchableOpacity onPress={() => router.navigate("/homeowner/home")} style={styles.tab}>
 						<ATText
 							typography={currentRoute === "/homeowner/home" ? "body" : "secondaryText"}
 							color={currentRoute === "/homeowner/home" ? "primaryTextColor" : "secondaryTextColor"}
@@ -25,9 +22,7 @@ export default function HomeownerHomeLayout() {
 					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() => router.navigate("/homeowner/home/inProgressJobs")}
-						style={
-							currentRoute === "/homeowner/home/inProgressJobs" ? styles.activeTab : styles.tab
-						}
+						style={styles.tab}
 					>
 						<ATText
 							typography={
@@ -45,7 +40,7 @@ export default function HomeownerHomeLayout() {
 					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() => router.navigate("/homeowner/home/closedJobs")}
-						style={currentRoute === "/homeowner/home/closedJobs" ? styles.activeTab : styles.tab}
+						style={styles.tab}
 					>
 						<ATText
 							typography={currentRoute === "/homeowner/home/closedJobs" ? "body" : "secondaryText"}
@@ -86,11 +81,6 @@ const styles = StyleSheet.create({
 		gap: 32,
 	},
 	tab: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	activeTab: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",

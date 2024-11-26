@@ -39,8 +39,8 @@ export const getGeoInformation = async (
 			return {
 				city: "City not found",
 				province: "N/A",
-				lat: Infinity,
-				lng: Infinity,
+				lat: 90,
+				lng: -90,
 				error: "City not found",
 			};
 		}
@@ -49,8 +49,8 @@ export const getGeoInformation = async (
 		return {
 			city: "City not found",
 			province: "N/A",
-			lat: Infinity,
-			lng: Infinity,
+			lat: 90,
+			lng: -90,
 			error: "Error fetching city",
 		};
 	}

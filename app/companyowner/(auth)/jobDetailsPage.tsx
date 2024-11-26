@@ -10,17 +10,20 @@ import ORMap from "@/components/organisms/Map";
 import { MLButton } from "@/components/molecules/Button";
 import BottomSheet from "@gorhom/bottom-sheet";
 import BidBottomSheet from "@/components/BottomSheetBid";
-import { IBid } from "@/typings/jobs.inter";
+import { IBid, IBidEntity } from "@/typings/jobs.inter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitBid } from "@/services/bid";
 import { router } from "expo-router";
+import MyBid from "@/components/MyBid";
 
 export default function JobDetailsPage() {
 	const bottomSheetRef = useRef<BottomSheet>(null);
 	const { user } = useUser<ICompanyOwnerEntity>();
-	const { selectedJob } = useJobContext();
+	const { selectedJob, bids } = useJobContext();
+	const [selectedBid, setSelectedBid] = useState<IBidEntity>();
 	const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
+	const [mapVisible, setMapVisible] = useState(true);
 	const queryClient = useQueryClient();
 	const { mutate, isError } = useMutation({
 		mutationFn: (newBid: IBid) => {
@@ -60,16 +63,28 @@ export default function JobDetailsPage() {
 		});
 	};
 
+	useEffect(() => {
+		if (selectedJob?.lat === 90 && selectedJob.lng === -90) {
+			setMapVisible(false);
+		}
+		const myBid = bids.find((bid) => selectedJob?.winningBidId === bid.bid);
+		setSelectedBid(myBid);
+	}, [selectedJob]);
+
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: Colors.backgroundColor, paddingVertical: 40 }}>
 			<ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 				<ORJobDetails jobDetails={selectedJob} />
-				<ORMap lat={selectedJob!.lat} lng={selectedJob!.lng} />
-				<MLButton
-					label="Apply for this job"
-					onPress={() => handleCreateBid()}
-					style={styles.button}
-				/>
+				{mapVisible && <ORMap lat={selectedJob!.lat} lng={selectedJob!.lng} />}
+				{selectedJob?.winningBidId ? (
+					<MyBid bid={selectedBid} />
+				) : (
+					<MLButton
+						label="Apply for this job"
+						onPress={() => handleCreateBid()}
+						style={styles.button}
+					/>
+				)}
 			</ScrollView>
 			<GeneralModal
 				visible={modalVisible}

@@ -69,11 +69,11 @@ export default function SignUp() {
 						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
 							<View>
 								<MLTextBox
-									onChangeText={handleChange("Company name")}
+									onChangeText={handleChange("companyName")}
 									heading="Conpany name"
 									placeholder="Company name"
 									value={values.companyName}
-									onBlur={handleBlur("companyname")}
+									onBlur={handleBlur("companyName")}
 									errorText={
 										touched.companyName && errors.companyName ? errors.companyName : undefined
 									}
