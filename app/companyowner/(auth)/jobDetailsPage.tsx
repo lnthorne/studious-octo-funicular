@@ -5,16 +5,16 @@ import { useUser } from "@/contexts/userContext";
 import { ICompanyOwnerEntity, IHomeOwnerEntity } from "@/typings/user.inter";
 import GeneralModal from "@/components/generalModal";
 import ORJobDetails from "@/components/organisms/JobDetails";
-import { Colors } from "react-native-ui-lib";
 import ORMap from "@/components/organisms/Map";
 import { MLButton } from "@/components/molecules/Button";
 import BottomSheet from "@gorhom/bottom-sheet";
 import BidBottomSheet from "@/components/BottomSheetBid";
-import { IBid, IBidEntity } from "@/typings/jobs.inter";
+import { BidStatus, IBid, IBidEntity, JobStatus } from "@/typings/jobs.inter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitBid } from "@/services/bid";
 import { router } from "expo-router";
 import MyBid from "@/components/MyBid";
+import { Colors } from "@/app/design-system/designSystem";
 
 export default function JobDetailsPage() {
 	const bottomSheetRef = useRef<BottomSheet>(null);
@@ -53,6 +53,10 @@ export default function JobDetailsPage() {
 		mutate(bid, {
 			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: ["posts", user?.uid], refetchType: "all" });
+				queryClient.invalidateQueries({
+					queryKey: ["bids", user?.uid, BidStatus.pending],
+					refetchType: "all",
+				});
 				setBottomSheetVisible(false);
 				bottomSheetRef.current?.close();
 				router.back();
@@ -67,7 +71,7 @@ export default function JobDetailsPage() {
 		if (selectedJob?.lat === 90 && selectedJob.lng === -90) {
 			setMapVisible(false);
 		}
-		const myBid = bids.find((bid) => selectedJob?.winningBidId === bid.bid);
+		const myBid = bids.find((myBid) => selectedJob?.bidIds?.some((jobBid) => jobBid === myBid.bid));
 		setSelectedBid(myBid);
 	}, [selectedJob]);
 
@@ -76,7 +80,7 @@ export default function JobDetailsPage() {
 			<ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 				<ORJobDetails jobDetails={selectedJob} />
 				{mapVisible && <ORMap lat={selectedJob!.lat} lng={selectedJob!.lng} />}
-				{selectedJob?.winningBidId ? (
+				{selectedBid && selectedJob?.jobStatus !== JobStatus.open ? (
 					<MyBid bid={selectedBid} />
 				) : (
 					<MLButton

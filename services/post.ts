@@ -9,7 +9,6 @@ import firestore, {
 	where,
 } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
-import { fetchBidFromBid } from "./bid";
 import compressImageToWebP from "./image";
 import { getGeoInformation } from "./geocode";
 import { geohashForLocation, geohashQueryBounds, Geopoint } from "geofire-common";
@@ -111,7 +110,11 @@ export async function fetchOpenJobPostsNotBidOn(
 		const posts = postsSnapshots
 			.flatMap((snapshot) => snapshot.docs)
 			.map((doc) => doc.data() as IPostEntity)
-			.filter((post) => !jobIdsWithUserBids.has(post.pid));
+			.filter((post) => {
+				console.log("TEST", jobIdsWithUserBids);
+				console.log("POST", post);
+				return !jobIdsWithUserBids.has(post.pid);
+			});
 
 		return posts;
 	} catch (error) {

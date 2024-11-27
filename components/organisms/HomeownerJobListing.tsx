@@ -109,7 +109,7 @@ export default function ORJobListing({
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 16,
+		paddingHorizontal: 10,
 	},
 	postContainer: {
 		flexDirection: "row",

@@ -123,7 +123,7 @@ export default function BidInProgress() {
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity onPress={toggleFilterDropdown} style={styles.filterButton}>
-				<Text style={styles.filterText}>Filter by Status: {filterTitle}</Text>
+				<ATText style={styles.filterText}>Filter by Status: {filterTitle}</ATText>
 			</TouchableOpacity>
 
 			{filterVisible && (
@@ -134,7 +134,7 @@ export default function BidInProgress() {
 							setFilterTitle("Accepted");
 						}}
 					>
-						<Text style={styles.dropdownText}>Accepted</Text>
+						<ATText style={styles.dropdownText}>Accepted</ATText>
 					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() => {
@@ -142,7 +142,7 @@ export default function BidInProgress() {
 							setFilterTitle("Waiting");
 						}}
 					>
-						<Text style={styles.dropdownText}>Waiting</Text>
+						<ATText style={styles.dropdownText}>Waiting</ATText>
 					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() => {
@@ -150,7 +150,7 @@ export default function BidInProgress() {
 							setFilterTitle("All");
 						}}
 					>
-						<Text style={styles.dropdownText}>All</Text>
+						<ATText style={styles.dropdownText}>All</ATText>
 					</TouchableOpacity>
 				</View>
 			)}
@@ -178,18 +178,15 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 	},
 	filterButton: {
-		marginBottom: 10,
-		backgroundColor: "#007bff",
+		backgroundColor: Colors.primaryButtonColor,
 		padding: 10,
-		borderRadius: 5,
 	},
 	filterText: {
-		color: "white",
-		fontWeight: "bold",
+		color: Colors.primaryButtonTextColor,
 		textAlign: "center",
 	},
 	dropdown: {
-		backgroundColor: "white",
+		color: "white",
 		padding: 10,
 		borderRadius: 5,
 		borderColor: "#ccc",
@@ -197,7 +194,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	dropdownText: {
+		alignSelf: "center",
 		paddingVertical: 8,
-		fontSize: 16,
 	},
 });

@@ -103,7 +103,7 @@ export default function bidDetailsPage() {
 					queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.inprogress] });
 					queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.open] });
 					Alert.alert("Bid accepted successfully!");
-					router.back();
+					router.navigate("/homeowner/home");
 				},
 				onError: () => {
 					Alert.alert("Failed to accept bid. Please try again");
@@ -152,7 +152,11 @@ export default function bidDetailsPage() {
 						<Ionicons name="send" size={24} style={{ flexDirection: "column" }} />
 					</TouchableOpacity>
 					{selectedJob?.jobStatus === JobStatus.open && (
-						<MLButton label="Accept Bid" onPress={handleAcceptBid} />
+						<MLButton
+							label="Accept Bid"
+							onPress={handleAcceptBid}
+							style={{ marginHorizontal: 0 }}
+						/>
 					)}
 				</Animated.View>
 			</ScrollView>

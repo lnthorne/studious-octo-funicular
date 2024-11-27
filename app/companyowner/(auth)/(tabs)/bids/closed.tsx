@@ -1,3 +1,4 @@
+import { Colors } from "@/app/design-system/designSystem";
 import { ATText } from "@/components/atoms/Text";
 import ORJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
@@ -6,8 +7,9 @@ import { fetchBidsFromUid } from "@/services/bid";
 import { fetchJobPostsByPidAndStaus } from "@/services/post";
 import { BidStatus, IPostEntity } from "@/typings/jobs.inter";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
+import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
 	ActivityIndicator,
@@ -18,7 +20,6 @@ import {
 	Animated,
 	SafeAreaView,
 } from "react-native";
-import { Colors } from "react-native-ui-lib";
 
 export default function BidInClosed() {
 	const opacity = useRef(new Animated.Value(0)).current;
@@ -119,7 +120,7 @@ export default function BidInClosed() {
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity onPress={toggleFilterDropdown} style={styles.filterButton}>
-				<Text style={styles.filterText}>Filter by Status: {filterTitle}</Text>
+				<ATText style={styles.filterText}>Filter by Status: {filterTitle}</ATText>
 			</TouchableOpacity>
 
 			{filterVisible && (
@@ -130,7 +131,7 @@ export default function BidInClosed() {
 							setFilterTitle("Completed");
 						}}
 					>
-						<Text style={styles.dropdownText}>Completed</Text>
+						<ATText style={styles.dropdownText}>Completed</ATText>
 					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() => {
@@ -138,7 +139,7 @@ export default function BidInClosed() {
 							setFilterTitle("Rejected");
 						}}
 					>
-						<Text style={styles.dropdownText}>Rejected</Text>
+						<ATText style={styles.dropdownText}>Rejected</ATText>
 					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() => {
@@ -146,7 +147,7 @@ export default function BidInClosed() {
 							setFilterTitle("All");
 						}}
 					>
-						<Text style={styles.dropdownText}>All</Text>
+						<ATText style={styles.dropdownText}>All</ATText>
 					</TouchableOpacity>
 				</View>
 			)}
@@ -175,14 +176,11 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 	},
 	filterButton: {
-		marginBottom: 10,
-		backgroundColor: "#007bff",
+		backgroundColor: Colors.primaryButtonColor,
 		padding: 10,
-		borderRadius: 5,
 	},
 	filterText: {
-		color: "white",
-		fontWeight: "bold",
+		color: Colors.primaryButtonTextColor,
 		textAlign: "center",
 	},
 	dropdown: {
@@ -194,7 +192,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	dropdownText: {
+		alignSelf: "center",
 		paddingVertical: 8,
-		fontSize: 16,
 	},
 });
