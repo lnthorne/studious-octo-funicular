@@ -108,7 +108,11 @@ export default function ConversationsPage() {
 									onPress={() => handlePress(item.conversationId, item.otherUser.companyName)}
 								>
 									<Image
-										source={require("../../../../assets/images/onboarding.png")}
+										source={
+											item.otherUser.profileImage
+												? { uri: item.otherUser.profileImage }
+												: require("../../../../assets/images/onboarding.png")
+										}
 										style={styles.avatar}
 									/>
 									<View style={{ flex: 1 }}>

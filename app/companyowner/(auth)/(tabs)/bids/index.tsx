@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	dropdown: {
-		color: "white",
+		backgroundColor: "white",
 		padding: 10,
 		borderRadius: 5,
 		borderColor: "#ccc",
