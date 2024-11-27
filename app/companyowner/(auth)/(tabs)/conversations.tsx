@@ -73,10 +73,6 @@ export default function ConversationsPage() {
 		}
 	}, [isLoading]);
 
-	useEffect(() => {
-		console.log("Con", conversations);
-	}, [conversations]);
-
 	if (isLoading) {
 		return (
 			<SafeAreaView style={styles.container}>

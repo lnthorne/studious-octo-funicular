@@ -71,12 +71,14 @@ export default function RootLayout() {
 								screenOptions={{
 									headerShown: false,
 									contentStyle: { backgroundColor: Colors.backgroundColor },
+									gestureEnabled: false,
 								}}
 							>
 								<Stack.Screen name="index" />
 								<Stack.Screen
 									name="shared/messages/[conversationId]"
 									options={{
+										gestureEnabled: true,
 										headerShown: true,
 										headerTitle: DirectMessageHeader,
 										headerTransparent: true,

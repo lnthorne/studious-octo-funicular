@@ -100,6 +100,7 @@ export default function BidInProgress() {
 				useNativeDriver: true,
 			}).start();
 		}
+		console.log("BIDS", bids);
 	}, [isBidsLoading, isJobPostsLoading]);
 
 	if (isBidsLoading || isJobPostsLoading) {
