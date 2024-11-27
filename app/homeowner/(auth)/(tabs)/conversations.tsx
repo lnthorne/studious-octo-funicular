@@ -20,7 +20,11 @@ import { Colors } from "@/app/design-system/designSystem";
 export default function ConversationsPage() {
 	const opacity = useRef(new Animated.Value(0)).current;
 	const { user } = useUser<IHomeOwnerEntity>();
-	const { data: conversations, isLoading, error } = useConversations<ICompanyOwnerEntity>(user);
+	const {
+		data: conversations,
+		isLoading,
+		error,
+	} = useConversations<ICompanyOwnerEntity>(user, UserType.companyowner);
 
 	const formatMessageDate = (timestamp: number): string => {
 		const messageDate = new Date(timestamp);

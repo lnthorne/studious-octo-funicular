@@ -13,7 +13,8 @@ export interface ConversationListing<T extends Identity> extends IConversation {
 }
 
 export function useConversations<T extends Identity>(
-	user: IHomeOwnerEntity | ICompanyOwnerEntity | null
+	user: IHomeOwnerEntity | ICompanyOwnerEntity | null,
+	otherUserType: UserType
 ) {
 	const queryClient = useQueryClient();
 	const [isLoading, setIsLoading] = useState(true);
@@ -50,7 +51,7 @@ export function useConversations<T extends Identity>(
 
 				const otherUserIds = Array.from(otherUserIdsSet);
 
-				const otherUsersData = await fetchUserNames(otherUserIds, UserType.companyowner);
+				const otherUsersData = await fetchUserNames(otherUserIds, otherUserType);
 
 				const userIdToDataMap = otherUsersData.reduce((acc, userData) => {
 					acc[userData.uid] = userData;
