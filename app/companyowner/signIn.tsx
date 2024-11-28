@@ -95,14 +95,7 @@ export default function SignIn() {
 							{loading ? (
 								<ActivityIndicator size="small" color="#0000ff" />
 							) : (
-								<>
-									<MLButton label="Log in" variant="primary" onPress={handleSubmit} />
-									<MLButton
-										label="Continue with Google"
-										variant="secondary"
-										onPress={handleSubmit}
-									/>
-								</>
+								<MLButton label="Log in" variant="primary" onPress={handleSubmit} />
 							)}
 						</View>
 					)}
