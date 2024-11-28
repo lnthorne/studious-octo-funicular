@@ -80,16 +80,15 @@ export default function JobDetailsPage() {
 			<ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 				<ORJobDetails jobDetails={selectedJob} />
 				{mapVisible && <ORMap lat={selectedJob!.lat} lng={selectedJob!.lng} />}
-				{selectedBid && selectedJob?.jobStatus !== JobStatus.open ? (
-					<MyBid bid={selectedBid} />
-				) : (
-					<MLButton
-						label="Apply for this job"
-						onPress={() => handleCreateBid()}
-						style={styles.button}
-					/>
-				)}
+				{selectedBid && selectedJob?.jobStatus !== JobStatus.open && <MyBid bid={selectedBid} />}
 			</ScrollView>
+			{selectedJob?.jobStatus === JobStatus.open && (
+				<MLButton
+					label="Apply for this job"
+					onPress={() => handleCreateBid()}
+					style={styles.button}
+				/>
+			)}
 			<GeneralModal
 				visible={modalVisible}
 				description="Are you sure you want to mark this job as completed? You cannot undo this action."
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 	},
 	button: {
-		marginTop: 25,
-		marginHorizontal: 0,
+		marginTop: 15,
+		marginHorizontal: 16,
 	},
 });
