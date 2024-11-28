@@ -95,7 +95,7 @@ export default function SignIn() {
 							</TouchableOpacity>
 
 							{loading ? (
-								<ActivityIndicator size="small" color="#0000ff" />
+								<ActivityIndicator size="small" color={Colors.primaryButtonColor} />
 							) : (
 								<MLButton label="Log in" variant="primary" onPress={handleSubmit} />
 							)}

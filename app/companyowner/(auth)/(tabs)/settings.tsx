@@ -21,8 +21,11 @@ import { MLTextBox } from "@/components/molecules/TextBox";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { updateUser } from "@/services/user";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Colors } from "@/app/design-system/designSystem";
+import { calculateReviewSummary, fetchCompanyReviews } from "@/services/review";
+import { IReviewEntity } from "@/typings/reviews.inter";
+import { ATText } from "@/components/atoms/Text";
 
 const validationSchema = Yup.object().shape({
 	companyName: Yup.string()
@@ -44,6 +47,12 @@ export default function SettingsScreen() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [profileImage, setProfileImage] = useState(user?.profileImage);
 	const [isNewProfileImage, setIsNewProfileImage] = useState(false);
+	const { data: reviewData, isLoading: reviewDataLoading } = useQuery({
+		queryKey: ["reviews", user],
+		enabled: !!user,
+		queryFn: () => fetchCompanyReviews(user!.uid),
+		select: (reviews: IReviewEntity[]) => calculateReviewSummary(reviews),
+	});
 	const { mutate, isPending } = useMutation({
 		mutationFn: ({
 			uid,
@@ -189,6 +198,30 @@ export default function SettingsScreen() {
 							{isEditing && <Ionicons name="add" size={32} />}
 						</TouchableOpacity>
 					)}
+					<View style={styles.ratingContainer}>
+						{reviewDataLoading ? (
+							<ActivityIndicator size="small" color={Colors.primaryButtonColor} />
+						) : (
+							<>
+								<View style={styles.starContainer}>
+									{[1, 2, 3, 4, 5].map((star, idx) => (
+										<Ionicons
+											key={idx}
+											name={
+												star <= Math.round(reviewData?.averageRating ?? 0) ? "star" : "star-outline"
+											}
+											size={20}
+											color={Colors.primaryButtonColor}
+										/>
+									))}
+								</View>
+								<ATText
+									typography="textBoxText"
+									style={{ alignSelf: "center" }}
+								>{`${reviewData?.totalReviews} reviews`}</ATText>
+							</>
+						)}
+					</View>
 					<Formik
 						initialValues={initialValues}
 						validationSchema={validationSchema}
@@ -278,7 +311,6 @@ const styles = StyleSheet.create({
 	imageContainer: {
 		width: 140,
 		height: 140,
-		position: "relative",
 		marginBottom: 10,
 		alignSelf: "center",
 	},
@@ -331,5 +363,13 @@ const styles = StyleSheet.create({
 		left: "50%",
 		transform: [{ translateX: -16 }, { translateY: -16 }],
 		zIndex: 1,
+	},
+	starContainer: {
+		flexDirection: "row",
+		paddingVertical: 15,
+	},
+	ratingContainer: {
+		alignSelf: "center",
+		flexDirection: "column",
 	},
 });
