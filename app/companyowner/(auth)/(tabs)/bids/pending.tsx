@@ -41,6 +41,7 @@ export default function Pending() {
 		refetchOnWindowFocus: true,
 		queryFn: async () => {
 			const bids = await fetchBidsFromUid(user!.uid, [BidStatus.pending]);
+			console.log("We have refetched the bids", bids);
 			setBids(bids);
 			return bids;
 		},

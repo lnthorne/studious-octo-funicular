@@ -71,7 +71,9 @@ export default function JobDetailsPage() {
 		if (selectedJob?.lat === 90 && selectedJob.lng === -90) {
 			setMapVisible(false);
 		}
+		console.log("Bids from job details page", bids);
 		const myBid = bids.find((myBid) => selectedJob?.bidIds?.some((jobBid) => jobBid === myBid.bid));
+		console.log("My Bid from job details page", myBid);
 		setSelectedBid(myBid);
 	}, [selectedJob]);
 
@@ -80,9 +82,9 @@ export default function JobDetailsPage() {
 			<ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 				<ORJobDetails jobDetails={selectedJob} />
 				{mapVisible && <ORMap lat={selectedJob!.lat} lng={selectedJob!.lng} />}
-				{selectedBid && selectedJob?.jobStatus !== JobStatus.open && <MyBid bid={selectedBid} />}
+				{selectedBid && <MyBid bid={selectedBid} />}
 			</ScrollView>
-			{selectedJob?.jobStatus === JobStatus.open && (
+			{!selectedBid && (
 				<MLButton
 					label="Apply for this job"
 					onPress={() => handleCreateBid()}
