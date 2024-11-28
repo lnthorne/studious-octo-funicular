@@ -131,7 +131,14 @@ export default function bidDetailsPage() {
 						ratingPercentages={data?.ratingPercentages}
 					/>
 					<View style={styles.detailsContainer}>
-						<Image source={require("../../../assets/images/onboarding.png")} style={styles.image} />
+						<Image
+							source={
+								selectedBid?.companyProfilePicture
+									? { uri: selectedBid.companyProfilePicture }
+									: require("../../../assets/images/onboarding.png")
+							}
+							style={styles.image}
+						/>
 						<View style={{ flex: 1 }}>
 							<ATText>{`$${selectedBid?.bidAmount}`}</ATText>
 							<ATText typography="secondaryText" color="secondaryTextColor">

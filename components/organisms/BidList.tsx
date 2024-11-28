@@ -3,16 +3,20 @@ import React from "react";
 import { ATText } from "../atoms/Text";
 import { IBidEntity, JobStatus } from "@/typings/jobs.inter";
 import { useJobContext } from "@/contexts/jobContext";
+import { useQuery } from "@tanstack/react-query";
 
 interface BidListProps {
-	bids: IBidEntity[] | undefined;
 	onPress: (selectedBid: IBidEntity) => void;
 }
 
-export default function ORBidList({ bids, onPress }: BidListProps) {
+export default function ORBidList({ onPress }: BidListProps) {
 	const { selectedJob } = useJobContext();
-	if (!bids || bids.length < 1) {
-		return <></>;
+	if (!selectedJob || !selectedJob.bids || selectedJob.bids.length < 1) {
+		return (
+			<ATText typography="secondaryText" color="secondaryTextColor" style={styles.listEmpty}>
+				You have not received any bids...
+			</ATText>
+		);
 	}
 
 	const renderHeading = () => {
@@ -29,7 +33,7 @@ export default function ORBidList({ bids, onPress }: BidListProps) {
 					Bids Recieved
 				</ATText>
 				<ATText typography="body">{`You've received ${
-					bids.length > 1 ? `${bids.length} bids` : `1 bid`
+					selectedJob!.bids!.length > 1 ? `${selectedJob!.bids!.length} bids` : `1 bid`
 				}
 			`}</ATText>
 			</>
@@ -39,10 +43,17 @@ export default function ORBidList({ bids, onPress }: BidListProps) {
 		<View style={styles.container}>
 			{renderHeading()}
 			<View style={styles.gridContainer}>
-				{bids.map((item, index) => (
+				{selectedJob?.bids?.map((item, index) => (
 					<View key={item.bid} style={styles.itemWrapper}>
 						<TouchableOpacity onPress={() => onPress(item)} style={styles.itemContainer}>
-							<Image source={require("../../assets/images/onboarding.png")} style={styles.image} />
+							<Image
+								source={
+									item.companyProfilePicture
+										? { uri: item.companyProfilePicture }
+										: require("../../assets/images/onboarding.png")
+								}
+								style={styles.image}
+							/>
 							<ATText typography="body">{`$${item.bidAmount}`}</ATText>
 							<ATText typography="secondaryText" color="secondaryTextColor">
 								By {item.companyName}
@@ -80,6 +91,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 
+	listEmpty: {
+		paddingBottom: 10,
+		alignSelf: "center",
+	},
 	gridContainer: {
 		flexDirection: "row",
 		flexWrap: "wrap",

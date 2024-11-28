@@ -5,7 +5,7 @@ import firestore from "@react-native-firebase/firestore";
  * Submit a new bid for a job post. Stores bid in firestore.
  * @param bidData - The bid data to submit
  */
-export async function submitBid(bidData: IBid): Promise<void> {
+export async function submitBid(bidData: IBid, companyProfilePicture?: string): Promise<void> {
 	try {
 		const bidRef = firestore().collection("bids").doc();
 
@@ -14,6 +14,7 @@ export async function submitBid(bidData: IBid): Promise<void> {
 			bid: bidRef.id,
 			createdAt: firestore.FieldValue.serverTimestamp(),
 			status: BidStatus.pending,
+			companyProfilePicture,
 		};
 
 		await bidRef.set(newBid);

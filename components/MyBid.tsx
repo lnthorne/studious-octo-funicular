@@ -2,12 +2,15 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import { IBidEntity } from "@/typings/jobs.inter";
 import { ATText } from "./atoms/Text";
+import { useUser } from "@/contexts/userContext";
+import { ICompanyOwnerEntity } from "@/typings/user.inter";
 
 interface MyBidProps {
 	bid: IBidEntity | undefined;
 }
 
 export default function MyBid({ bid }: MyBidProps) {
+	const { user } = useUser<ICompanyOwnerEntity>();
 	if (!bid) {
 		return (
 			<View style={styles.container}>
@@ -21,7 +24,14 @@ export default function MyBid({ bid }: MyBidProps) {
 		<View style={styles.container}>
 			<ATText typography="heading">Your Bid</ATText>
 			<View style={styles.detailsContainer}>
-				<Image source={require("../assets/images/onboarding.png")} style={styles.image} />
+				<Image
+					source={
+						user?.profileImage
+							? { uri: user.profileImage }
+							: require("../assets/images/onboarding.png")
+					}
+					style={styles.image}
+				/>
 				<View style={{ flex: 1 }}>
 					<ATText>{`$${bid?.bidAmount}`}</ATText>
 					<ATText typography="secondaryText" color="secondaryTextColor">

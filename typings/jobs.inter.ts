@@ -25,6 +25,7 @@ export interface IBid {
 }
 
 export interface IBidEntity extends IBid {
+	companyProfilePicture?: string;
 	bid: string;
 	createdAt: FirebaseFirestoreTypes.FieldValue;
 	status: BidStatus;

@@ -155,13 +155,7 @@ export default function JobDetails() {
 		<SafeAreaView style={{ flex: 1, backgroundColor: Colors.backgroundColor, paddingVertical: 40 }}>
 			<ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 				<ORJobDetails jobDetails={selectedJob} />
-				{selectedJob?.bids ? (
-					<ORBidList bids={selectedJob.bids} onPress={handleBidSelected} />
-				) : (
-					<ATText typography="secondaryText" color="secondaryTextColor" style={styles.listEmpty}>
-						You have not received any bids...
-					</ATText>
-				)}
+				<ORBidList onPress={handleBidSelected} />
 				{handleButtonType()}
 			</ScrollView>
 			<GeneralModal

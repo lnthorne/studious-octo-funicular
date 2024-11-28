@@ -27,7 +27,7 @@ export default function JobDetailsPage() {
 	const queryClient = useQueryClient();
 	const { mutate, isError } = useMutation({
 		mutationFn: (newBid: IBid) => {
-			return submitBid(newBid);
+			return submitBid(newBid, user?.profileImage);
 		},
 	});
 
