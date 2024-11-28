@@ -28,7 +28,7 @@ export default function MyBid({ bid }: MyBidProps) {
 					source={
 						user?.profileImage
 							? { uri: user.profileImage }
-							: require("../assets/images/onboarding.png")
+							: require("../assets/images/welcome.png")
 					}
 					style={styles.image}
 				/>

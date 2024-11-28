@@ -111,7 +111,7 @@ export default function ConversationsPage() {
 										source={
 											item.otherUser.profileImage
 												? { uri: item.otherUser.profileImage }
-												: require("../../../../assets/images/onboarding.png")
+												: require("../../../../assets/images/welcome.png")
 										}
 										style={styles.avatar}
 									/>

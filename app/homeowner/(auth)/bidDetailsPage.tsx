@@ -135,7 +135,7 @@ export default function bidDetailsPage() {
 							source={
 								selectedBid?.companyProfilePicture
 									? { uri: selectedBid.companyProfilePicture }
-									: require("../../../assets/images/onboarding.png")
+									: require("../../../assets/images/welcome.png")
 							}
 							style={styles.image}
 						/>

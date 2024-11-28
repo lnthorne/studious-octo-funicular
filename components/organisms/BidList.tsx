@@ -50,7 +50,7 @@ export default function ORBidList({ onPress }: BidListProps) {
 								source={
 									item.companyProfilePicture
 										? { uri: item.companyProfilePicture }
-										: require("../../assets/images/onboarding.png")
+										: require("../../assets/images/welcome.png")
 								}
 								style={styles.image}
 							/>
