@@ -78,7 +78,7 @@ export default function SignIn() {
 								onBlur={handleBlur("password")}
 								errorText={touched.password && errors.password ? errors.password : undefined}
 							/>
-							<TouchableOpacity>
+							<TouchableOpacity onPress={() => router.navigate("/shared/forgotPassword")}>
 								<ATText
 									style={styles.optionText}
 									typography="secondaryText"

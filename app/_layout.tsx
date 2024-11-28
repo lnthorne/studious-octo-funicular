@@ -38,7 +38,8 @@ export default function RootLayout() {
 	}, [fontsLoaded, initializing]);
 
 	const DirectMessageHeader = () => <ATText typography="heading">{name}</ATText>;
-	const DirectMessageBack = () => {
+	const ForgotPasswordHeader = () => <ATText typography="heading">Reset Password</ATText>;
+	const Back = () => {
 		return (
 			<TouchableOpacity onPress={() => router.back()}>
 				<Ionicons name="arrow-back-outline" size={35}></Ionicons>
@@ -82,7 +83,17 @@ export default function RootLayout() {
 										headerShown: true,
 										headerTitle: DirectMessageHeader,
 										headerTransparent: true,
-										headerLeft: () => <DirectMessageBack />,
+										headerLeft: () => <Back />,
+									}}
+								/>
+								<Stack.Screen
+									name="shared/forgotPassword"
+									options={{
+										gestureEnabled: true,
+										headerShown: true,
+										headerTitle: ForgotPasswordHeader,
+										headerTransparent: true,
+										headerLeft: () => <Back />,
 									}}
 								/>
 							</Stack>

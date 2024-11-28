@@ -1,4 +1,4 @@
-import auth from "@react-native-firebase/auth";
+import auth, { getAuth, sendPasswordResetEmail } from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firestore from "@react-native-firebase/firestore";
 
@@ -58,6 +58,22 @@ export async function signUp<T extends IHomeOwner | ICompanyOwner>(
 		console.log(`${userType} user signed up successfully!`);
 	} catch (error) {
 		console.error("Error signing up user:", error);
+		throw error;
+	}
+}
+
+/**
+ * Sends a password reset email to the user.
+ * @param email - The email address of the user who wants to reset their password.
+ */
+
+export async function resetPassword(email: string) {
+	const auth = getAuth();
+	try {
+		await sendPasswordResetEmail(auth, email);
+		console.log("Password reset email sent.");
+	} catch (error) {
+		console.error("Error sending password reset email:", error);
 		throw error;
 	}
 }
