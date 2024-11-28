@@ -181,6 +181,7 @@ export default function CreatePostScreen() {
 									placeholder="Title"
 									heading="Title"
 									value={values.title}
+									autoCapitalize="words"
 									errorText={touched.title && errors.title ? errors.title : undefined}
 								/>
 								<MLTextBox
@@ -202,6 +203,7 @@ export default function CreatePostScreen() {
 									heading="Postal code"
 									value={values.zipcode}
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
+									autoCapitalize="characters"
 								/>
 								<MLTextBox
 									onChangeText={(budget) => {

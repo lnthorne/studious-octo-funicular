@@ -95,6 +95,7 @@ export default function SignUp() {
 									value={values.email}
 									keyboardType="email-address"
 									onBlur={handleBlur("email")}
+									autoCapitalize="none"
 									errorText={touched.email && errors.email ? errors.email : undefined}
 								/>
 
@@ -104,6 +105,7 @@ export default function SignUp() {
 									value={values.zipcode}
 									onChangeText={handleChange("zipcode")}
 									onBlur={handleBlur("zipcode")}
+									autoCapitalize="characters"
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
 								/>
 								<MLTextBox
@@ -123,6 +125,7 @@ export default function SignUp() {
 									secureTextEntry
 									onChangeText={handleChange("password")}
 									onBlur={handleBlur("password")}
+									autoCapitalize="none"
 									errorText={touched.password && errors.password ? errors.password : undefined}
 								/>
 

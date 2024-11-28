@@ -63,6 +63,7 @@ export default function SignIn() {
 								keyboardType="email-address"
 								onBlur={handleBlur("email")}
 								errorText={touched.email && errors.email ? errors.email : undefined}
+								autoCapitalize="none"
 							/>
 							<MLTextBox
 								heading="Password"
@@ -72,6 +73,7 @@ export default function SignIn() {
 								onChangeText={handleChange("password")}
 								onBlur={handleBlur("password")}
 								errorText={touched.password && errors.password ? errors.password : undefined}
+								autoCapitalize="none"
 							/>
 							<TouchableOpacity>
 								<ATText

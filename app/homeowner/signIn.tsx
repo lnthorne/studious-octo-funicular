@@ -67,6 +67,7 @@ export default function SignIn() {
 								value={values.email}
 								keyboardType="email-address"
 								onBlur={handleBlur("email")}
+								autoCapitalize="none"
 								errorText={touched.email && errors.email ? errors.email : undefined}
 							/>
 							<MLTextBox
@@ -76,6 +77,7 @@ export default function SignIn() {
 								secureTextEntry
 								onChangeText={handleChange("password")}
 								onBlur={handleBlur("password")}
+								autoCapitalize="none"
 								errorText={touched.password && errors.password ? errors.password : undefined}
 							/>
 							<TouchableOpacity onPress={() => router.navigate("/shared/forgotPassword")}>

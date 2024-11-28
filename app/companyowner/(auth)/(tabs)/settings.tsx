@@ -227,6 +227,7 @@ export default function SettingsScreen() {
 									onBlur={handleBlur("zipcode")}
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
 									editable={isEditing}
+									autoCapitalize="characters"
 								/>
 								<MLTextBox
 									onChangeText={handleChange("telephone")}

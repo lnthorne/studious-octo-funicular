@@ -80,6 +80,7 @@ const ReviewBottomSheet = React.forwardRef<BottomSheet, ReviewBottomSheetProps>(
 									value={values.title}
 									onBlur={handleBlur("title")}
 									style={styles.textField}
+									autoCapitalize="words"
 								/>
 							</View>
 
