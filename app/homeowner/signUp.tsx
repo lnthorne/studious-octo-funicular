@@ -18,6 +18,7 @@ import { MLTextBox } from "@/components/molecules/TextBox";
 import { MLButton } from "@/components/molecules/Button";
 import { ATText } from "@/components/atoms/Text";
 import { Colors } from "../design-system/designSystem";
+import { IHomeOwnerSignUp } from "@/typings/auth/login.inter";
 
 const validationSchema = Yup.object().shape({
 	firstname: Yup.string()
@@ -39,7 +40,7 @@ const validationSchema = Yup.object().shape({
 export default function SignUp() {
 	const [loading, setLoading] = useState(false);
 
-	const initialValues: IHomeOwner = {
+	const initialValues: IHomeOwnerSignUp = {
 		firstname: "",
 		lastname: "",
 		email: "",
@@ -48,10 +49,10 @@ export default function SignUp() {
 		telephone: "",
 	};
 
-	const handleSignUp = async (values: IHomeOwner) => {
+	const handleSignUp = async (values: IHomeOwnerSignUp) => {
 		setLoading(true);
 		try {
-			await signUp<IHomeOwner>(UserType.homeowner, values);
+			await signUp<IHomeOwnerSignUp>(UserType.homeowner, values);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			alert("Registration failed: " + err.message);

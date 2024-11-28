@@ -2,7 +2,7 @@ import auth, { getAuth, sendPasswordResetEmail } from "@react-native-firebase/au
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firestore from "@react-native-firebase/firestore";
 
-import { ILoginData } from "@/typings/auth/login.inter";
+import { ICompanyOwnerSignUp, IHomeOwnerSignUp, ILoginData } from "@/typings/auth/login.inter";
 import { ICompanyOwner, IHomeOwner, UserType } from "@/typings/user.inter";
 
 /**
@@ -37,7 +37,7 @@ export async function signOut() {
  * @param userType - The type of user to sign up
  * @param userData - The form data of the new user
  */
-export async function signUp<T extends IHomeOwner | ICompanyOwner>(
+export async function signUp<T extends IHomeOwnerSignUp | ICompanyOwnerSignUp>(
 	userType: UserType,
 	userData: T
 ): Promise<void> {

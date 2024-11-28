@@ -9,7 +9,6 @@ export interface IHomeOwner {
 	firstname: string;
 	lastname: string;
 	email: string;
-	password: string;
 	zipcode: string;
 	telephone: string;
 	profileImage?: string;
@@ -18,7 +17,6 @@ export interface IHomeOwner {
 export interface ICompanyOwner {
 	companyName: string;
 	email: string;
-	password: string;
 	zipcode: string;
 	telephone: string;
 	profileImage?: string;

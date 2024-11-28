@@ -155,7 +155,6 @@ export default function SettingsScreen() {
 		firstname: user.firstname,
 		lastname: user.lastname,
 		email: user.email,
-		password: user.password,
 		zipcode: user.zipcode,
 		telephone: user.telephone,
 	};
@@ -248,17 +247,6 @@ export default function SettingsScreen() {
 									keyboardType="numeric"
 									onBlur={handleBlur("telephone")}
 									errorText={touched.telephone && errors.telephone ? errors.telephone : undefined}
-									editable={isEditing}
-								/>
-
-								<MLTextBox
-									heading="Password"
-									placeholder="Password"
-									value={values.password}
-									secureTextEntry
-									onChangeText={handleChange("password")}
-									onBlur={handleBlur("password")}
-									errorText={touched.password && errors.password ? errors.password : undefined}
 									editable={isEditing}
 								/>
 
