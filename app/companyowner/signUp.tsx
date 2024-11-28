@@ -98,6 +98,7 @@ export default function SignUp() {
 									onChangeText={handleChange("zipcode")}
 									onBlur={handleBlur("zipcode")}
 									autoCapitalize="characters"
+									maxLength={6}
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
 								/>
 

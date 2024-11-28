@@ -257,6 +257,7 @@ export default function SettingsScreen() {
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
 									editable={isEditing}
 									autoCapitalize="characters"
+									maxLength={6}
 								/>
 								<MLTextBox
 									onChangeText={handleChange("telephone")}
