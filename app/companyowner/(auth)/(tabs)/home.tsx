@@ -38,7 +38,7 @@ export default function ViewPostsScreen() {
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		refetchInterval: 10 * 60 * 1000, // 10 minutes
 		refetchOnWindowFocus: true,
-		enabled: !!user,
+		enabled: !!user && isZipValid,
 		queryFn: () => fetchPosts(user!.uid, radius, zipcodeSearch),
 	});
 
@@ -107,6 +107,8 @@ export default function ViewPostsScreen() {
 				onChangeText={setZipcodeSearch}
 				errorText={isZipValid ? undefined : "Invalid postal code"}
 				returnKeyType="done"
+				autoCapitalize="characters"
+				maxLength={6}
 				onEndEditing={() => refetch()}
 			/>
 			<MLSlider radius={radius} onRadiusChange={setRadius} onSeekEnd={() => refetch()} />
