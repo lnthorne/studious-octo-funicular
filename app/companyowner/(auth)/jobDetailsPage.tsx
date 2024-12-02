@@ -11,10 +11,11 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import BidBottomSheet from "@/components/BottomSheetBid";
 import { BidStatus, IBid, IBidEntity, JobStatus } from "@/typings/jobs.inter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { submitBid } from "@/services/bid";
+import { submitBid, updateBidStatus } from "@/services/bid";
 import { router } from "expo-router";
 import MyBid from "@/components/MyBid";
 import { Colors } from "@/app/design-system/designSystem";
+import { updatePostCompletionStatus } from "@/services/post";
 
 export default function JobDetailsPage() {
 	const bottomSheetRef = useRef<BottomSheet>(null);
@@ -28,6 +29,14 @@ export default function JobDetailsPage() {
 	const { mutate, isError } = useMutation({
 		mutationFn: (newBid: IBid) => {
 			return submitBid(newBid, user?.profileImage);
+		},
+	});
+	const { mutate: mutateJobStatus } = useMutation({
+		mutationFn: async ({ pid, uid }: { pid: string; uid: string }) => {
+			if (selectedBid) {
+				await updateBidStatus(selectedBid.bid, BidStatus.waiting);
+				return updatePostCompletionStatus(pid, uid);
+			}
 		},
 	});
 
@@ -67,13 +76,34 @@ export default function JobDetailsPage() {
 		});
 	};
 
+	const handleJobComplete = () => {
+		if (selectedJob && user) {
+			mutateJobStatus(
+				{ pid: selectedJob.pid, uid: user.uid },
+				{
+					onSuccess: () => {
+						queryClient.invalidateQueries({ queryKey: ["posts", user?.uid], refetchType: "all" });
+						queryClient.invalidateQueries({
+							queryKey: ["bids", user?.uid, [BidStatus.accepted, BidStatus.waiting]],
+							refetchType: "all",
+						});
+
+						selectedBid!.status = BidStatus.waiting;
+						router.back();
+					},
+					onError: () => {
+						Alert.alert("There was an error updating job status. Try again.");
+					},
+				}
+			);
+		}
+	};
+
 	useEffect(() => {
 		if (selectedJob?.lat === 90 && selectedJob.lng === -90) {
 			setMapVisible(false);
 		}
-		console.log("Bids from job details page", bids);
 		const myBid = bids.find((myBid) => selectedJob?.bidIds?.some((jobBid) => jobBid === myBid.bid));
-		console.log("My Bid from job details page", myBid);
 		setSelectedBid(myBid);
 	}, [selectedJob]);
 
@@ -89,6 +119,14 @@ export default function JobDetailsPage() {
 					label="Apply for this job"
 					onPress={() => handleCreateBid()}
 					style={styles.button}
+				/>
+			)}
+			{selectedBid && selectedJob?.jobStatus === JobStatus.inprogress && (
+				<MLButton
+					label="Job completed"
+					onPress={() => handleJobComplete()}
+					style={styles.button}
+					disabled={selectedBid.status === BidStatus.waiting}
 				/>
 			)}
 			<GeneralModal
