@@ -28,6 +28,7 @@ export default function ORDatePickerModal({
 								onChange={(event, newDate) => {
 									if (newDate) {
 										onChange(newDate);
+										onClose();
 									}
 								}}
 								display="inline"
