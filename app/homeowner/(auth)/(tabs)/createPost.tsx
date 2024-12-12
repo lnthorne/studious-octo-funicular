@@ -196,13 +196,17 @@ export default function CreatePostScreen() {
 									numberOfLines={5}
 								/>
 								<MLTextBox
-									onChangeText={handleChange("zipcode")}
+									onChangeText={(text) => {
+										const formattedText = text.replace(/\s+/g, "");
+										handleChange("zipcode")(formattedText);
+									}}
 									onBlur={handleBlur("zipcode")}
 									placeholder="Postal code"
 									heading="Postal code"
 									value={values.zipcode}
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
 									autoCapitalize="characters"
+									maxLength={6}
 								/>
 								<MLTextBox
 									onChangeText={(budget) => {

@@ -231,7 +231,10 @@ export default function SettingsScreen() {
 									heading="Postal code"
 									placeholder="Postal code"
 									value={values.zipcode}
-									onChangeText={handleChange("zipcode")}
+									onChangeText={(text) => {
+										const formattedText = text.replace(/\s+/g, "");
+										handleChange("zipcode")(formattedText);
+									}}
 									onBlur={handleBlur("zipcode")}
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
 									editable={isEditing}

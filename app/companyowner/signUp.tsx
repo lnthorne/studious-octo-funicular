@@ -95,7 +95,10 @@ export default function SignUp() {
 									heading="Postal code"
 									placeholder="Postal code"
 									value={values.zipcode}
-									onChangeText={handleChange("zipcode")}
+									onChangeText={(text) => {
+										const formattedText = text.replace(/\s+/g, "");
+										handleChange("zipcode")(formattedText);
+									}}
 									onBlur={handleBlur("zipcode")}
 									autoCapitalize="characters"
 									maxLength={6}
