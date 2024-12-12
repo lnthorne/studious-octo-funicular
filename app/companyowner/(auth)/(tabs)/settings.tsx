@@ -20,7 +20,7 @@ import { useRef, useState } from "react";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
-import { updateUser } from "@/services/user";
+import { updateProfileImage, updateUser } from "@/services/user";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Colors } from "@/app/design-system/designSystem";
 import { calculateReviewSummary, fetchCompanyReviews } from "@/services/review";
@@ -43,26 +43,30 @@ export default function SettingsScreen() {
 	const { user, setUser } = useUser<ICompanyOwnerEntity>();
 	const [isEditing, setIsEditing] = useState(false);
 	const [profileImage, setProfileImage] = useState(user?.profileImage);
-	const [isNewProfileImage, setIsNewProfileImage] = useState(false);
 	const { data: reviewData, isLoading: reviewDataLoading } = useQuery({
-		queryKey: ["reviews", user],
-		enabled: !!user,
+		queryKey: ["reviews", user?.uid],
+		enabled: !!user?.uid,
 		queryFn: () => fetchCompanyReviews(user!.uid),
 		select: (reviews: IReviewEntity[]) => calculateReviewSummary(reviews),
 	});
-	const { mutate, isPending } = useMutation({
+	const { mutate: userMutation, isPending: userMutationIsPending } = useMutation({
 		mutationFn: ({
 			uid,
 			values,
 			userType,
-			newProfileImage,
 		}: {
 			uid: string;
 			values: ICompanyOwner;
 			userType: UserType;
 			newProfileImage?: string;
 		}) => {
-			return updateUser<ICompanyOwner>(uid, values, userType, newProfileImage);
+			return updateUser<ICompanyOwner>(uid, values, userType);
+		},
+	});
+
+	const { mutate: photoMutation } = useMutation({
+		mutationFn: ({ uid, newProfileImage }: { uid: string; newProfileImage: string }) => {
+			return updateProfileImage(uid, newProfileImage, UserType.companyowner);
 		},
 	});
 
@@ -89,19 +93,19 @@ export default function SettingsScreen() {
 		if (fromCamera) {
 			result = await ImagePicker.launchCameraAsync({
 				allowsEditing: true,
-				quality: 0.6,
+				quality: 0.3,
 			});
 		} else {
 			result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				quality: 0.6,
+				quality: 0.3,
 			});
 		}
 
 		if (!result.canceled) {
 			const uri = result.assets[0].uri;
 			setProfileImage(uri);
-			setIsNewProfileImage(true);
+			handleProfileImageUpdate(uri);
 		}
 	};
 
@@ -118,28 +122,37 @@ export default function SettingsScreen() {
 		);
 	};
 
+	const handleProfileImageUpdate = async (newProfileImage: string) => {
+		photoMutation(
+			{
+				uid: user.uid,
+				newProfileImage,
+			},
+			{
+				onSuccess: (updateProfileImage) => {
+					setUser({ ...user, profileImage: updateProfileImage });
+				},
+				onError: () => {
+					Alert.alert("There was an error updating your profile picture. Please try again.");
+				},
+			}
+		);
+	};
+
 	const handProfileUpdate = async (values: ICompanyOwner) => {
-		const newProfileImage = isNewProfileImage ? profileImage : undefined;
-		mutate(
+		userMutation(
 			{
 				uid: user.uid,
 				values,
 				userType: UserType.companyowner,
-				newProfileImage,
 			},
 			{
 				onSuccess: (updatedUser) => {
 					setIsEditing(false);
-					setIsNewProfileImage(false);
 					setUser({ ...user, ...updatedUser });
-					if (isNewProfileImage) {
-						setProfileImage(updatedUser.profileImage);
-					}
-					console.log("USER", user);
 				},
 				onError: () => {
 					setIsEditing(false);
-					setIsNewProfileImage(false);
 					Alert.alert("There was an error updating your profile. Please try again.");
 				},
 			}
@@ -169,30 +182,16 @@ export default function SettingsScreen() {
 			>
 				<ScrollView keyboardDismissMode="on-drag">
 					{profileImage ? (
-						<TouchableOpacity
-							onPress={showImagePickerOptions}
-							disabled={!isEditing}
-							style={styles.imageContainer}
-						>
+						<TouchableOpacity onPress={showImagePickerOptions} style={styles.imageContainer}>
 							<Animated.Image
 								style={[styles.image, { opacity: imageOpacity }]}
 								source={{ uri: profileImage }}
 								onLoadEnd={handleImageLoad}
 							/>
-							{isEditing && (
-								<>
-									<View style={styles.imageTint} />
-									<Ionicons name="camera" size={32} style={styles.iconOverlay} color={"white"} />
-								</>
-							)}
 						</TouchableOpacity>
 					) : (
-						<TouchableOpacity
-							style={styles.addIconContainer}
-							onPress={showImagePickerOptions}
-							disabled={!isEditing}
-						>
-							{isEditing && <Ionicons name="add" size={32} />}
+						<TouchableOpacity style={styles.addIconContainer} onPress={showImagePickerOptions}>
+							<Ionicons name="camera" size={32} style={styles.iconOverlay} color={"grey"} />
 						</TouchableOpacity>
 					)}
 					<View style={styles.ratingContainer}>
@@ -270,9 +269,11 @@ export default function SettingsScreen() {
 									editable={isEditing}
 								/>
 
-								{isPending && <ActivityIndicator size="large" color={Colors.primaryButtonColor} />}
+								{userMutationIsPending && (
+									<ActivityIndicator size="large" color={Colors.primaryButtonColor} />
+								)}
 
-								{!isPending &&
+								{!userMutationIsPending &&
 									(isEditing ? (
 										<View style={styles.buttonRow}>
 											<MLButton label="Save" onPress={handleSubmit} style={styles.button} />
@@ -282,8 +283,6 @@ export default function SettingsScreen() {
 												style={styles.button}
 												onPress={() => {
 													setValues(initialValues);
-													setProfileImage(user.profileImage);
-													setIsNewProfileImage(false);
 													setIsEditing(false);
 												}}
 											/>

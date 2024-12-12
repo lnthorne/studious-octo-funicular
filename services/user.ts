@@ -92,32 +92,10 @@ export async function identifyUserType(uid: string = ""): Promise<UserType | nul
 export async function updateUser<T extends IHomeOwner | ICompanyOwner>(
 	uid: string,
 	user: T,
-	userType: UserType,
-	newProfileImage?: string
+	userType: UserType
 ): Promise<T> {
 	try {
 		const userDocRef = firestore().collection(userType).doc(uid);
-
-		if (newProfileImage) {
-			const compressedImage = await compressImageToWebP(newProfileImage);
-			if (!compressedImage) {
-				throw new Error("There was an error compressing the profile image");
-			}
-			const existingUserDoc = await userDocRef.get();
-			const existingUserData = existingUserDoc.data();
-
-			if (existingUserData?.profileImage) {
-				const oldImageRef = storage().ref(`profileImages/${uid}`);
-				await deleteObject(oldImageRef);
-			}
-			const response = await fetch(compressedImage);
-			const blob = await response.blob();
-			const imageRef = storage().ref(`profileImages/${uid}`);
-			await imageRef.put(blob);
-			const imageUrl = await imageRef.getDownloadURL();
-
-			user.profileImage = imageUrl;
-		}
 
 		await userDocRef.update({
 			...user,
@@ -126,6 +104,51 @@ export async function updateUser<T extends IHomeOwner | ICompanyOwner>(
 		return user;
 	} catch (error) {
 		console.error("Error updating user:", error);
+		throw error;
+	}
+}
+
+/**
+ *
+ * @param uid User id
+ * @param newProfileImage The uri of the image to be uploaded
+ * @param userType
+ * @returns The url of the uploaded image
+ */
+export async function updateProfileImage(
+	uid: string,
+	newProfileImage: string,
+	userType: UserType
+): Promise<string> {
+	try {
+		const compressedImage = await compressImageToWebP(newProfileImage);
+		if (!compressedImage) {
+			throw new Error("There was an error compressing the profile image");
+		}
+
+		const userDocRef = firestore().collection(userType).doc(uid);
+		const existingUserDoc = await userDocRef.get();
+		const existingUserData = existingUserDoc.data();
+
+		if (existingUserData?.profileImage) {
+			const oldImageRef = storage().ref(`profileImages/${uid}`);
+			await deleteObject(oldImageRef);
+		}
+
+		const response = await fetch(compressedImage);
+		const blob = await response.blob();
+
+		const imageRef = storage().ref(`profileImages/${uid}`);
+		await imageRef.put(blob);
+		const imageUrl = await imageRef.getDownloadURL();
+
+		await userDocRef.update({
+			profileImage: imageUrl,
+		});
+
+		return imageUrl;
+	} catch (error) {
+		console.error("Error updating profile image:", error);
 		throw error;
 	}
 }
