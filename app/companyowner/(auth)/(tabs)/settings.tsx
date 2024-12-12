@@ -99,6 +99,8 @@ export default function SettingsScreen() {
 			result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				quality: 0.3,
+				allowsEditing: true,
+				aspect: [4, 3],
 			});
 		}
 
