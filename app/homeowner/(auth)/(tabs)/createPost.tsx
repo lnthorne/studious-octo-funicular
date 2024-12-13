@@ -36,7 +36,18 @@ const PostSchema = Yup.object().shape({
 		.required("Postal code is required"),
 });
 
-const matrixLayout = [[], [1], [1, 1], [2, 1], [2, 2], [3, 2], [2, 3, 1]];
+const matrixLayout = [
+	[],
+	[1],
+	[1, 1],
+	[2, 1],
+	[2, 2],
+	[3, 2],
+	[2, 3, 1],
+	[2, 3, 2],
+	[2, 3, 3],
+	[3, 3, 3],
+];
 
 export default function CreatePostScreen() {
 	const { user } = useUser<IHomeOwnerEntity>();
@@ -97,6 +108,7 @@ export default function CreatePostScreen() {
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				quality: 0.6,
 				allowsMultipleSelection: true,
+				selectionLimit: 9,
 			});
 		}
 
