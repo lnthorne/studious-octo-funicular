@@ -75,7 +75,7 @@ export default function SignIn() {
 								errorText={touched.password && errors.password ? errors.password : undefined}
 								autoCapitalize="none"
 							/>
-							<TouchableOpacity>
+							<TouchableOpacity onPress={() => router.navigate("/shared/forgotPassword")}>
 								<ATText
 									style={styles.optionText}
 									typography="secondaryText"

@@ -3,7 +3,7 @@ import { IBid } from "@/typings/jobs.inter";
 import BottomSheet, { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, TouchableOpacity, View, Keyboard } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Keyboard, ScrollView } from "react-native";
 import * as Yup from "yup";
 import { ATText } from "./atoms/Text";
 import ORDatePickerModal from "./DatePickerModal";
@@ -64,82 +64,92 @@ const BidBottomSheet = React.forwardRef<BottomSheet, BidBottomSheetProps>(
 				enablePanDownToClose={!isKeyboardOpen}
 				keyboardBlurBehavior="restore"
 			>
-				<Formik
-					initialValues={initialValues}
-					validationSchema={BidSchema}
-					onSubmit={(values) => {
-						onSubmit && onSubmit(values);
-					}}
-				>
-					{({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
-						<>
-							<ATText typography="heading" style={{ paddingHorizontal: 16 }}>
-								Creat a bid
-							</ATText>
-							<View style={styles.container}>
-								<ATText style={styles.heading} color="primaryTextColor">
-									Amount
+				<ScrollView scrollEnabled={false}>
+					<Formik
+						initialValues={initialValues}
+						validationSchema={BidSchema}
+						onSubmit={(values) => {
+							onSubmit && onSubmit(values);
+						}}
+					>
+						{({
+							handleChange,
+							handleBlur,
+							handleSubmit,
+							values,
+							errors,
+							touched,
+							setFieldValue,
+						}) => (
+							<>
+								<ATText typography="heading" style={{ paddingHorizontal: 16 }}>
+									Creat a bid
 								</ATText>
-								<View style={[styles.textFieldContainer]}>
-									<BottomSheetTextInput
-										placeholder="Amount"
-										placeholderTextColor={Colors.secondaryTextColor}
-										onChangeText={(bidAmount) => {
-											const numericValue = bidAmount.replace(/[^0-9.]/g, "");
-											setFieldValue("bidAmount", numericValue);
-										}}
-										value={values.bidAmount ? `$${values.bidAmount}` : ""}
-										onBlur={handleBlur("amount")}
-										style={styles.textField}
-										keyboardType="numeric"
-									/>
+								<View style={styles.container}>
+									<ATText style={styles.heading} color="primaryTextColor">
+										Amount
+									</ATText>
+									<View style={[styles.textFieldContainer]}>
+										<BottomSheetTextInput
+											placeholder="Amount"
+											placeholderTextColor={Colors.secondaryTextColor}
+											onChangeText={(bidAmount) => {
+												const numericValue = bidAmount.replace(/[^0-9.]/g, "");
+												setFieldValue("bidAmount", numericValue);
+											}}
+											value={values.bidAmount ? `$${values.bidAmount}` : ""}
+											onBlur={handleBlur("amount")}
+											style={styles.textField}
+											keyboardType="numeric"
+										/>
+									</View>
+									{errors.bidAmount && touched.bidAmount && (
+										<ATText color="error">{errors.bidAmount}</ATText>
+									)}
 								</View>
-								{errors.bidAmount && touched.bidAmount && (
-									<ATText color="error">{errors.bidAmount}</ATText>
-								)}
-							</View>
-							<View style={styles.container}>
-								<ATText style={styles.heading} color="primaryTextColor">
-									Details
-								</ATText>
-								<View style={[styles.textFieldContainer]}>
-									<BottomSheetTextInput
-										placeholder="Write your details..."
-										placeholderTextColor={Colors.secondaryTextColor}
-										multiline
-										onChangeText={handleChange("description")}
-										value={values.description}
-										onBlur={handleBlur("details")}
-										style={styles.textArea}
-									/>
+								<View style={styles.container}>
+									<ATText style={styles.heading} color="primaryTextColor">
+										Details
+									</ATText>
+									<View style={[styles.textFieldContainer]}>
+										<BottomSheetTextInput
+											placeholder="Write your details..."
+											placeholderTextColor={Colors.secondaryTextColor}
+											multiline
+											onChangeText={handleChange("description")}
+											value={values.description}
+											onBlur={handleBlur("details")}
+											style={styles.textArea}
+										/>
+									</View>
+									{errors.description && touched.description && (
+										<ATText color="error">{errors.description}</ATText>
+									)}
 								</View>
-								{errors.description && touched.description && (
-									<ATText color="error">{errors.description}</ATText>
-								)}
-							</View>
-							<View style={styles.container}>
-								<ATText style={styles.heading} color="primaryTextColor">
-									Estimated start date
-								</ATText>
-								<TouchableOpacity onPress={() => setModalVisible(true)} style={styles.dateField}>
-									<Ionicons name="calendar" size={23} />
-									<ATText>{values.date.toLocaleDateString()}</ATText>
-								</TouchableOpacity>
-							</View>
+								<View style={styles.container}>
+									<ATText style={styles.heading} color="primaryTextColor">
+										Estimated start date
+									</ATText>
+									<TouchableOpacity onPress={() => setModalVisible(true)} style={styles.dateField}>
+										<Ionicons name="calendar" size={23} />
+										<ATText>{values.date.toLocaleDateString()}</ATText>
+									</TouchableOpacity>
+								</View>
 
-							<ORDatePickerModal
-								onClose={handleModalClose}
-								onChange={(newDate) => {
-									setSelectedDate(newDate);
-									setFieldValue("date", newDate);
-								}}
-								selectedDate={selectedDate}
-								visible={modalVisible}
-							/>
-							<MLButton variant="primary" label="Apply for this job" onPress={handleSubmit} />
-						</>
-					)}
-				</Formik>
+								<ORDatePickerModal
+									onClose={handleModalClose}
+									onChange={(newDate) => {
+										setSelectedDate(newDate);
+										setFieldValue("date", newDate);
+									}}
+									selectedDate={selectedDate}
+									visible={modalVisible}
+								/>
+								<MLButton variant="primary" label="Apply for this job" onPress={handleSubmit} />
+							</>
+						)}
+					</Formik>
+				</ScrollView>
 			</BottomSheet>
 		);
 	}

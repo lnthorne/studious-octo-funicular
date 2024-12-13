@@ -3,7 +3,16 @@ import { MLButton } from "@/components/molecules/Button";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { resetPassword } from "@/services/auth";
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert, SafeAreaView } from "react-native";
+import {
+	View,
+	Text,
+	TextInput,
+	Button,
+	StyleSheet,
+	Alert,
+	SafeAreaView,
+	ScrollView,
+} from "react-native";
 import { Colors } from "../design-system/designSystem";
 
 export default function ForgotPasswordScreen() {
@@ -20,22 +29,21 @@ export default function ForgotPasswordScreen() {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			{/* <ATText style={styles.title} typography="heading">
-				Reset Password
-			</ATText> */}
-			<MLTextBox
-				placeholder="Enter your email"
-				value={email}
-				onChangeText={setEmail}
-				keyboardType="email-address"
-				autoCapitalize="none"
-			/>
-			<MLButton
-				label="Send Reset Email"
-				variant="primary"
-				onPress={handleResetPassword}
-				style={styles.input}
-			/>
+			<ScrollView keyboardDismissMode="on-drag">
+				<MLTextBox
+					placeholder="Enter your email"
+					value={email}
+					onChangeText={setEmail}
+					keyboardType="email-address"
+					autoCapitalize="none"
+				/>
+				<MLButton
+					label="Send Reset Email"
+					variant="primary"
+					onPress={handleResetPassword}
+					style={styles.input}
+				/>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }
