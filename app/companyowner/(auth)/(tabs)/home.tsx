@@ -1,16 +1,6 @@
 // app/home/createPost.tsx
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	ActivityIndicator,
-	FlatList,
-	TouchableOpacity,
-	RefreshControl,
-	SafeAreaView,
-	Animated,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, StyleSheet, SafeAreaView, Animated } from "react-native";
 import { fetchOpenJobPostsNotBidOn } from "@/services/post";
 import { IPostEntity } from "@/typings/jobs.inter";
 import { router } from "expo-router";
@@ -24,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
 import ORJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
+import { SkeletonView } from "react-native-ui-lib";
 
 export default function ViewPostsScreen() {
 	const opacity = useRef(new Animated.Value(0)).current;
@@ -81,14 +72,6 @@ export default function ViewPostsScreen() {
 		}
 	}, [isLoading]);
 
-	if (isLoading) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
-			</SafeAreaView>
-		);
-	}
-
 	if (isError) {
 		return (
 			<SafeAreaView style={[styles.container]}>
@@ -104,7 +87,10 @@ export default function ViewPostsScreen() {
 			<MLTextBox
 				placeholder="Enter postal code"
 				value={zipcodeSearch}
-				onChangeText={setZipcodeSearch}
+				onChangeText={(text) => {
+					const formattedText = text.replace(/\s+/g, "");
+					setZipcodeSearch(formattedText);
+				}}
 				errorText={isZipValid ? undefined : "Invalid postal code"}
 				returnKeyType="done"
 				autoCapitalize="characters"
@@ -112,6 +98,9 @@ export default function ViewPostsScreen() {
 				onEndEditing={() => refetch()}
 			/>
 			<MLSlider radius={radius} onRadiusChange={setRadius} onSeekEnd={() => refetch()} />
+			{isLoading && (
+				<SkeletonView showContent={false} template={SkeletonView.templates.LIST_ITEM} times={8} />
+			)}
 			<Animated.View style={[{ flex: 1 }, { opacity }]}>
 				<ORJobListing
 					data={data || []}

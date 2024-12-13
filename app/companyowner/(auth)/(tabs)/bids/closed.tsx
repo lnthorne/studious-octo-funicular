@@ -20,6 +20,7 @@ import {
 	Animated,
 	SafeAreaView,
 } from "react-native";
+import { SkeletonView } from "react-native-ui-lib";
 
 export default function BidInClosed() {
 	const opacity = useRef(new Animated.Value(0)).current;
@@ -99,14 +100,6 @@ export default function BidInClosed() {
 		}
 	}, [isBidsLoading, isJobPostsLoading]);
 
-	if (isBidsLoading || isJobPostsLoading) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
-			</SafeAreaView>
-		);
-	}
-
 	if (isBidsError || isJobPostsError) {
 		return (
 			<SafeAreaView style={[styles.container]}>
@@ -153,6 +146,9 @@ export default function BidInClosed() {
 			)}
 
 			<View style={styles.container}>
+				{(isBidsLoading || isJobPostsLoading) && (
+					<SkeletonView showContent={false} template={SkeletonView.templates.LIST_ITEM} times={7} />
+				)}
 				<Animated.View style={[{ flex: 1 }, { opacity }]}>
 					<ORJobListing
 						data={jobPosts || []}

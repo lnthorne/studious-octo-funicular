@@ -11,6 +11,7 @@ import { useJobContext } from "@/contexts/jobContext";
 import { useQuery } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
 import { Colors } from "@/app/design-system/designSystem";
+import { SkeletonView } from "react-native-ui-lib";
 
 export default function HomeScreen() {
 	const opacity = useRef(new Animated.Value(0)).current;
@@ -47,14 +48,6 @@ export default function HomeScreen() {
 		router.navigate("/homeowner/jobDetailsPage");
 	};
 
-	if (isLoading) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<ActivityIndicator size={"large"} color={Colors.primaryButtonColor} />
-			</SafeAreaView>
-		);
-	}
-
 	if (isError) {
 		return (
 			<SafeAreaView style={[styles.container]}>
@@ -66,6 +59,9 @@ export default function HomeScreen() {
 	}
 	return (
 		<View style={styles.container}>
+			{isLoading && (
+				<SkeletonView showContent={false} template={SkeletonView.templates.LIST_ITEM} times={9} />
+			)}
 			<Animated.View style={[{ flex: 1 }, { opacity }]}>
 				<ORJobListing
 					data={data || []}
