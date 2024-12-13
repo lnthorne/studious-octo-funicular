@@ -5,6 +5,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { ATText } from "./atoms/Text";
 import { Colors } from "@/app/design-system/designSystem";
 
+const MAX_RATING_NUM = 5;
+
 interface ReviewStatsProps {
 	totalReviews: number | undefined;
 	averageRating: number | undefined;
@@ -36,8 +38,8 @@ export default function ReviewStats({
 			</View>
 			<View style={styles.ratingContainer}>
 				{ratingPercentages?.map((percentage, index) => (
-					<View style={styles.progressBarConatiner}>
-						<ATText>{index + 1}</ATText>
+					<View style={styles.progressBarConatiner} key={index}>
+						<ATText>{MAX_RATING_NUM - index}</ATText>
 						<Progress.Bar
 							progress={percentage || 0}
 							width={200}

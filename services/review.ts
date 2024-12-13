@@ -60,6 +60,8 @@ export function calculateReviewSummary(reviews: IReviewEntity[]): ReviewSummary 
 		parseFloat((count / totalReviews).toFixed(2))
 	);
 
+	ratingPercentages.reverse();
+
 	return {
 		totalReviews,
 		averageRating: parseFloat(averageRating.toFixed(1)),

@@ -1,19 +1,29 @@
-import React from "react";
-import { StyleSheet, Image, View, SafeAreaView } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { StyleSheet, Image, View, SafeAreaView, Animated } from "react-native";
 import { ATText } from "@/components/atoms/Text";
 import ORCoursel from "@/components/organisms/Coursel";
 import { Colors } from "./design-system/designSystem";
 
 export default function Onboarding() {
+	const opacity = useRef(new Animated.Value(0)).current;
+	useEffect(() => {
+		Animated.timing(opacity, {
+			toValue: 1,
+			duration: 500,
+			useNativeDriver: true,
+		}).start();
+	}, []);
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.column}>
-				<View style={styles.subHeading}>
-					<ATText typography="heading">Welcome</ATText>
+			<Animated.View style={[{ flex: 1 }, { opacity }]}>
+				<View style={styles.column}>
+					<View style={styles.subHeading}>
+						<ATText typography="heading">Welcome</ATText>
+					</View>
+					<Image source={require("../assets/images/SpadeLogo.png")} style={styles.image} />
+					<ORCoursel />
 				</View>
-				<Image source={require("../assets/images/SpadeLogo.png")} style={styles.image} />
-				<ORCoursel />
-			</View>
+			</Animated.View>
 		</SafeAreaView>
 	);
 }
