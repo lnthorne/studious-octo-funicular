@@ -16,6 +16,7 @@ import { ICompanyOwnerEntity, IHomeOwnerEntity, UserType } from "@/typings/user.
 import { ATText } from "@/components/atoms/Text";
 import { useConversations } from "@/hooks/useConversations";
 import { Colors } from "@/app/design-system/designSystem";
+import { SkeletonView } from "react-native-ui-lib";
 
 export default function ConversationsPage() {
 	const opacity = useRef(new Animated.Value(0)).current;
@@ -73,20 +74,11 @@ export default function ConversationsPage() {
 		}
 	}, [isLoading]);
 
-	if (isLoading) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<ActivityIndicator
-					size={"large"}
-					color={Colors.primaryButtonColor}
-					style={{ marginTop: 50 }}
-				/>
-			</SafeAreaView>
-		);
-	}
-
 	return (
 		<SafeAreaView style={styles.container}>
+			{isLoading && (
+				<SkeletonView showContent={false} template={SkeletonView.templates.LIST_ITEM} times={9} />
+			)}
 			<Animated.View style={[{ flex: 1 }, { opacity }]}>
 				<FlatList
 					style={{ paddingTop: 10 }}
