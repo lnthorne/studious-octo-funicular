@@ -36,6 +36,8 @@ const PostSchema = Yup.object().shape({
 		.required("Postal code is required"),
 });
 
+const MAX_NUMBER_PHOTOS = 9;
+
 const matrixLayout = [
 	[],
 	[1],
@@ -98,17 +100,20 @@ export default function CreatePostScreen() {
 			return;
 		}
 
+		const remainingLimit = MAX_NUMBER_PHOTOS - imageUris.length;
+
 		let result;
 		if (fromCamera) {
 			result = await ImagePicker.launchCameraAsync({
 				quality: 0.6,
 			});
 		} else {
+			console.log("Len", imageUris.length);
 			result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				quality: 0.6,
 				allowsMultipleSelection: true,
-				selectionLimit: 9,
+				selectionLimit: remainingLimit,
 			});
 		}
 
@@ -257,11 +262,17 @@ export default function CreatePostScreen() {
 												matrix={matrixLayout[imageUris.length]}
 												onLongPress={handImageLongPress}
 											/>
-											<TouchableOpacity style={styles.morePhotos} onPress={showImagePickerOptions}>
-												<ATText typography="secondaryText" color="secondaryTextColor">
-													Add more photos...
-												</ATText>
-											</TouchableOpacity>
+
+											{imageUris.length < MAX_NUMBER_PHOTOS && (
+												<TouchableOpacity
+													style={styles.morePhotos}
+													onPress={showImagePickerOptions}
+												>
+													<ATText typography="secondaryText" color="secondaryTextColor">
+														Add more photos...
+													</ATText>
+												</TouchableOpacity>
+											)}
 										</>
 									)}
 								</View>
