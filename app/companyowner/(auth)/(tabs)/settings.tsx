@@ -26,6 +26,7 @@ import { Colors } from "@/app/design-system/designSystem";
 import { calculateReviewSummary, fetchCompanyReviews } from "@/services/review";
 import { IReviewEntity } from "@/typings/reviews.inter";
 import { ATText } from "@/components/atoms/Text";
+import { router } from "expo-router";
 
 const validationSchema = Yup.object().shape({
 	companyName: Yup.string()
@@ -298,7 +299,14 @@ export default function SettingsScreen() {
 							</View>
 						)}
 					</Formik>
-					<MLButton label="Logout" onPress={async () => signOut()} variant="secondary" />
+					<MLButton
+						label="Logout"
+						onPress={async () => {
+							await signOut();
+							router.replace("/");
+						}}
+						variant="secondary"
+					/>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

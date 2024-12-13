@@ -13,6 +13,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "@/hooks/useFonts";
 import * as SplashScreen from "expo-splash-screen";
 import { Colors } from "./design-system/designSystem";
+import LaunchScreen from "@/hooks/useAnimation";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 	const { name } = useGlobalSearchParams<{ name: string }>();
 	const [initializing, setInitializing] = useState<boolean>(true);
+	const [isAnimationPlaying, setAnimationPlaying] = useState(true);
 	const fontsLoaded = useFonts();
 	const onAuthStateChanged = () => {
 		if (initializing) setInitializing(false);
@@ -61,8 +63,17 @@ export default function RootLayout() {
 		);
 	}
 
+	if (isAnimationPlaying) {
+		return (
+			<>
+				<StatusBar style="dark" />
+				<LaunchScreen onAnimationDone={() => setAnimationPlaying(false)} />
+			</>
+		);
+	}
+
 	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
+		<GestureHandlerRootView style={{ flex: 1, backgroundColor: Colors.backgroundColor }}>
 			<StatusBar style="dark" />
 			<UserProvider>
 				<UserContextWrapper>

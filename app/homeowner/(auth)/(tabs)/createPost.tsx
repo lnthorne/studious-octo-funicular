@@ -108,7 +108,6 @@ export default function CreatePostScreen() {
 				quality: 0.6,
 			});
 		} else {
-			console.log("Len", imageUris.length);
 			result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				quality: 0.6,

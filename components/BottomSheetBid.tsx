@@ -1,7 +1,7 @@
 import { Colors } from "@/app/design-system/designSystem";
 import { IBid } from "@/typings/jobs.inter";
 import BottomSheet, { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { Formik, FormikHelpers } from "formik";
+import { Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View, Keyboard } from "react-native";
 import * as Yup from "yup";
@@ -9,8 +9,6 @@ import { ATText } from "./atoms/Text";
 import ORDatePickerModal from "./DatePickerModal";
 import { Ionicons } from "@expo/vector-icons";
 import { MLButton } from "./molecules/Button";
-import { useUser } from "@/contexts/userContext";
-import { ICompanyOwnerEntity } from "@/typings/user.inter";
 
 interface BidBottomSheetProps {
 	initialValues: IBid;
@@ -64,6 +62,7 @@ const BidBottomSheet = React.forwardRef<BottomSheet, BidBottomSheetProps>(
 				handleStyle={{ display: "none" }}
 				keyboardBehavior="extend"
 				enablePanDownToClose={!isKeyboardOpen}
+				keyboardBlurBehavior="restore"
 			>
 				<Formik
 					initialValues={initialValues}

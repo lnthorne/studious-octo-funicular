@@ -27,8 +27,6 @@ export default function UserContextWrapper({ children }: { children: React.React
 		const subscriber = auth().onAuthStateChanged(async (firebaseUser) => {
 			if (firebaseUser) {
 				await fetchUserDataAndRedirect(firebaseUser);
-			} else {
-				router.replace("/");
 			}
 		});
 

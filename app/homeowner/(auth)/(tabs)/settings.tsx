@@ -23,6 +23,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { updateProfileImage, updateUser } from "@/services/user";
 import { useMutation } from "@tanstack/react-query";
 import { Colors } from "@/app/design-system/designSystem";
+import { router } from "expo-router";
 
 const validationSchema = Yup.object().shape({
 	firstname: Yup.string()
@@ -276,7 +277,14 @@ export default function SettingsScreen() {
 							</View>
 						)}
 					</Formik>
-					<MLButton label="Logout" onPress={async () => signOut()} variant="secondary" />
+					<MLButton
+						label="Logout"
+						onPress={async () => {
+							await signOut();
+							router.replace("/");
+						}}
+						variant="secondary"
+					/>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
