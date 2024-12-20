@@ -1,11 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Image, View, SafeAreaView, Animated } from "react-native";
 import { ATText } from "@/components/atoms/Text";
 import ORCoursel from "@/components/organisms/Coursel";
 import { Colors } from "./design-system/designSystem";
+import useAnimation from "@/hooks/useAnimation";
 
 export default function Onboarding() {
 	const opacity = useRef(new Animated.Value(0)).current;
+	const { startAnimation } = useAnimation();
+	const [isAnimationDone, setAnimationDone] = useState(false);
 	useEffect(() => {
 		Animated.timing(opacity, {
 			toValue: 1,
@@ -13,6 +16,13 @@ export default function Onboarding() {
 			useNativeDriver: true,
 		}).start();
 	}, []);
+
+	// if (true) {
+	// 	const videoSource = require("../assets/splash/splash.mp4");
+	// 	startAnimation(videoSource, () => {
+	// 		console.log("Animation done");
+	// 	});
+	// }
 	return (
 		<SafeAreaView style={styles.container}>
 			<Animated.View style={[{ flex: 1 }, { opacity }]}>

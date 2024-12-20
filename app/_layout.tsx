@@ -13,7 +13,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "@/hooks/useFonts";
 import * as SplashScreen from "expo-splash-screen";
 import { Colors } from "./design-system/designSystem";
-import LaunchScreen from "@/hooks/useAnimation";
+import { AnimationProvider } from "@/contexts/animationContext";
+import LaunchAnimation from "@/components/LaunchAnimation";
 
 const queryClient = new QueryClient();
 
@@ -67,7 +68,10 @@ export default function RootLayout() {
 		return (
 			<>
 				<StatusBar style="dark" />
-				<LaunchScreen onAnimationDone={() => setAnimationPlaying(false)} />
+				<LaunchAnimation
+					source={require("../assets/splash/splash.mp4")}
+					onAnimationDone={() => setAnimationPlaying(false)}
+				/>
 			</>
 		);
 	}
@@ -79,35 +83,37 @@ export default function RootLayout() {
 				<UserContextWrapper>
 					<JobProvider>
 						<QueryClientProvider client={queryClient}>
-							<Stack
-								screenOptions={{
-									headerShown: false,
-									contentStyle: { backgroundColor: Colors.backgroundColor },
-									gestureEnabled: false,
-								}}
-							>
-								<Stack.Screen name="index" />
-								<Stack.Screen
-									name="shared/messages/[conversationId]"
-									options={{
-										gestureEnabled: true,
-										headerShown: true,
-										headerTitle: DirectMessageHeader,
-										headerTransparent: true,
-										headerLeft: () => <Back />,
+							<AnimationProvider>
+								<Stack
+									screenOptions={{
+										headerShown: false,
+										contentStyle: { backgroundColor: Colors.backgroundColor },
+										gestureEnabled: false,
 									}}
-								/>
-								<Stack.Screen
-									name="shared/forgotPassword"
-									options={{
-										gestureEnabled: true,
-										headerShown: true,
-										headerTitle: ForgotPasswordHeader,
-										headerTransparent: true,
-										headerLeft: () => <Back />,
-									}}
-								/>
-							</Stack>
+								>
+									<Stack.Screen name="index" />
+									<Stack.Screen
+										name="shared/messages/[conversationId]"
+										options={{
+											gestureEnabled: true,
+											headerShown: true,
+											headerTitle: DirectMessageHeader,
+											headerTransparent: true,
+											headerLeft: () => <Back />,
+										}}
+									/>
+									<Stack.Screen
+										name="shared/forgotPassword"
+										options={{
+											gestureEnabled: true,
+											headerShown: true,
+											headerTitle: ForgotPasswordHeader,
+											headerTransparent: true,
+											headerLeft: () => <Back />,
+										}}
+									/>
+								</Stack>
+							</AnimationProvider>
 						</QueryClientProvider>
 					</JobProvider>
 				</UserContextWrapper>

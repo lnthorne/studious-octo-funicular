@@ -83,7 +83,7 @@ const BidBottomSheet = React.forwardRef<BottomSheet, BidBottomSheetProps>(
 						}) => (
 							<>
 								<ATText typography="heading" style={{ paddingHorizontal: 16 }}>
-									Creat a bid
+									Create a bid
 								</ATText>
 								<View style={styles.container}>
 									<ATText style={styles.heading} color="primaryTextColor">

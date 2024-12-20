@@ -1,18 +1,8 @@
-import { ATText } from "@/components/atoms/Text";
 import { MLButton } from "@/components/molecules/Button";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { resetPassword } from "@/services/auth";
 import React, { useState } from "react";
-import {
-	View,
-	Text,
-	TextInput,
-	Button,
-	StyleSheet,
-	Alert,
-	SafeAreaView,
-	ScrollView,
-} from "react-native";
+import { StyleSheet, Alert, SafeAreaView, ScrollView } from "react-native";
 import { Colors } from "../design-system/designSystem";
 
 export default function ForgotPasswordScreen() {

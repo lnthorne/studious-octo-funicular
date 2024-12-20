@@ -1,5 +1,4 @@
-// app/home/createPost.tsx
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import {
 	View,
 	StyleSheet,
@@ -27,6 +26,8 @@ import { Ionicons } from "@expo/vector-icons";
 import MLCollage from "@/components/molecules/Collage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Colors } from "@/app/design-system/designSystem";
+import LaunchAnimation from "@/hooks/useAnimation";
+import useAnimation from "@/hooks/useAnimation";
 
 const PostSchema = Yup.object().shape({
 	title: Yup.string().required("Title is required"),
@@ -53,6 +54,7 @@ const matrixLayout = [
 
 export default function CreatePostScreen() {
 	const { user } = useUser<IHomeOwnerEntity>();
+	const { startAnimation } = useAnimation();
 	const queryClient = useQueryClient();
 	const [imageUris, setImageUris] = useState<string[]>([]);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -69,6 +71,7 @@ export default function CreatePostScreen() {
 	});
 
 	const handlePostSubmit = async (values: IPost, { resetForm }: FormikHelpers<IPost>) => {
+		const videoSource = require("../../../../assets/splash/jobPosted.mp4");
 		const postWithUid: IPost = {
 			...values,
 			uid: user!.uid,
@@ -80,10 +83,14 @@ export default function CreatePostScreen() {
 					queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.open], refetchType: "all" });
 					setImageUris([]);
 					resetForm();
-					router.navigate("/homeowner/home");
 				},
 			}
 		);
+		startAnimation(videoSource, onAnimationDone);
+	};
+
+	const onAnimationDone = () => {
+		router.navigate("/homeowner/home");
 	};
 
 	const pickImage = async (fromCamera: boolean) => {
