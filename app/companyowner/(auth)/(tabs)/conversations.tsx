@@ -151,9 +151,9 @@ const styles = StyleSheet.create({
 		height: 75,
 	},
 	avatar: {
-		width: 48,
-		height: 48,
-		borderRadius: 24,
+		width: 50,
+		height: 50,
+		borderRadius: 25,
 		marginRight: 12,
 	},
 	timestamp: {

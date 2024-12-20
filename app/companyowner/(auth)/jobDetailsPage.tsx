@@ -16,16 +16,19 @@ import { router } from "expo-router";
 import MyBid from "@/components/MyBid";
 import { Colors } from "@/app/design-system/designSystem";
 import { updatePostCompletionStatus } from "@/services/post";
+import useAnimation from "@/hooks/useAnimation";
 
 export default function JobDetailsPage() {
 	const bottomSheetRef = useRef<BottomSheet>(null);
 	const { user } = useUser<ICompanyOwnerEntity>();
+	const { startAnimation } = useAnimation();
 	const { selectedJob, bids } = useJobContext();
 	const [selectedBid, setSelectedBid] = useState<IBidEntity>();
 	const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [mapVisible, setMapVisible] = useState(true);
 	const queryClient = useQueryClient();
+	const videoSource = require("../../../assets/splash/bidSent.mp4");
 	const { mutate, isError } = useMutation({
 		mutationFn: (newBid: IBid) => {
 			return submitBid(newBid, user?.profileImage);
@@ -68,7 +71,9 @@ export default function JobDetailsPage() {
 				});
 				setBottomSheetVisible(false);
 				bottomSheetRef.current?.close();
-				router.back();
+				startAnimation(videoSource, () => {
+					router.back();
+				});
 			},
 			onError: () => {
 				Alert.alert("There was an error submitting bid. Try again.");
@@ -89,6 +94,7 @@ export default function JobDetailsPage() {
 						});
 
 						selectedBid!.status = BidStatus.waiting;
+
 						router.back();
 					},
 					onError: () => {
