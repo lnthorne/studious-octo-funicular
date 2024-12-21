@@ -87,7 +87,10 @@ export default function JobDetailsPage() {
 				{ pid: selectedJob.pid, uid: user.uid },
 				{
 					onSuccess: () => {
-						queryClient.invalidateQueries({ queryKey: ["posts", user?.uid], refetchType: "all" });
+						queryClient.invalidateQueries({
+							queryKey: ["jobPosts", user?.uid],
+							refetchType: "all",
+						});
 						queryClient.invalidateQueries({
 							queryKey: ["bids", user?.uid, [BidStatus.accepted, BidStatus.waiting]],
 							refetchType: "all",
@@ -106,6 +109,7 @@ export default function JobDetailsPage() {
 	};
 
 	useEffect(() => {
+		console.log("Job details", selectedJob);
 		if (selectedJob?.lat === 90 && selectedJob.lng === -90) {
 			setMapVisible(false);
 		}

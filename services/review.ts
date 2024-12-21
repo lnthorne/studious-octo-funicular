@@ -61,6 +61,7 @@ export function calculateReviewSummary(reviews: IReviewEntity[]): ReviewSummary 
 	);
 
 	ratingPercentages.reverse();
+	console.log("TESTS", ratingPercentages);
 
 	return {
 		totalReviews,

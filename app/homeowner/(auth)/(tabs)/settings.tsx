@@ -21,7 +21,7 @@ import { MLTextBox } from "@/components/molecules/TextBox";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { updateProfileImage, updateUser } from "@/services/user";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Colors } from "@/app/design-system/designSystem";
 import { router } from "expo-router";
 
@@ -41,6 +41,7 @@ const validationSchema = Yup.object().shape({
 
 export default function SettingsScreen() {
 	const imageOpacity = useRef(new Animated.Value(0)).current;
+	const queryClient = useQueryClient();
 	const { user, setUser } = useUser<IHomeOwnerEntity>();
 	const [isEditing, setIsEditing] = useState(false);
 	const [profileImage, setProfileImage] = useState(user?.profileImage);
@@ -280,8 +281,13 @@ export default function SettingsScreen() {
 					<MLButton
 						label="Logout"
 						onPress={async () => {
-							await signOut();
-							router.replace("/");
+							try {
+								await signOut();
+								queryClient.clear();
+								router.replace("/");
+							} catch (error) {
+								console.error("There was an error signing out", error);
+							}
 						}}
 						variant="secondary"
 					/>

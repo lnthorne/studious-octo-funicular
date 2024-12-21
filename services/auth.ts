@@ -4,6 +4,7 @@ import firestore from "@react-native-firebase/firestore";
 
 import { ICompanyOwnerSignUp, IHomeOwnerSignUp, ILoginData } from "@/typings/auth/login.inter";
 import { ICompanyOwner, IHomeOwner, UserType } from "@/typings/user.inter";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 /**
  * Call firbase auth to sign in the user and fetch the authenticate user

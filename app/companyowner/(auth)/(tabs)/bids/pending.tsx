@@ -6,7 +6,7 @@ import { useJobContext } from "@/contexts/jobContext";
 import { useUser } from "@/contexts/userContext";
 import { fetchBidsFromUid } from "@/services/bid";
 import { fetchJobPostsByPidAndStaus } from "@/services/post";
-import { BidStatus, IBidEntity, IPostEntity } from "@/typings/jobs.inter";
+import { BidStatus, IBidEntity, IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import { useQuery } from "@tanstack/react-query";
 import { router, useFocusEffect } from "expo-router";
@@ -58,7 +58,7 @@ export default function Pending() {
 		isError: isJobPostsError,
 		refetch: refetchJobPosts,
 	} = useQuery({
-		queryKey: ["jobPosts", bids],
+		queryKey: ["jobPosts", bids, JobStatus.open],
 		enabled: !!bids && bids.length > 0,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		queryFn: async () => {
@@ -71,6 +71,7 @@ export default function Pending() {
 
 	const handleJobSelection = (selectedJob: IPostEntity) => {
 		setSelectedJob(selectedJob);
+		console.log("SELECRED JOB", selectedJob);
 		router.navigate("/companyowner/jobDetailsPage");
 	};
 	const onRefresh = async () => {

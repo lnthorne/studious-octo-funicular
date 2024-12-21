@@ -26,7 +26,6 @@ import { Ionicons } from "@expo/vector-icons";
 import MLCollage from "@/components/molecules/Collage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Colors } from "@/app/design-system/designSystem";
-import LaunchAnimation from "@/hooks/useAnimation";
 import useAnimation from "@/hooks/useAnimation";
 
 const PostSchema = Yup.object().shape({
@@ -171,7 +170,6 @@ export default function CreatePostScreen() {
 		description: "",
 		title: "",
 		estimatedStartDate: new Date(),
-		budget: 0,
 		zipcode: user?.zipcode || "",
 	};
 
@@ -230,17 +228,6 @@ export default function CreatePostScreen() {
 									errorText={touched.zipcode && errors.zipcode ? errors.zipcode : undefined}
 									autoCapitalize="characters"
 									maxLength={6}
-								/>
-								<MLTextBox
-									onChangeText={(budget) => {
-										const numericValue = budget.replace(/[^0-9.]/g, "");
-										setFieldValue("budget", numericValue);
-									}}
-									onBlur={handleBlur("budget")}
-									placeholder="Budget"
-									heading="Budget"
-									value={values.budget ? `$${values.budget}` : ""}
-									keyboardType="numeric"
 								/>
 								<View style={styles.fieldContainer}>
 									<ATText style={styles.fieldHeader}>Desired start date</ATText>

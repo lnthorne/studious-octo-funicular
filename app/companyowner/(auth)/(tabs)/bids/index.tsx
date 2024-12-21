@@ -5,7 +5,7 @@ import { useJobContext } from "@/contexts/jobContext";
 import { useUser } from "@/contexts/userContext";
 import { fetchBidsFromUid } from "@/services/bid";
 import { fetchJobPostsByPidAndStaus } from "@/services/post";
-import { BidStatus, IPostEntity } from "@/typings/jobs.inter";
+import { BidStatus, IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -59,7 +59,7 @@ export default function BidInProgress() {
 		isError: isJobPostsError,
 		refetch: refetchJobPosts,
 	} = useQuery({
-		queryKey: ["jobPosts", bids],
+		queryKey: ["jobPosts", bids, JobStatus.inprogress],
 		enabled: !!bids && bids.length > 0, // Only fetch if there are bids
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		queryFn: async () => {

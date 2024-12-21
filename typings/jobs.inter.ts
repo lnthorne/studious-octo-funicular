@@ -36,7 +36,6 @@ export interface IPost {
 	title: string;
 	description: string;
 	zipcode: string;
-	budget: number;
 	estimatedStartDate: Date;
 	imageUrls?: string[];
 	bidIds?: string[];

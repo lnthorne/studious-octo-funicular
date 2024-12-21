@@ -54,12 +54,6 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 			<MLCollage images={jobDetails.imageUrls || []} matrix={matrixLayout[numberOfImages]} />
 			<ATText typography="body">{jobDetails.description}</ATText>
 			<View style={styles.textContainer}>
-				<ATText>{`$${jobDetails.budget}`}</ATText>
-				<ATText typography="secondaryText" color="secondaryTextColor">
-					Budget
-				</ATText>
-			</View>
-			<View style={styles.textContainer}>
 				{data?.error ? (
 					<ATText>{jobDetails.zipcode.toUpperCase()}</ATText>
 				) : (

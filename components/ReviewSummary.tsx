@@ -50,9 +50,9 @@ export default function ReviewStats({
 							animated
 							animationConfig={{ bounciness: 20 }}
 						/>
-						<ATText typography="textSecondary" color="secondaryTextColor">{`${
+						<ATText typography="textSecondary" color="secondaryTextColor">{`${(
 							percentage * 100
-						}%`}</ATText>
+						).toFixed(0)}%`}</ATText>
 					</View>
 				))}
 			</View>

@@ -5,7 +5,7 @@ import { useJobContext } from "@/contexts/jobContext";
 import { useUser } from "@/contexts/userContext";
 import { fetchBidsFromUid } from "@/services/bid";
 import { fetchJobPostsByPidAndStaus } from "@/services/post";
-import { BidStatus, IPostEntity } from "@/typings/jobs.inter";
+import { BidStatus, IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -58,7 +58,7 @@ export default function BidInClosed() {
 		isError: isJobPostsError,
 		refetch: refetchJobPosts,
 	} = useQuery({
-		queryKey: ["jobPosts", bids],
+		queryKey: ["jobPosts", bids, JobStatus.closed],
 		enabled: !!bids && bids.length > 0,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		queryFn: async () => {
