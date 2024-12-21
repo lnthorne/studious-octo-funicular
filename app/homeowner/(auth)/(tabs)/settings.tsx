@@ -24,6 +24,7 @@ import { updateProfileImage, updateUser } from "@/services/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Colors } from "@/app/design-system/designSystem";
 import { router } from "expo-router";
+import { selectProfileImage, showImagePickerOptions } from "@/app/shared/camera";
 
 const validationSchema = Yup.object().shape({
 	firstname: Yup.string()
@@ -72,52 +73,11 @@ export default function SettingsScreen() {
 	}
 
 	const pickImage = async (fromCamera: boolean) => {
-		// Request permission to access media library or camera
-		let permissionResult;
-		if (fromCamera) {
-			permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-		} else {
-			permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-		}
-
-		if (permissionResult.status !== "granted") {
-			alert("Sorry, we need permissions to make this work!");
-			return;
-		}
-
-		let result;
-		if (fromCamera) {
-			result = await ImagePicker.launchCameraAsync({
-				allowsEditing: true,
-				quality: 0.3,
-			});
-		} else {
-			result = await ImagePicker.launchImageLibraryAsync({
-				mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				quality: 0.3,
-				allowsEditing: true,
-				aspect: [4, 3],
-			});
-		}
-
-		if (!result.canceled) {
-			const uri = result.assets[0].uri;
-			setProfileImage(uri);
+		const uri = await selectProfileImage(fromCamera);
+		setProfileImage(uri);
+		if (uri) {
 			handleProfileImageUpdate(uri);
 		}
-	};
-
-	const showImagePickerOptions = () => {
-		Alert.alert(
-			"Upload Image",
-			"Choose an option",
-			[
-				{ text: "Take a Photo", onPress: () => pickImage(true) },
-				{ text: "Choose from Library", onPress: () => pickImage(false) },
-				{ text: "Cancel", style: "cancel" },
-			],
-			{ cancelable: true }
-		);
 	};
 
 	const handleProfileImageUpdate = async (newProfileImage: string) => {
@@ -176,12 +136,15 @@ export default function SettingsScreen() {
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
 				style={{ paddingTop: 10 }}
-				behavior={Platform.OS === "ios" ? "padding" : "height"} // Behavior for keyboard appearance
-				keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0} // Adjust if needed
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
 			>
 				<ScrollView keyboardDismissMode="on-drag">
 					{profileImage ? (
-						<TouchableOpacity onPress={showImagePickerOptions} style={styles.imageContainer}>
+						<TouchableOpacity
+							onPress={() => showImagePickerOptions(pickImage)}
+							style={styles.imageContainer}
+						>
 							<Animated.Image
 								style={[styles.image, { opacity: imageOpacity }]}
 								source={{ uri: profileImage }}
@@ -189,7 +152,10 @@ export default function SettingsScreen() {
 							/>
 						</TouchableOpacity>
 					) : (
-						<TouchableOpacity style={styles.addIconContainer} onPress={showImagePickerOptions}>
+						<TouchableOpacity
+							style={styles.addIconContainer}
+							onPress={() => showImagePickerOptions(pickImage)}
+						>
 							<Ionicons name="camera" size={32} style={styles.iconOverlay} color={"grey"} />
 						</TouchableOpacity>
 					)}
