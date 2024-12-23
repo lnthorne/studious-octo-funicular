@@ -1,4 +1,5 @@
 import * as ImageManipulator from "expo-image-manipulator";
+import storage from "@react-native-firebase/storage";
 
 /**
  * Compresses and converts an image to WEBP format.
@@ -7,7 +8,7 @@ import * as ImageManipulator from "expo-image-manipulator";
  * @param width - The maximum width to resize the image. Default is 1080px.
  * @returns The URI of the compressed WEBP image.
  */
-async function compressImageToWebP(
+export async function compressImageToWebP(
 	uri: string,
 	quality: number = 0.3,
 	width: number = 1080
@@ -26,4 +27,22 @@ async function compressImageToWebP(
 	}
 }
 
-export default compressImageToWebP;
+export async function storeProfileImage(uid: string, newProfileImage: string): Promise<string> {
+	try {
+		const compressedImage = await compressImageToWebP(newProfileImage);
+		if (!compressedImage) {
+			throw new Error("There was an error compressing the profile image");
+		}
+
+		const response = await fetch(compressedImage);
+		const blob = await response.blob();
+		const imageRef = storage().ref(`profileImages/${uid}`);
+		await imageRef.put(blob);
+		const imageUrl = await imageRef.getDownloadURL();
+
+		return imageUrl;
+	} catch (error) {
+		console.error("Error storing the profile image", error);
+		throw error;
+	}
+}

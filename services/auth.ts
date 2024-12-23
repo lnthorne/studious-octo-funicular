@@ -5,6 +5,8 @@ import firestore from "@react-native-firebase/firestore";
 import { ICompanyOwnerSignUp, IHomeOwnerSignUp, ILoginData } from "@/typings/auth/login.inter";
 import { ICompanyOwner, IHomeOwner, UserType } from "@/typings/user.inter";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { updateProfileImage } from "./user";
+import { storeProfileImage } from "./image";
 
 /**
  * Call firbase auth to sign in the user and fetch the authenticate user
@@ -47,15 +49,19 @@ export async function signUp<T extends IHomeOwnerSignUp | ICompanyOwnerSignUp>(
 		const user = await auth().createUserWithEmailAndPassword(email, password);
 		await AsyncStorage.setItem("uid", user.user.uid);
 
+		const imageUrl = await storeProfileImage(user.user.uid, userData.profileImage);
+
 		await firestore()
 			.collection(userType)
 			.doc(user.user.uid)
 			.set({
 				...userData,
+				profileImage: imageUrl,
 				uid: user.user.uid,
 				createdAt: firestore.FieldValue.serverTimestamp(),
 				updatedAt: firestore.FieldValue.serverTimestamp(),
 			});
+
 		console.log(`${userType} user signed up successfully!`);
 	} catch (error) {
 		console.error("Error signing up user:", error);

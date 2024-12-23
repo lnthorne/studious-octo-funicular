@@ -8,6 +8,7 @@ export interface ISignupData {
 	password: string;
 	zipcode: string;
 	telephone: string;
+	profileImage: string;
 }
 
 export interface IHomeOwnerSignUp extends ISignupData {

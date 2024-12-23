@@ -9,7 +9,7 @@ import firestore, {
 	where,
 } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
-import compressImageToWebP from "./image";
+import { compressImageToWebP } from "./image";
 import { getGeoInformation } from "./geocode";
 import { geohashForLocation, geohashQueryBounds, Geopoint } from "geofire-common";
 

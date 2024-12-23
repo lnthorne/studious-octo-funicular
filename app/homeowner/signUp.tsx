@@ -8,6 +8,7 @@ import {
 	TouchableOpacity,
 	KeyboardAvoidingView,
 	Platform,
+	Image,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -19,6 +20,10 @@ import { MLButton } from "@/components/molecules/Button";
 import { ATText } from "@/components/atoms/Text";
 import { Colors } from "../design-system/designSystem";
 import { IHomeOwnerSignUp } from "@/typings/auth/login.inter";
+import { selectProfileImage, showImagePickerOptions } from "../shared/camera";
+import { Ionicons } from "@expo/vector-icons";
+import useAnimation from "@/hooks/useAnimation";
+import { router } from "expo-router";
 
 const validationSchema = Yup.object().shape({
 	firstname: Yup.string()
@@ -38,7 +43,9 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function SignUp() {
+	const { startAnimation } = useAnimation();
 	const [loading, setLoading] = useState(false);
+	const videoSource = require("../../assets/splash/homeowner-onboarding.mp4");
 
 	const initialValues: IHomeOwnerSignUp = {
 		firstname: "",
@@ -47,12 +54,26 @@ export default function SignUp() {
 		password: "",
 		zipcode: "",
 		telephone: "",
+		profileImage: "",
+	};
+
+	const pickImage = async (
+		fromCamera: boolean,
+		setFieldValue: (field: string, value: any) => void
+	) => {
+		const uri = await selectProfileImage(fromCamera);
+		if (uri) {
+			setFieldValue("profileImage", uri);
+		}
 	};
 
 	const handleSignUp = async (values: IHomeOwnerSignUp) => {
 		setLoading(true);
 		try {
 			await signUp<IHomeOwnerSignUp>(UserType.homeowner, values);
+			startAnimation(videoSource, () => {
+				router.replace("/homeowner/home");
+			});
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			alert("Registration failed: " + err.message);
@@ -71,8 +92,35 @@ export default function SignUp() {
 						validationSchema={validationSchema}
 						onSubmit={handleSignUp}
 					>
-						{({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-							<View>
+						{({
+							handleChange,
+							handleBlur,
+							handleSubmit,
+							values,
+							errors,
+							touched,
+							setFieldValue,
+						}) => (
+							<View style={{ marginTop: 10 }}>
+								{values.profileImage ? (
+									<TouchableOpacity
+										onPress={() =>
+											showImagePickerOptions((fromCamera) => pickImage(fromCamera, setFieldValue))
+										}
+										style={styles.imageContainer}
+									>
+										<Image style={styles.image} source={{ uri: values.profileImage }} />
+									</TouchableOpacity>
+								) : (
+									<TouchableOpacity
+										style={styles.addIconContainer}
+										onPress={() =>
+											showImagePickerOptions((fromCamera) => pickImage(fromCamera, setFieldValue))
+										}
+									>
+										<Ionicons name="camera" size={32} style={styles.iconOverlay} color={"grey"} />
+									</TouchableOpacity>
+								)}
 								<MLTextBox
 									onChangeText={handleChange("firstname")}
 									heading="First name"
@@ -165,5 +213,35 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingTop: 4,
 		paddingBottom: 12,
+	},
+	imageContainer: {
+		width: 140,
+		height: 140,
+		position: "relative",
+		marginBottom: 10,
+		alignSelf: "center",
+	},
+	image: {
+		width: "100%",
+		height: "100%",
+		borderRadius: 70,
+	},
+	addIconContainer: {
+		alignSelf: "center",
+		width: 140,
+		height: 140,
+		justifyContent: "center",
+		alignItems: "center",
+		borderWidth: 2,
+		borderColor: "black",
+		borderStyle: "dashed",
+		borderRadius: 70,
+	},
+	iconOverlay: {
+		position: "absolute",
+		top: "50%",
+		left: "50%",
+		transform: [{ translateX: -16 }, { translateY: -16 }],
+		zIndex: 1,
 	},
 });

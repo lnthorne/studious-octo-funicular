@@ -64,7 +64,6 @@ export default function ConversationsPage() {
 	};
 
 	useEffect(() => {
-		console.log("Convo", conversations);
 		if (!isLoading) {
 			Animated.timing(opacity, {
 				toValue: 1,

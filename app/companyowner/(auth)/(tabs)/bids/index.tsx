@@ -8,16 +8,9 @@ import { fetchJobPostsByPidAndStaus } from "@/services/post";
 import { BidStatus, IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import { useQuery } from "@tanstack/react-query";
-import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-import {
-	ActivityIndicator,
-	View,
-	StyleSheet,
-	TouchableOpacity,
-	SafeAreaView,
-	Animated,
-} from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, StyleSheet, TouchableOpacity, SafeAreaView, Animated } from "react-native";
 import { SkeletonView } from "react-native-ui-lib";
 
 export default function BidInProgress() {
@@ -37,19 +30,14 @@ export default function BidInProgress() {
 		isError: isBidsError,
 		refetch: refetchBids,
 	} = useQuery({
-		queryKey: ["bids", user?.uid, selectedFilter],
+		queryKey: ["bids", user?.uid, JobStatus.inprogress, selectedFilter],
 		enabled: !!user?.uid,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		refetchInterval: 10 * 60 * 1000, // 10 minutes
 		refetchOnWindowFocus: true,
 		queryFn: async () => {
 			const bids = await fetchBidsFromUid(user!.uid, selectedFilter);
-			setBids(bids);
 			return bids;
-		},
-		select: (bids) => {
-			const bidIds = bids!.map((bid) => bid.pid);
-			return bidIds;
 		},
 	});
 
@@ -63,8 +51,9 @@ export default function BidInProgress() {
 		enabled: !!bids && bids.length > 0, // Only fetch if there are bids
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		queryFn: async () => {
-			if (bids) {
-				return fetchJobPostsByPidAndStaus(bids);
+			const bidIds = bids!.map((bid) => bid.pid);
+			if (bidIds) {
+				return fetchJobPostsByPidAndStaus(bidIds);
 			}
 			return [];
 		},
@@ -92,6 +81,14 @@ export default function BidInProgress() {
 		router.navigate("/companyowner/jobDetailsPage");
 	};
 
+	useFocusEffect(
+		useCallback(() => {
+			if (bids) {
+				setBids(bids);
+			}
+		}, [bids])
+	);
+
 	useEffect(() => {
 		if (!isBidsLoading || isJobPostsLoading) {
 			Animated.timing(opacity, {
@@ -100,7 +97,6 @@ export default function BidInProgress() {
 				useNativeDriver: true,
 			}).start();
 		}
-		console.log("BIDS", bids);
 	}, [isBidsLoading, isJobPostsLoading]);
 
 	if (isBidsError || isJobPostsError) {

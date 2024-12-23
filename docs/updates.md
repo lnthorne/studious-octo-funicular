@@ -125,3 +125,7 @@
 ### Nov, 22, 2024
 
 - RNULIB has a bunch of pre made shit tha you made and its better. Go back and clean that up. Then proceed with Firebase Geostore for lat/long queries
+
+### Dec 21, 2024
+
+- With the new sign up profile picture, there is an issue where if I create the new profile, the profile gets created. But the auth service doesnt navigate us to the homepage. If I comment out the profile image it works, so something to do with the new service.

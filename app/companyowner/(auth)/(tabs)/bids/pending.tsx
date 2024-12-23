@@ -6,22 +6,12 @@ import { useJobContext } from "@/contexts/jobContext";
 import { useUser } from "@/contexts/userContext";
 import { fetchBidsFromUid } from "@/services/bid";
 import { fetchJobPostsByPidAndStaus } from "@/services/post";
-import { BidStatus, IBidEntity, IPostEntity, JobStatus } from "@/typings/jobs.inter";
+import { BidStatus, IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import { useQuery } from "@tanstack/react-query";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-	ActivityIndicator,
-	Text,
-	View,
-	StyleSheet,
-	FlatList,
-	TouchableOpacity,
-	RefreshControl,
-	SafeAreaView,
-	Animated,
-} from "react-native";
+import { View, StyleSheet, SafeAreaView, Animated } from "react-native";
 import { SkeletonView } from "react-native-ui-lib";
 
 export default function Pending() {
@@ -42,13 +32,7 @@ export default function Pending() {
 		refetchOnWindowFocus: true,
 		queryFn: async () => {
 			const bids = await fetchBidsFromUid(user!.uid, [BidStatus.pending]);
-			console.log("We have refetched the bids", bids);
-			setBids(bids);
 			return bids;
-		},
-		select: (bids) => {
-			const bidIds = bids!.map((bid) => bid.pid);
-			return bidIds;
 		},
 	});
 
@@ -62,8 +46,9 @@ export default function Pending() {
 		enabled: !!bids && bids.length > 0,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		queryFn: async () => {
-			if (bids) {
-				return fetchJobPostsByPidAndStaus(bids);
+			const bidIds = bids!.map((bid) => bid.pid);
+			if (bidIds) {
+				return fetchJobPostsByPidAndStaus(bidIds);
 			}
 			return [];
 		},
@@ -71,7 +56,6 @@ export default function Pending() {
 
 	const handleJobSelection = (selectedJob: IPostEntity) => {
 		setSelectedJob(selectedJob);
-		console.log("SELECRED JOB", selectedJob);
 		router.navigate("/companyowner/jobDetailsPage");
 	};
 	const onRefresh = async () => {
@@ -80,6 +64,14 @@ export default function Pending() {
 		await refetchJobPosts();
 		setIsRefresh(false);
 	};
+
+	useFocusEffect(
+		useCallback(() => {
+			if (bids) {
+				setBids(bids);
+			}
+		}, [bids])
+	);
 
 	useEffect(() => {
 		if (!isBidsLoading || isJobPostsLoading) {

@@ -1,8 +1,8 @@
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useJobContext } from "@/contexts/jobContext";
 import { useUser } from "@/contexts/userContext";
-import { ICompanyOwnerEntity, IHomeOwnerEntity } from "@/typings/user.inter";
+import { ICompanyOwnerEntity } from "@/typings/user.inter";
 import GeneralModal from "@/components/generalModal";
 import ORJobDetails from "@/components/organisms/JobDetails";
 import ORMap from "@/components/organisms/Map";
@@ -64,11 +64,11 @@ export default function JobDetailsPage() {
 	const handleSubmitBid = (bid: IBid) => {
 		mutate(bid, {
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ["posts", user?.uid], refetchType: "all" });
 				queryClient.invalidateQueries({
 					queryKey: ["bids", user?.uid, BidStatus.pending],
 					refetchType: "all",
 				});
+				queryClient.invalidateQueries({ queryKey: ["jobPosts", user?.uid], refetchType: "all" });
 				setBottomSheetVisible(false);
 				bottomSheetRef.current?.close();
 				startAnimation(videoSource, () => {
@@ -82,6 +82,7 @@ export default function JobDetailsPage() {
 	};
 
 	const handleJobComplete = () => {
+		setModalVisible(false);
 		if (selectedJob && user) {
 			mutateJobStatus(
 				{ pid: selectedJob.pid, uid: user.uid },
@@ -109,7 +110,6 @@ export default function JobDetailsPage() {
 	};
 
 	useEffect(() => {
-		console.log("Job details", selectedJob);
 		if (selectedJob?.lat === 90 && selectedJob.lng === -90) {
 			setMapVisible(false);
 		}
@@ -134,15 +134,15 @@ export default function JobDetailsPage() {
 			{selectedBid && selectedJob?.jobStatus === JobStatus.inprogress && (
 				<MLButton
 					label="Job completed"
-					onPress={() => handleJobComplete()}
+					onPress={() => setModalVisible(true)}
 					style={styles.button}
 					disabled={selectedBid.status === BidStatus.waiting}
 				/>
 			)}
 			<GeneralModal
 				visible={modalVisible}
-				description="Are you sure you want to mark this job as completed? You cannot undo this action."
-				onDone={handleModalClose}
+				description="You have marked this job as completed, but it will stay in progress until the homeowner also marks it as complete."
+				onDone={handleJobComplete}
 				onCancel={handleModalClose}
 			/>
 			<BidBottomSheet
