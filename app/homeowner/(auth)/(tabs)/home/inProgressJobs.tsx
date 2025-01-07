@@ -67,7 +67,6 @@ export default function inProgressJobs() {
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}
 					onPress={handleJobSelection}
-					chipLabel="View"
 				/>
 			</Animated.View>
 		</View>

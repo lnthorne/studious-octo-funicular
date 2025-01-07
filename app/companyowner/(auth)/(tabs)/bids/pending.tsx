@@ -104,7 +104,6 @@ export default function Pending() {
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}
 					onPress={handleJobSelection}
-					chipLabel="View Job"
 				/>
 			</Animated.View>
 		</View>

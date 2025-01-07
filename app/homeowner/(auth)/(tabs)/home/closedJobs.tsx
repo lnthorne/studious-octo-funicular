@@ -67,7 +67,6 @@ export default function closedJobs() {
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}
 					onPress={handleJobSelection}
-					chipLabel="View"
 				/>
 			</Animated.View>
 		</View>

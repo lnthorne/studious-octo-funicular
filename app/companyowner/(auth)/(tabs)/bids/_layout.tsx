@@ -12,20 +12,6 @@ export default function CompanyownerHomeLayout() {
 			<View style={{ flex: 1 }}>
 				<View style={styles.tabContainer}>
 					<TouchableOpacity
-						onPress={() => router.navigate("/companyowner/bids")}
-						style={styles.tab}
-					>
-						<ATText
-							typography={currentRoute === "/companyowner/bids" ? "body" : "secondaryText"}
-							color={
-								currentRoute === "/companyowner/bids" ? "primaryTextColor" : "secondaryTextColor"
-							}
-							style={{ textAlign: "center" }}
-						>
-							In Progress
-						</ATText>
-					</TouchableOpacity>
-					<TouchableOpacity
 						onPress={() => router.navigate("/companyowner/bids/pending")}
 						style={styles.tab}
 					>
@@ -38,7 +24,21 @@ export default function CompanyownerHomeLayout() {
 							}
 							style={{ textAlign: "center" }}
 						>
-							Pending
+							Pending Bids
+						</ATText>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => router.navigate("/companyowner/bids")}
+						style={styles.tab}
+					>
+						<ATText
+							typography={currentRoute === "/companyowner/bids" ? "body" : "secondaryText"}
+							color={
+								currentRoute === "/companyowner/bids" ? "primaryTextColor" : "secondaryTextColor"
+							}
+							style={{ textAlign: "center" }}
+						>
+							In Progress
 						</ATText>
 					</TouchableOpacity>
 					<TouchableOpacity

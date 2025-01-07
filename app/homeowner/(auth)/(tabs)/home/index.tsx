@@ -68,7 +68,6 @@ export default function HomeScreen() {
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}
 					onPress={handleJobSelection}
-					chipLabel="View Bids"
 				/>
 			</Animated.View>
 		</View>

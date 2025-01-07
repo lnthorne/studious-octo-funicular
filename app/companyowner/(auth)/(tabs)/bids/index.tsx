@@ -153,7 +153,6 @@ export default function BidInProgress() {
 						isRefresh={isRefresh}
 						onRefresh={onRefresh}
 						onPress={handleJobSelection}
-						chipLabel="View Job"
 					/>
 				</Animated.View>
 			</View>

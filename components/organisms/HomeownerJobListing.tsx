@@ -6,10 +6,10 @@ import {
 	Image,
 	ListRenderItem,
 	ActivityIndicator,
+	TouchableOpacity,
 } from "react-native";
 import React from "react";
 import { Timestamp } from "@react-native-firebase/firestore";
-import ATChip from "../atoms/Chips";
 import { ATText } from "../atoms/Text";
 import { IPostEntity } from "@/typings/jobs.inter";
 import { Colors } from "@/app/design-system/designSystem";
@@ -19,16 +19,9 @@ interface ListingProps {
 	isRefresh: boolean;
 	onRefresh: () => void;
 	onPress: (job: IPostEntity) => void;
-	chipLabel: string;
 }
 
-export default function ORJobListing({
-	data,
-	isRefresh,
-	onRefresh,
-	onPress,
-	chipLabel,
-}: ListingProps) {
+export default function ORJobListing({ data, isRefresh, onRefresh, onPress }: ListingProps) {
 	const getpostImage = (uri: string | undefined) => {
 		if (uri) return { uri };
 
@@ -50,15 +43,15 @@ export default function ORJobListing({
 	};
 
 	const shortenTitle = (title: string): string => {
-		if (title.length > 19) {
-			return title.substring(0, 16) + "...";
+		if (title.length > 30) {
+			return title.substring(0, 27) + "...";
 		}
 		return title;
 	};
 
 	const renderItem: ListRenderItem<IPostEntity> = ({ item }) => {
 		return (
-			<View style={styles.postContainer}>
+			<TouchableOpacity style={styles.postContainer} onPress={() => onPress(item)}>
 				<View style={styles.imageContainer}>
 					<ActivityIndicator
 						style={styles.loadingIndicator}
@@ -73,8 +66,7 @@ export default function ORJobListing({
 						{getDaysAgo(item.createdAt as Timestamp)}
 					</ATText>
 				</View>
-				<ATChip label={chipLabel} isToggled={false} onPress={() => onPress(item)} />
-			</View>
+			</TouchableOpacity>
 		);
 	};
 
@@ -117,6 +109,10 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 		paddingHorizontal: 16,
 		minHeight: 76,
+		borderBottomColor: Colors.borderBottomColor,
+		borderBottomWidth: 1,
+		borderBottomStartRadius: 30,
+		borderBottomEndRadius: 30,
 	},
 	column: {
 		flex: 1,
