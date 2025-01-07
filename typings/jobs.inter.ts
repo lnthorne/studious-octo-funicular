@@ -5,6 +5,7 @@ export enum JobStatus {
 	closed = "closed",
 	inprogress = "inprogress",
 	open = "open",
+	canceled = "canceled",
 }
 
 export enum BidStatus {
@@ -13,6 +14,7 @@ export enum BidStatus {
 	pending = "pending",
 	completed = "completed",
 	waiting = "waiting",
+	canceled = "canceled",
 }
 
 export interface IBid {

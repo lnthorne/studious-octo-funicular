@@ -123,7 +123,7 @@ export default function BidInClosed() {
 					</TouchableOpacity>
 					<TouchableOpacity
 						onPress={() => {
-							handleFilterSelect([BidStatus.rejected]);
+							handleFilterSelect([BidStatus.rejected, BidStatus.canceled]);
 							setFilterTitle("Rejected");
 						}}
 					>

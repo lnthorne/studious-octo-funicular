@@ -250,3 +250,27 @@ export async function fetchJobPostsByPidAndStaus(pids: string[]): Promise<IPostE
 		throw error;
 	}
 }
+
+export async function cancelJobPosting(posting: IPostEntity) {
+	const db = firestore();
+	const batch = db.batch();
+
+	try {
+		const postRef = db.collection("posts").doc(posting.pid);
+		batch.update(postRef, {
+			jobStatus: JobStatus.canceled,
+		});
+
+		const bidSnapshots = await db.collection("bids").where("pid", "==", posting.pid).get();
+
+		bidSnapshots.forEach((doc) => {
+			batch.update(doc.ref, { status: BidStatus.canceled });
+		});
+
+		await batch.commit();
+		console.log("Posting has been cancelled");
+	} catch (error) {
+		console.error("Error canceling the job posting", error);
+		throw error;
+	}
+}

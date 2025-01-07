@@ -19,9 +19,16 @@ interface ListingProps {
 	isRefresh: boolean;
 	onRefresh: () => void;
 	onPress: (job: IPostEntity) => void;
+	onLongPress?: (jon: IPostEntity) => void;
 }
 
-export default function ORJobListing({ data, isRefresh, onRefresh, onPress }: ListingProps) {
+export default function ORJobListing({
+	data,
+	isRefresh,
+	onRefresh,
+	onPress,
+	onLongPress,
+}: ListingProps) {
 	const getpostImage = (uri: string | undefined) => {
 		if (uri) return { uri };
 
@@ -51,7 +58,11 @@ export default function ORJobListing({ data, isRefresh, onRefresh, onPress }: Li
 
 	const renderItem: ListRenderItem<IPostEntity> = ({ item }) => {
 		return (
-			<TouchableOpacity style={styles.postContainer} onPress={() => onPress(item)}>
+			<TouchableOpacity
+				style={styles.postContainer}
+				onPress={() => onPress(item)}
+				onLongPress={() => (onLongPress ? onLongPress(item) : undefined)}
+			>
 				<View style={styles.imageContainer}>
 					<ActivityIndicator
 						style={styles.loadingIndicator}

@@ -1,20 +1,21 @@
 // app/home/index.tsx
 import { useUser } from "@/contexts/userContext";
-import { fetchJobsWithBidsByStatus } from "@/services/post";
+import { cancelJobPosting, fetchJobsWithBidsByStatus } from "@/services/post";
 import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { IHomeOwnerEntity } from "@/typings/user.inter";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, SafeAreaView, StyleSheet, View } from "react-native";
+import { Alert, Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import ORJobListing from "@/components/organisms/HomeownerJobListing";
 import { useJobContext } from "@/contexts/jobContext";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ATText } from "@/components/atoms/Text";
 import { Colors } from "@/app/design-system/designSystem";
 import { SkeletonView } from "react-native-ui-lib";
 
 export default function HomeScreen() {
 	const opacity = useRef(new Animated.Value(0)).current;
+	const queryClient = useQueryClient();
 	const { user } = useUser<IHomeOwnerEntity>();
 	const { setSelectedJob } = useJobContext();
 	const [isRefresh, setIsRefresh] = useState(false);
@@ -25,6 +26,14 @@ export default function HomeScreen() {
 		refetchOnWindowFocus: true,
 		enabled: !!user?.uid,
 		queryFn: () => fetchJobsWithBidsByStatus(user!.uid, [JobStatus.open]),
+	});
+
+	const {
+		mutate,
+		isError: isJobDeletionError,
+		isPending: isJobDeletionPending,
+	} = useMutation({
+		mutationFn: async (selectedJob: IPostEntity) => cancelJobPosting(selectedJob),
 	});
 
 	useEffect(() => {
@@ -48,6 +57,29 @@ export default function HomeScreen() {
 		router.navigate("/homeowner/jobDetailsPage");
 	};
 
+	const handleLongPress = (selectedJob: IPostEntity) => {
+		Alert.alert(
+			"Delete Job",
+			"Are you sure you want to delete this job?",
+			[
+				{ text: "Cancel", style: "cancel" },
+				{ text: "Delete", style: "destructive", onPress: () => handleJobDeletion(selectedJob) },
+			],
+			{ cancelable: true }
+		);
+	};
+
+	const handleJobDeletion = async (selectedJob: IPostEntity) => {
+		mutate(selectedJob, {
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["jobs", JobStatus.open], refetchType: "all" });
+			},
+			onError: () => {
+				Alert.alert("There was an error deleting your job.");
+			},
+		});
+	};
+
 	if (isError) {
 		return (
 			<SafeAreaView style={[styles.container]}>
@@ -68,6 +100,7 @@ export default function HomeScreen() {
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}
 					onPress={handleJobSelection}
+					onLongPress={handleLongPress}
 				/>
 			</Animated.View>
 		</View>
