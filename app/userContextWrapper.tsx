@@ -1,36 +1,37 @@
 import { useEffect } from "react";
 import { useUser } from "@/contexts/userContext";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { getUser, identifyUserType } from "@/services/user";
+import { getUser } from "@/services/user";
 import { IHomeOwnerEntity, ICompanyOwnerEntity, UserType } from "@/typings/user.inter";
 import { router } from "expo-router";
+import EventEmitter from "react-native/Libraries/vendor/emitter/EventEmitter";
+import { AUTH_EVENTS } from "@/typings/auth/login.inter";
+
+export const eventEmitter = new EventEmitter();
 
 export default function UserContextWrapper({ children }: { children: React.ReactNode }) {
 	const { setUser } = useUser<IHomeOwnerEntity | ICompanyOwnerEntity>();
 
-	const fetchUserDataAndRedirect = async (firebaseUser: FirebaseAuthTypes.User) => {
+	const fetchUserDataAndRedirect = async (userType: UserType) => {
 		try {
-			const userType = await identifyUserType(firebaseUser.uid);
-			if (!userType) {
+			const userData = await getUser(userType);
+			if (!userData) {
+				console.error("No user data found");
 				return;
 			}
-			const userData = await getUser(userType);
 			setUser(userData);
-
-			router.replace(`/${userType}/home`); // Navigate to authenticated home
+			router.replace(`/${userType}/home`);
+			console.log("Succesfully fetched user");
 		} catch (error) {
 			console.error("Error fetching user data", error);
 		}
 	};
 
 	useEffect(() => {
-		const subscriber = auth().onAuthStateChanged(async (firebaseUser) => {
-			if (firebaseUser) {
-				await fetchUserDataAndRedirect(firebaseUser);
-			}
-		});
+		eventEmitter.addListener(AUTH_EVENTS.SIGN_IN, fetchUserDataAndRedirect);
 
-		return subscriber;
+		return () => {
+			eventEmitter.removeAllListeners(AUTH_EVENTS.SIGN_IN);
+		};
 	}, []);
 
 	return <>{children}</>;

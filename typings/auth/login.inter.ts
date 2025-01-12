@@ -1,3 +1,7 @@
+export enum AUTH_EVENTS {
+	SIGN_IN = "SIGN_IN",
+}
+
 export interface ILoginData {
 	email: string;
 	password: string;

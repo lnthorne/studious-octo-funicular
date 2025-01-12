@@ -1,17 +1,20 @@
 // LaunchAnimation.tsx
 import React, { useRef } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
 import { Video, ResizeMode, AVPlaybackSource, AVPlaybackStatus } from "expo-av";
 import { Colors } from "@/app/design-system/designSystem";
+import { Ionicons } from "@expo/vector-icons";
+import { ATText } from "./atoms/Text";
 
 const { width, height } = Dimensions.get("window");
 
 interface AnimationProps {
 	onAnimationDone: () => void;
 	source: AVPlaybackSource;
+	isSkippable?: boolean;
 }
 
-const LaunchAnimation = ({ onAnimationDone, source }: AnimationProps) => {
+const LaunchAnimation = ({ onAnimationDone, source, isSkippable = false }: AnimationProps) => {
 	const videoRef = useRef<Video>(null);
 
 	const handlePlaybackStatusUpdate = (status: AVPlaybackStatus) => {
@@ -25,6 +28,11 @@ const LaunchAnimation = ({ onAnimationDone, source }: AnimationProps) => {
 		}
 	};
 
+	const handleSkip = () => {
+		console.log("Animation Skipped!");
+		onAnimationDone();
+	};
+
 	return (
 		<View style={styles.container}>
 			<Video
@@ -36,6 +44,11 @@ const LaunchAnimation = ({ onAnimationDone, source }: AnimationProps) => {
 				isLooping={false}
 				onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
 			/>
+			{isSkippable && (
+				<TouchableOpacity style={styles.overlayIconContainer} onPress={handleSkip}>
+					<ATText color="primaryButtonTextColor">Skip</ATText>
+				</TouchableOpacity>
+			)}
 		</View>
 	);
 };
@@ -55,6 +68,15 @@ const styles = StyleSheet.create({
 	video: {
 		width: width,
 		height: height,
+	},
+	overlayIconContainer: {
+		position: "absolute",
+		top: 55,
+		right: 40,
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		borderRadius: 5,
+		paddingHorizontal: 10,
+		paddingVertical: 4,
 	},
 });
 

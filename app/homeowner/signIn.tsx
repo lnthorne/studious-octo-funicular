@@ -22,6 +22,7 @@ import { MLButton } from "@/components/molecules/Button";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { ATText } from "@/components/atoms/Text";
 import { Colors } from "../design-system/designSystem";
+import { UserType } from "@/typings/user.inter";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -41,7 +42,7 @@ export default function SignIn() {
 	const handleSignIn = async (values: ILoginData) => {
 		setLoading(true);
 		try {
-			await signIn(values);
+			await signIn(values, UserType.homeowner);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			alert("Sign in failed: " + err.message);

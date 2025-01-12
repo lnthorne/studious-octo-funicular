@@ -67,6 +67,10 @@ export default function SettingsScreen() {
 		},
 	});
 
+	if (user) {
+		console.log("USER", user);
+	}
+
 	if (!user) {
 		Alert.alert("Error", "Please try again.");
 		return;

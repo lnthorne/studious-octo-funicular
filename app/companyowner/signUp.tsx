@@ -22,6 +22,7 @@ import { Colors } from "../design-system/designSystem";
 import { ICompanyOwnerSignUp } from "@/typings/auth/login.inter";
 import { selectProfileImage, showImagePickerOptions } from "../shared/camera";
 import { Ionicons } from "@expo/vector-icons";
+import useAnimation from "@/hooks/useAnimation";
 
 const validationSchema = Yup.object().shape({
 	companyName: Yup.string()
@@ -35,7 +36,9 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function SignUp() {
+	const { startAnimation } = useAnimation();
 	const [loading, setLoading] = useState(false);
+	const videoSource = require("../../assets/splash/provider-onboarding.mp4");
 
 	const initialValues: ICompanyOwnerSignUp = {
 		companyName: "",
@@ -58,8 +61,10 @@ export default function SignUp() {
 
 	const handleSignUp = async (values: ICompanyOwnerSignUp) => {
 		setLoading(true);
+		const isSkippable = true;
 		try {
 			await signUp<ICompanyOwnerSignUp>(UserType.companyowner, values);
+			startAnimation(videoSource, () => {}, isSkippable);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			alert("Registration failed: " + err.message);
@@ -106,6 +111,11 @@ export default function SignUp() {
 									>
 										<Ionicons name="camera" size={32} style={styles.iconOverlay} color={"grey"} />
 									</TouchableOpacity>
+								)}
+								{errors.profileImage && (
+									<ATText style={styles.error} color="error" typography="error">
+										{errors.profileImage}
+									</ATText>
 								)}
 								<MLTextBox
 									onChangeText={handleChange("companyName")}
@@ -225,5 +235,9 @@ const styles = StyleSheet.create({
 		left: "50%",
 		transform: [{ translateX: -16 }, { translateY: -16 }],
 		zIndex: 1,
+	},
+	error: {
+		alignSelf: "center",
+		marginTop: 3,
 	},
 });

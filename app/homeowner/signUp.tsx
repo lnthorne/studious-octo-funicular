@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { FirebaseError } from "firebase/app";
 import { signUp } from "@/services/auth";
-import { IHomeOwner, UserType } from "@/typings/user.inter";
+import { UserType } from "@/typings/user.inter";
 import { MLTextBox } from "@/components/molecules/TextBox";
 import { MLButton } from "@/components/molecules/Button";
 import { ATText } from "@/components/atoms/Text";
@@ -23,9 +23,9 @@ import { IHomeOwnerSignUp } from "@/typings/auth/login.inter";
 import { selectProfileImage, showImagePickerOptions } from "../shared/camera";
 import { Ionicons } from "@expo/vector-icons";
 import useAnimation from "@/hooks/useAnimation";
-import { router } from "expo-router";
 
 const validationSchema = Yup.object().shape({
+	profileImage: Yup.string().required("Profile picture is required"),
 	firstname: Yup.string()
 		.min(2, "First Name must be at least 2 characters")
 		.required("First Name is required"),
@@ -69,11 +69,10 @@ export default function SignUp() {
 
 	const handleSignUp = async (values: IHomeOwnerSignUp) => {
 		setLoading(true);
+		const isSkippable = true;
 		try {
 			await signUp<IHomeOwnerSignUp>(UserType.homeowner, values);
-			startAnimation(videoSource, () => {
-				router.replace("/homeowner/home");
-			});
+			startAnimation(videoSource, () => {}, isSkippable);
 		} catch (e: any) {
 			const err = e as FirebaseError;
 			alert("Registration failed: " + err.message);
@@ -120,6 +119,11 @@ export default function SignUp() {
 									>
 										<Ionicons name="camera" size={32} style={styles.iconOverlay} color={"grey"} />
 									</TouchableOpacity>
+								)}
+								{errors.profileImage && (
+									<ATText style={styles.error} color="error" typography="error">
+										{errors.profileImage}
+									</ATText>
 								)}
 								<MLTextBox
 									onChangeText={handleChange("firstname")}
@@ -243,5 +247,9 @@ const styles = StyleSheet.create({
 		left: "50%",
 		transform: [{ translateX: -16 }, { translateY: -16 }],
 		zIndex: 1,
+	},
+	error: {
+		alignSelf: "center",
+		marginTop: 3,
 	},
 });

@@ -129,3 +129,7 @@
 ### Dec 21, 2024
 
 - With the new sign up profile picture, there is an issue where if I create the new profile, the profile gets created. But the auth service doesnt navigate us to the homepage. If I comment out the profile image it works, so something to do with the new service. Actually, we dont even get signed into the new account.
+
+### January 6, 2025
+
+- Set a time limit for bids, after 30 days of sitting in pending it gets sent to rejected.
