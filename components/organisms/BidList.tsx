@@ -20,7 +20,7 @@ export default function ORBidList({ onPress }: BidListProps) {
 	}
 
 	const renderHeading = () => {
-		if (selectedJob?.jobStatus === JobStatus.inprogress) {
+		if (selectedJob?.jobStatus !== JobStatus.open) {
 			return (
 				<ATText typography="heading" style={styles.heading}>
 					Winning Bid

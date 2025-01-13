@@ -28,11 +28,7 @@ export default function HomeScreen() {
 		queryFn: () => fetchJobsWithBidsByStatus(user!.uid, [JobStatus.open]),
 	});
 
-	const {
-		mutate,
-		isError: isJobDeletionError,
-		isPending: isJobDeletionPending,
-	} = useMutation({
+	const { mutate } = useMutation({
 		mutationFn: async (selectedJob: IPostEntity) => cancelJobPosting(selectedJob),
 	});
 

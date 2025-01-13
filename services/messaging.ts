@@ -6,7 +6,6 @@ import {
 	IMessageEntity,
 	SERVER_MESSAGE,
 } from "@/typings/messaging.inter";
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
 /**
  * Fetch a user's conversations from the Firebase Realtime Database.
@@ -121,6 +120,36 @@ async function areUsersInConversationTogether(
 }
 
 /**
+ * check the current PID of the conversation and update if needed
+ * @param conversationId
+ * @param pid Posting ID
+ * @returns true if the conversation PID is updated, else false
+ */
+async function checkAndUpdateConversationPid(
+	conversationId: string,
+	pid: string
+): Promise<boolean> {
+	const conversationRef = database().ref(`conversations/${conversationId}`);
+
+	try {
+		const pidSnapshot = await conversationRef.child("pid").once("value");
+		const currentPid = pidSnapshot.val();
+
+		if (currentPid !== pid) {
+			await conversationRef.update({ pid });
+			console.log(`PID updated to: ${pid}`);
+			return true;
+		} else {
+			console.log("PID already matches, no update needed.");
+			return false;
+		}
+	} catch (error) {
+		console.error("Error checking and updating PID:", error);
+		throw error;
+	}
+}
+
+/**
  * Calls areUsersInConversationTogether to check if a conversation exists, if not,
  * creates a new conversation between two users in Realtime Database.
  * @param senderId - The ID of the user starting the conversation.
@@ -144,7 +173,10 @@ export async function startNewConversation(
 	try {
 		const existingConversationId = await areUsersInConversationTogether(senderId, recipientId);
 		if (existingConversationId) {
-			await sendMessage(existingConversationId, jobContext);
+			const isNewPid = await checkAndUpdateConversationPid(existingConversationId, pid);
+			if (isNewPid) {
+				await sendMessage(existingConversationId, jobContext);
+			}
 			return existingConversationId;
 		}
 		// Create a reference to the new conversation
@@ -153,6 +185,7 @@ export async function startNewConversation(
 		// Prepare the conversation data
 		const newConversation: IConversation = {
 			conversationId: conversationRef.key!, // Auto-generated key from Firebase
+			pid,
 			createdAt: Date.now(),
 			isHidden: false,
 			isMutingNotifications: false,

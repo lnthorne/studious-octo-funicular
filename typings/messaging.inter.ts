@@ -8,6 +8,7 @@ export enum MessageType {
 
 export interface IConversation {
 	conversationId: string;
+	pid: string;
 	createdAt: number; // Unix timestamp
 	isHidden: boolean;
 	isMutingNotifications: boolean;

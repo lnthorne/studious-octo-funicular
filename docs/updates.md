@@ -133,3 +133,7 @@
 ### January 6, 2025
 
 - Set a time limit for bids, after 30 days of sitting in pending it gets sent to rejected.
+
+### January 12, 2025
+
+- Fixed the auth issue with events. Now need to figure out how we can let the two users know what job they are talking about when messaging. I have a shitty solution rn, but broken when you go from the bids page
