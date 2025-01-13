@@ -9,8 +9,8 @@ import {
 	ILoginData,
 } from "@/typings/auth/login.inter";
 import { storeProfileImage } from "./image";
-import { eventEmitter } from "@/app/userContextWrapper";
 import { UserType } from "@/typings/user.inter";
+import { eventEmitter } from "@/app";
 
 /**
  * Call firbase auth to sign in the user and fetch the authenticate user

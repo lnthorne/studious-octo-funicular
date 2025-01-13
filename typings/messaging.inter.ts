@@ -1,4 +1,4 @@
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+export const SERVER_MESSAGE = "SERVER_MESSAGE";
 
 export enum MessageType {
 	TEXT = "text",
@@ -24,6 +24,7 @@ export interface IMessage {
 	body: string;
 	senderId: string;
 	messageType: MessageType;
+	pid?: string;
 }
 
 export interface IMessageEntity extends IMessage {

@@ -1,5 +1,11 @@
 import database from "@react-native-firebase/database";
-import { IMessage, IConversation, MessageType, IMessageEntity } from "@/typings/messaging.inter";
+import {
+	IMessage,
+	IConversation,
+	MessageType,
+	IMessageEntity,
+	SERVER_MESSAGE,
+} from "@/typings/messaging.inter";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
 /**
@@ -125,11 +131,20 @@ async function areUsersInConversationTogether(
 export async function startNewConversation(
 	senderId: string,
 	recipientId: string,
-	initialMessage?: string
+	jobTitle: string,
+	pid: string
 ): Promise<string> {
+	const jobContext: IMessage = {
+		body: `This conversation pertains to ${jobTitle}`,
+		senderId: SERVER_MESSAGE,
+		messageType: MessageType.TEXT,
+		pid,
+	};
+
 	try {
 		const existingConversationId = await areUsersInConversationTogether(senderId, recipientId);
 		if (existingConversationId) {
+			await sendMessage(existingConversationId, jobContext);
 			return existingConversationId;
 		}
 		// Create a reference to the new conversation
@@ -144,7 +159,7 @@ export async function startNewConversation(
 			isPinned: false,
 			isReadOnly: false,
 			unreadMessagesCount: 0,
-			lastMessage: initialMessage || "",
+			lastMessage: "",
 			lastMessageTimestamp: Date.now(),
 			lastSenderId: senderId,
 			members: {
@@ -154,16 +169,7 @@ export async function startNewConversation(
 		};
 
 		await conversationRef.set(newConversation);
-
-		if (initialMessage) {
-			const message: IMessage = {
-				body: initialMessage,
-				senderId,
-				messageType: MessageType.TEXT,
-			};
-			sendMessage(newConversation.conversationId, message);
-		}
-
+		await sendMessage(newConversation.conversationId, jobContext);
 		return conversationRef.key!;
 	} catch (error) {
 		console.error("Error starting new conversation:", error);

@@ -9,7 +9,7 @@ import {
 	ScrollView,
 	Animated,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useJobContext } from "@/contexts/jobContext";
 import { ATText } from "@/components/atoms/Text";
 import { useUser } from "@/contexts/userContext";
@@ -56,12 +56,17 @@ export default function bidDetailsPage() {
 	}, [isLoading]);
 
 	const handleCreateConversation = async () => {
-		if (!user || !selectedBid) {
+		if (!user || !selectedBid || !selectedJob) {
 			Alert.alert("Error", "Please try again.");
 			return;
 		}
 		try {
-			const conversationId = await startNewConversation(user.uid, selectedBid.uid);
+			const conversationId = await startNewConversation(
+				user.uid,
+				selectedBid.uid,
+				selectedJob.title,
+				selectedJob.pid
+			);
 			router.navigate({
 				pathname: "/shared/messages/[conversationId]",
 				params: {

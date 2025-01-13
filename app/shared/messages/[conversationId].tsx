@@ -9,12 +9,10 @@ import {
 	SafeAreaView,
 	KeyboardAvoidingView,
 	Platform,
-	TouchableOpacity,
-	Image,
 } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
-import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/messaging"; // Your service
-import { IMessage, IMessageEntity, MessageType } from "@/typings/messaging.inter";
+import { useLocalSearchParams } from "expo-router";
+import { subscribeToMessages, sendMessage, markMessageAsRead } from "@/services/messaging";
+import { IMessage, IMessageEntity, MessageType, SERVER_MESSAGE } from "@/typings/messaging.inter";
 import { useUser } from "@/contexts/userContext";
 import { ATText } from "@/components/atoms/Text";
 import { Colors } from "@/app/design-system/designSystem";
@@ -82,6 +80,30 @@ export default function MessagesPage() {
 		}
 	};
 
+	const generateMessageStyles = (item: IMessageEntity) => {
+		if (item.senderId === user?.uid) {
+			return [styles.messageBubble, styles.userMessage];
+		}
+
+		if (item.senderId === SERVER_MESSAGE) {
+			return styles.serverMessage;
+		}
+
+		return [styles.messageBubble, styles.otherMessage];
+	};
+
+	const generateTimestampStyles = (item: IMessageEntity) => {
+		if (item.senderId === user?.uid) {
+			return styles.userTimestamp;
+		}
+
+		if (item.senderId === SERVER_MESSAGE) {
+			return styles.serverTimestamp;
+		}
+
+		return styles.otherTimestamp;
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
@@ -98,21 +120,11 @@ export default function MessagesPage() {
 					onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
 					keyboardDismissMode="on-drag"
 					renderItem={({ item }) => (
-						<View style={styles.messageContainer}>
-							<View
-								style={[
-									styles.messageBubble,
-									item.senderId === user?.uid ? styles.userMessage : styles.otherMessage,
-								]}
-								key={item.messageId}
-							>
+						<View style={styles.messageContainer} key={item.messageId}>
+							<View style={generateMessageStyles(item)}>
 								<ATText typography="messageText">{item.body}</ATText>
 							</View>
-							<Text
-								style={item.senderId === user?.uid ? styles.userTimestamp : styles.otherTimestamp}
-							>
-								{formatMessageDate(item.timestamp)}
-							</Text>
+							<Text style={generateTimestampStyles(item)}>{formatMessageDate(item.timestamp)}</Text>
 						</View>
 					)}
 				/>
@@ -198,5 +210,18 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		marginRight: 10,
 		height: 40,
+	},
+	serverMessage: {
+		fontSize: 10,
+		color: Colors.timestamp,
+		textAlign: "center",
+		alignSelf: "center",
+	},
+
+	serverTimestamp: {
+		fontSize: 10,
+		color: Colors.timestamp,
+		textAlign: "center",
+		alignSelf: "center",
 	},
 });

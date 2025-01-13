@@ -1,6 +1,5 @@
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import auth from "@react-native-firebase/auth";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { UserProvider } from "@/contexts/userContext";
@@ -11,32 +10,21 @@ import { ATText } from "@/components/atoms/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "@/hooks/useFonts";
-import * as SplashScreen from "expo-splash-screen";
 import { Colors } from "./design-system/designSystem";
 import { AnimationProvider } from "@/contexts/animationContext";
 import LaunchAnimation from "@/components/LaunchAnimation";
 
 const queryClient = new QueryClient();
 
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
 	const { name } = useGlobalSearchParams<{ name: string }>();
 	const [initializing, setInitializing] = useState<boolean>(true);
 	const [isAnimationPlaying, setAnimationPlaying] = useState(true);
 	const fontsLoaded = useFonts();
-	const onAuthStateChanged = () => {
-		if (initializing) setInitializing(false);
-	};
 
 	useEffect(() => {
-		const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-		return subscriber;
-	}, []);
-
-	useEffect(() => {
-		if (fontsLoaded && !initializing) {
-			SplashScreen.hideAsync();
+		if (fontsLoaded && initializing) {
+			setInitializing(false);
 		}
 	}, [fontsLoaded, initializing]);
 

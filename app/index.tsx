@@ -3,6 +3,12 @@ import { StyleSheet, Image, View, SafeAreaView, Animated } from "react-native";
 import { ATText } from "@/components/atoms/Text";
 import ORCoursel from "@/components/organisms/Coursel";
 import { Colors } from "./design-system/designSystem";
+import { identifyUserType } from "@/services/user";
+import { AUTH_EVENTS } from "@/typings/auth/login.inter";
+import EventEmitter from "react-native/Libraries/vendor/emitter/EventEmitter";
+import auth from "@react-native-firebase/auth";
+
+export const eventEmitter = new EventEmitter();
 
 export default function Onboarding() {
 	const opacity = useRef(new Animated.Value(0)).current;
@@ -12,6 +18,18 @@ export default function Onboarding() {
 			duration: 500,
 			useNativeDriver: true,
 		}).start();
+	}, []);
+
+	useEffect(() => {
+		const subscriber = auth().onAuthStateChanged(async (firebaseUser) => {
+			if (firebaseUser) {
+				const userType = await identifyUserType(firebaseUser.uid);
+				if (userType) {
+					eventEmitter.emit(AUTH_EVENTS.SIGN_IN, userType);
+				}
+			}
+		});
+		return subscriber;
 	}, []);
 
 	return (

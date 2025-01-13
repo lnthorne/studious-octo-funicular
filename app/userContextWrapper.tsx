@@ -3,10 +3,8 @@ import { useUser } from "@/contexts/userContext";
 import { getUser } from "@/services/user";
 import { IHomeOwnerEntity, ICompanyOwnerEntity, UserType } from "@/typings/user.inter";
 import { router } from "expo-router";
-import EventEmitter from "react-native/Libraries/vendor/emitter/EventEmitter";
 import { AUTH_EVENTS } from "@/typings/auth/login.inter";
-
-export const eventEmitter = new EventEmitter();
+import { eventEmitter } from "./index";
 
 export default function UserContextWrapper({ children }: { children: React.ReactNode }) {
 	const { setUser } = useUser<IHomeOwnerEntity | ICompanyOwnerEntity>();
