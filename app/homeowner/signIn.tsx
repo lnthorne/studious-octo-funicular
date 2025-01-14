@@ -45,6 +45,7 @@ export default function SignIn() {
 			await signIn(values, UserType.homeowner);
 		} catch (e: any) {
 			const err = e as FirebaseError;
+			console.error("Error signing in", err);
 			alert("Sign in failed: " + err.message);
 		} finally {
 			setLoading(false);
