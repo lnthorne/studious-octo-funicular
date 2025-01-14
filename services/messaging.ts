@@ -76,6 +76,9 @@ export function subscribeToMessages(
 export async function sendMessage(conversationId: string, message: IMessage) {
 	const messageRef = database().ref(`messages/${conversationId}`).push();
 	const conversationRef = database().ref(`conversations/${conversationId}`);
+	const currentUnreadMessagesCount = (
+		await conversationRef.child("unreadMessagesCount").once("value")
+	).val();
 	try {
 		await messageRef.set({
 			...message,
@@ -90,6 +93,7 @@ export async function sendMessage(conversationId: string, message: IMessage) {
 			lastMessage: message.body,
 			lastMessageTimestamp: Date.now(),
 			lastSenderId: message.senderId,
+			unreadMessagesCount: currentUnreadMessagesCount + 1,
 		});
 	} catch (error) {
 		throw error;
@@ -217,6 +221,10 @@ export async function startNewConversation(
  * @param userId - The ID of the user who read the message.
  */
 export async function markMessageAsRead(conversationId: string, messageId: string, userId: string) {
+	const conversationRef = database().ref(`conversations/${conversationId}`);
+	const currentUnreadMessagesCount = (
+		await conversationRef.child("unreadMessagesCount").once("value")
+	).val();
 	const messagesRef = database().ref(`messages/${conversationId}`);
 	try {
 		await messagesRef
@@ -225,6 +233,10 @@ export async function markMessageAsRead(conversationId: string, messageId: strin
 			.update({
 				[userId]: true,
 			});
+
+		if (currentUnreadMessagesCount > 0) {
+			await conversationRef.update({ unreadMessagesCount: currentUnreadMessagesCount - 1 });
+		}
 	} catch (error) {
 		throw error;
 	}

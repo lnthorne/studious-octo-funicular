@@ -34,7 +34,7 @@ export function useConversations<T extends Identity>(
 			return;
 		}
 
-		console.log("caution");
+		console.log("query from useConversation");
 
 		let isMounted = true;
 
@@ -58,16 +58,22 @@ export function useConversations<T extends Identity>(
 					return acc;
 				}, {} as Record<string, any>);
 
-				const conversationsWithUserData = updatedConversations.map((conversation) => {
-					const memberIds = Object.keys(conversation.members);
-					const otherMemberId = memberIds.find((memberId) => memberId !== user.uid);
-					const otherUserData = userIdToDataMap[otherMemberId!];
+				const conversationsWithUserData = updatedConversations
+					.map((conversation) => {
+						const memberIds = Object.keys(conversation.members);
+						const otherMemberId = memberIds.find((memberId) => memberId !== user.uid);
+						const otherUserData = userIdToDataMap[otherMemberId!];
 
-					return {
-						...conversation,
-						otherUser: otherUserData,
-					};
-				});
+						return {
+							...conversation,
+							otherUser: otherUserData,
+						};
+					})
+					.sort((a, b) => {
+						const timestampA = a.lastMessageTimestamp;
+						const timestampB = b.lastMessageTimestamp;
+						return timestampB - timestampA;
+					});
 
 				queryClient.setQueryData(["conversations", user.uid], conversationsWithUserData);
 			} catch (err) {

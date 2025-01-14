@@ -107,7 +107,6 @@ export default function ViewPostsScreen() {
 					isRefresh={isRefresh}
 					onRefresh={onRefresh}
 					onPress={handlePostPress}
-					chipLabel="View"
 				/>
 			</Animated.View>
 		</View>

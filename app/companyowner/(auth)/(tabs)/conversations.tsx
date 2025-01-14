@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
 	View,
 	Text,
 	FlatList,
 	TouchableOpacity,
 	StyleSheet,
-	ActivityIndicator,
 	SafeAreaView,
 	Image,
 	Animated,
@@ -106,7 +105,12 @@ export default function ConversationsPage() {
 												? { uri: item.otherUser.profileImage }
 												: require("../../../../assets/images/welcome.png")
 										}
-										style={styles.avatar}
+										style={[
+											styles.avatar,
+											item.unreadMessagesCount > 0 && item.lastSenderId !== user?.uid
+												? styles.notification
+												: null,
+										]}
 									/>
 									<View style={{ flex: 1 }}>
 										<ATText>
@@ -160,5 +164,9 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: Colors.timestamp,
 		textAlign: "right",
+	},
+	notification: {
+		borderWidth: 5,
+		borderColor: Colors.primaryDotColor,
 	},
 });

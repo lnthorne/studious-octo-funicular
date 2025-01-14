@@ -85,6 +85,7 @@ export async function fetchOpenJobPostsNotBidOn(
 					collection(db, "posts"),
 					where("jobStatus", "==", JobStatus.open),
 					orderBy("geohash"),
+					orderBy("createdAt", "desc"),
 					startAt(b[0]),
 					endAt(b[1])
 				);
@@ -94,7 +95,11 @@ export async function fetchOpenJobPostsNotBidOn(
 			postsSnapshots = await Promise.all(promises);
 		} else {
 			// If no center is specified, fetch all open jobs
-			const q = query(collection(db, "posts"), where("jobStatus", "==", JobStatus.open));
+			const q = query(
+				collection(db, "posts"),
+				where("jobStatus", "==", JobStatus.open),
+				orderBy("createdAt", "desc")
+			);
 			postsSnapshots = [await getDocs(q)];
 		}
 
@@ -111,8 +116,6 @@ export async function fetchOpenJobPostsNotBidOn(
 			.flatMap((snapshot) => snapshot.docs)
 			.map((doc) => doc.data() as IPostEntity)
 			.filter((post) => {
-				console.log("TEST", jobIdsWithUserBids);
-				console.log("POST", post);
 				return !jobIdsWithUserBids.has(post.pid);
 			});
 
@@ -153,6 +156,7 @@ export async function fetchJobsWithBidsByStatus(
 			.collection("posts")
 			.where("uid", "==", uid)
 			.where("jobStatus", "in", statuses)
+			.orderBy("createdAt", "desc")
 			.get();
 
 		const posts: IPostEntity[] = postsSnapshot.docs.map((doc) => doc.data() as IPostEntity);
@@ -244,7 +248,13 @@ export async function fetchJobPostsByPidAndStaus(pids: string[]): Promise<IPostE
 		});
 
 		const results = await Promise.all(promises);
-		return results.filter((post) => post !== null);
+		return results
+			.filter((post) => post !== null)
+			.sort((a, b) => {
+				// FieldValue has the format {"nanoseconds": number, "seconds": number}
+				// @ts-ignore
+				return b.createdAt["seconds"] - a.createdAt["seconds"];
+			});
 	} catch (error) {
 		console.error("Error fetching job postings:", error);
 		throw error;
