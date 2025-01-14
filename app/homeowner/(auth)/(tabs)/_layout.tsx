@@ -1,7 +1,11 @@
 import { Colors } from "@/app/design-system/designSystem";
 import { ATText } from "@/components/atoms/Text";
+import Help from "@/components/Help";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+
+const videoSource = require("../../../../assets/splash/homeowner-onboarding.mp4");
+
 const HomeHeader = () => (
 	<ATText typography="heading" style={{ fontSize: 28 }}>
 		Dashboard
@@ -106,6 +110,7 @@ export default function MainLayout() {
 					},
 					headerTitleAlign: "left",
 					headerTitle: () => <ProfileHeader />,
+					headerRight: () => <Help source={videoSource} />,
 					tabBarIcon: ({ focused }) => (
 						<Ionicons
 							name={focused ? "person" : "person-outline"}

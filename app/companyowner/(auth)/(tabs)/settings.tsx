@@ -18,7 +18,6 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useRef, useState } from "react";
 import { MLTextBox } from "@/components/molecules/TextBox";
-import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { updateProfileImage, updateUser } from "@/services/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
