@@ -1,12 +1,5 @@
 import React from "react";
-import {
-	Modal,
-	View,
-	Text,
-	TouchableOpacity,
-	StyleSheet,
-	TouchableWithoutFeedback,
-} from "react-native";
+import { Modal, View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { ATText } from "./atoms/Text";
 import { MLButton } from "./molecules/Button";
 
