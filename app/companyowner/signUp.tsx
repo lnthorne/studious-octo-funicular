@@ -119,7 +119,7 @@ export default function SignUp() {
 								)}
 								<MLTextBox
 									onChangeText={handleChange("companyName")}
-									heading="Conpany name"
+									heading="Company name"
 									placeholder="Company name"
 									value={values.companyName}
 									onBlur={handleBlur("companyName")}

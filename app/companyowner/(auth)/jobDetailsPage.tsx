@@ -68,7 +68,7 @@ export default function JobDetailsPage() {
 					queryKey: ["bids", user?.uid, BidStatus.pending],
 					refetchType: "all",
 				});
-				queryClient.invalidateQueries({ queryKey: ["jobPosts", user?.uid], refetchType: "all" });
+				queryClient.invalidateQueries({ queryKey: ["posts", user?.uid], refetchType: "all" });
 				setBottomSheetVisible(false);
 				bottomSheetRef.current?.close();
 				startAnimation(videoSource, () => {
