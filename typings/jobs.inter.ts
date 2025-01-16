@@ -23,13 +23,14 @@ export interface IBid {
 	companyName: string;
 	bidAmount: number;
 	description: string;
-	date: Date;
+	date: Date; // Estimated Start date
 }
 
 export interface IBidEntity extends IBid {
 	companyProfilePicture?: string;
 	bid: string;
 	createdAt: FirebaseFirestoreTypes.FieldValue;
+	lastUpdatedAt: FirebaseFirestoreTypes.FieldValue;
 	status: BidStatus;
 }
 

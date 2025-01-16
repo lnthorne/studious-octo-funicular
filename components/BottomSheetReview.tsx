@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import BottomSheet, { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import * as Yup from "yup";
 import { Ionicons } from "@expo/vector-icons";
@@ -42,63 +42,76 @@ const ReviewBottomSheet = React.forwardRef<BottomSheet, ReviewBottomSheetProps>(
 				handleStyle={{ display: "none" }}
 				keyboardBehavior="extend"
 			>
-				<Formik
-					initialValues={{ title: "", text: "", rating }}
-					validationSchema={ReviewSchema}
-					onSubmit={(values, { resetForm }: FormikHelpers<ReviewForm>) => {
-						onSubmit && onSubmit(values);
-						resetForm();
-					}}
-				>
-					{({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
-						<>
-							<ATText typography="heading" style={styles.text}>
-								Leave a Review
-							</ATText>
-							<View style={styles.starContainer}>
-								{[1, 2, 3, 4, 5].map((star) => (
-									<TouchableOpacity key={star} onPress={() => handleStarPress(star, setFieldValue)}>
-										<Ionicons
-											name={star <= rating ? "star" : "star-outline"}
-											size={32}
-											color={Colors.primaryButtonColor}
-										/>
-									</TouchableOpacity>
-								))}
-								<ATText color="error">*</ATText>
-							</View>
-							{errors.rating && touched.rating && (
-								<ATText color="error" style={styles.text}>
-									{errors.rating}
+				<ScrollView scrollEnabled={false}>
+					<Formik
+						initialValues={{ title: "", text: "", rating }}
+						validationSchema={ReviewSchema}
+						onSubmit={(values, { resetForm }: FormikHelpers<ReviewForm>) => {
+							onSubmit && onSubmit(values);
+							resetForm();
+						}}
+					>
+						{({
+							handleChange,
+							handleBlur,
+							handleSubmit,
+							values,
+							errors,
+							touched,
+							setFieldValue,
+						}) => (
+							<>
+								<ATText typography="heading" style={styles.text}>
+									Leave a Review
 								</ATText>
-							)}
-							<View style={[styles.textFieldContainer]}>
-								<BottomSheetTextInput
-									placeholder="Title"
-									placeholderTextColor={Colors.secondaryTextColor}
-									onChangeText={handleChange("title")}
-									value={values.title}
-									onBlur={handleBlur("title")}
-									style={styles.textField}
-									autoCapitalize="words"
-								/>
-							</View>
+								<View style={styles.starContainer}>
+									{[1, 2, 3, 4, 5].map((star) => (
+										<TouchableOpacity
+											key={star}
+											onPress={() => handleStarPress(star, setFieldValue)}
+										>
+											<Ionicons
+												name={star <= rating ? "star" : "star-outline"}
+												size={32}
+												color={Colors.primaryButtonColor}
+											/>
+										</TouchableOpacity>
+									))}
+									<ATText color="error">*</ATText>
+								</View>
+								{errors.rating && touched.rating && (
+									<ATText color="error" style={styles.text}>
+										{errors.rating}
+									</ATText>
+								)}
+								<View style={[styles.textFieldContainer]}>
+									<BottomSheetTextInput
+										placeholder="Title"
+										placeholderTextColor={Colors.secondaryTextColor}
+										onChangeText={handleChange("title")}
+										value={values.title}
+										onBlur={handleBlur("title")}
+										style={styles.textField}
+										autoCapitalize="words"
+									/>
+								</View>
 
-							<View style={[styles.textFieldContainer]}>
-								<BottomSheetTextInput
-									placeholder="Write your review..."
-									placeholderTextColor={Colors.secondaryTextColor}
-									multiline
-									onChangeText={handleChange("text")}
-									value={values.text}
-									onBlur={handleBlur("text")}
-									style={styles.textArea}
-								/>
-							</View>
-							<MLButton variant="primary" label="Submit review" onPress={handleSubmit} />
-						</>
-					)}
-				</Formik>
+								<View style={[styles.textFieldContainer]}>
+									<BottomSheetTextInput
+										placeholder="Write your review..."
+										placeholderTextColor={Colors.secondaryTextColor}
+										multiline
+										onChangeText={handleChange("text")}
+										value={values.text}
+										onBlur={handleBlur("text")}
+										style={styles.textArea}
+									/>
+								</View>
+								<MLButton variant="primary" label="Submit review" onPress={handleSubmit} />
+							</>
+						)}
+					</Formik>
+				</ScrollView>
 			</BottomSheet>
 		);
 	}

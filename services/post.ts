@@ -223,6 +223,7 @@ export async function checkAndClosePostingAndBid(pid: string, bidId: string): Pr
 		const bidRef = firestoreInstance.collection("bids").doc(bidId);
 		batch.update(bidRef, {
 			status: BidStatus.completed,
+			lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
 		});
 
 		await batch.commit();
@@ -274,7 +275,10 @@ export async function cancelJobPosting(posting: IPostEntity) {
 		const bidSnapshots = await db.collection("bids").where("pid", "==", posting.pid).get();
 
 		bidSnapshots.forEach((doc) => {
-			batch.update(doc.ref, { status: BidStatus.canceled });
+			batch.update(doc.ref, {
+				status: BidStatus.canceled,
+				lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
+			});
 		});
 
 		await batch.commit();

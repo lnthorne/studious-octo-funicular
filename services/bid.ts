@@ -13,6 +13,7 @@ export async function submitBid(bidData: IBid, companyProfilePictureParam?: stri
 			...bidData,
 			bid: bidRef.id,
 			createdAt: firestore.FieldValue.serverTimestamp(),
+			lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
 			status: BidStatus.pending,
 			...(companyProfilePictureParam && { companyProfilePicture: companyProfilePictureParam }),
 		};
@@ -85,6 +86,7 @@ export async function updateBidStatus(bid: string, bidStatus: BidStatus): Promis
 		const bidRef = firestore().collection("bids").doc(bid);
 		bidRef.update({
 			status: bidStatus,
+			lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
 		});
 	} catch (error) {
 		console.log("Error upating bid status", error);
@@ -107,7 +109,10 @@ export async function acceptBidAndCloseOtherBids(
 	const batch = firestoreInstance.batch();
 	try {
 		const bidRef = firestoreInstance.collection("bids").doc(bid);
-		batch.update(bidRef, { status: BidStatus.accepted });
+		batch.update(bidRef, {
+			status: BidStatus.accepted,
+			lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
+		});
 
 		const postRef = firestoreInstance.collection("posts").doc(pid);
 		batch.update(postRef, {
@@ -123,7 +128,10 @@ export async function acceptBidAndCloseOtherBids(
 			.get();
 
 		otherBidsSnapshot.forEach((doc) => {
-			batch.update(doc.ref, { status: BidStatus.rejected });
+			batch.update(doc.ref, {
+				status: BidStatus.rejected,
+				lastUpdatedAt: firestore.FieldValue.serverTimestamp(),
+			});
 		});
 
 		await batch.commit();

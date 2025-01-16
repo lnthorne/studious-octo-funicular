@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
-import { IPostEntity } from "@/typings/jobs.inter";
+import { IPostEntity, JobStatus } from "@/typings/jobs.inter";
 import { ATText } from "../atoms/Text";
 import MLCollage from "../molecules/Collage";
 import { Timestamp } from "@react-native-firebase/firestore";
@@ -45,6 +45,39 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 		});
 	};
 
+	const generateDateText = () => {
+		const bidLastUpdated = jobDetails?.bids?.[0].lastUpdatedAt;
+		console.log("JOB DETAIL", jobDetails);
+		if (jobDetails.jobStatus === JobStatus.completed && bidLastUpdated) {
+			return (
+				<>
+					<ATText>{formatDate(bidLastUpdated as Timestamp)}</ATText>
+					<ATText typography="secondaryText" color="secondaryTextColor">
+						Job complete
+					</ATText>
+				</>
+			);
+		}
+		if (jobDetails.jobStatus === JobStatus.inprogress && bidLastUpdated) {
+			return (
+				<>
+					<ATText>{formatDate(bidLastUpdated as Timestamp)}</ATText>
+					<ATText typography="secondaryText" color="secondaryTextColor">
+						Bid accepted
+					</ATText>
+				</>
+			);
+		}
+		return (
+			<>
+				<ATText>{formatDate(jobDetails.estimatedStartDate)}</ATText>
+				<ATText typography="secondaryText" color="secondaryTextColor">
+					Estimated start date
+				</ATText>
+			</>
+		);
+	};
+
 	const numberOfImages = jobDetails.imageUrls?.length || 0;
 	return (
 		<View>
@@ -64,12 +97,7 @@ export default function ORJobDetails({ jobDetails }: JobDetailProps) {
 					Location
 				</ATText>
 			</View>
-			<View style={styles.textContainer}>
-				<ATText>{formatDate(jobDetails.estimatedStartDate)}</ATText>
-				<ATText typography="secondaryText" color="secondaryTextColor">
-					Start date
-				</ATText>
-			</View>
+			<View style={styles.textContainer}>{generateDateText()}</View>
 			<View style={styles.textContainer}>
 				<ATText>{formatDate(jobDetails.createdAt as Timestamp)}</ATText>
 				<ATText typography="secondaryText" color="secondaryTextColor">

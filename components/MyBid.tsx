@@ -4,6 +4,7 @@ import { IBidEntity } from "@/typings/jobs.inter";
 import { ATText } from "./atoms/Text";
 import { useUser } from "@/contexts/userContext";
 import { ICompanyOwnerEntity } from "@/typings/user.inter";
+import { Timestamp } from "@react-native-firebase/firestore";
 
 interface MyBidProps {
 	bid: IBidEntity | undefined;
@@ -20,9 +21,28 @@ export default function MyBid({ bid }: MyBidProps) {
 			</View>
 		);
 	}
+
+	const formatDate = (createdAt: Timestamp | Date): string => {
+		let formattedDate;
+		if (createdAt instanceof Timestamp) {
+			formattedDate = createdAt.toDate();
+		} else {
+			formattedDate = createdAt;
+		}
+		return formattedDate.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+	};
+
 	return (
 		<View style={styles.container}>
 			<ATText typography="heading">Your Bid</ATText>
+			<View style={styles.row}>
+				<ATText typography="subheading">Estimated start date: </ATText>
+				<ATText>{formatDate(bid.date)}</ATText>
+			</View>
 			<View style={styles.detailsContainer}>
 				<Image
 					source={
@@ -57,5 +77,8 @@ const styles = StyleSheet.create({
 		width: 48,
 		height: 48,
 		borderRadius: 8,
+	},
+	row: {
+		flexDirection: "row",
 	},
 });

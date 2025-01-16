@@ -115,6 +115,10 @@ export default function JobDetailsPage() {
 		}
 		const myBid = bids.find((myBid) => selectedJob?.bidIds?.some((jobBid) => jobBid === myBid.bid));
 		setSelectedBid(myBid);
+
+		if (selectedJob && myBid) {
+			selectedJob.bids = [myBid];
+		}
 	}, [selectedJob]);
 
 	return (

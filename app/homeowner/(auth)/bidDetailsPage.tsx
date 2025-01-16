@@ -117,6 +117,20 @@ export default function bidDetailsPage() {
 		);
 	};
 
+	const formatDate = (createdAt: Timestamp | Date): string => {
+		let formattedDate;
+		if (createdAt instanceof Timestamp) {
+			formattedDate = createdAt.toDate();
+		} else {
+			formattedDate = createdAt;
+		}
+		return formattedDate.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+	};
+
 	if (isLoading) {
 		return (
 			<SafeAreaView style={styles.container}>
@@ -135,6 +149,12 @@ export default function bidDetailsPage() {
 						averageRating={data?.averageRating}
 						ratingPercentages={data?.ratingPercentages}
 					/>
+					{selectedBid?.date && (
+						<View style={styles.row}>
+							<ATText typography="subheading">Estimated start date: </ATText>
+							<ATText>{formatDate(selectedBid.date)}</ATText>
+						</View>
+					)}
 					<View style={styles.detailsContainer}>
 						<Image
 							source={
@@ -207,5 +227,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		alignSelf: "stretch",
+	},
+	row: {
+		flexDirection: "row",
 	},
 });

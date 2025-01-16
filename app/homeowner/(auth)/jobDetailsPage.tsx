@@ -82,7 +82,7 @@ export default function JobDetails() {
 						disabled={isCompanyCompletionPending}
 						label={label}
 						onPress={() => setModalVisible(true)}
-						style={{ marginVertical: 0 }}
+						style={{ marginVertical: 0, marginHorizontal: 0 }}
 					/>
 					{isCompanyCompletionPending && (
 						<ATText
