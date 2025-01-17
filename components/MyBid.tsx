@@ -39,10 +39,6 @@ export default function MyBid({ bid }: MyBidProps) {
 	return (
 		<View style={styles.container}>
 			<ATText typography="heading">Your Bid</ATText>
-			<View style={styles.row}>
-				<ATText typography="subheading">Estimated start date: </ATText>
-				<ATText>{formatDate(bid.date)}</ATText>
-			</View>
 			<View style={styles.detailsContainer}>
 				<Image
 					source={
@@ -59,6 +55,10 @@ export default function MyBid({ bid }: MyBidProps) {
 					</ATText>
 				</View>
 			</View>
+			<View style={styles.row}>
+				<ATText typography="subheading">Estimated start date: </ATText>
+				<ATText>{formatDate(bid.date)}</ATText>
+			</View>
 		</View>
 	);
 }
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		gap: 12,
-		paddingVertical: 12,
+		paddingTop: 12,
 	},
 	image: {
 		width: 48,
